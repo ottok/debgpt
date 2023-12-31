@@ -21,7 +21,8 @@ Example API design can be found below. One issue is that some documents like the
 
 
 ```python
-import debgpt as llm
+import debgpt
+llm = debgpt.llm.from_pretrained()
 
 # This function wraps (a part of) debian-policy document in context.
 llm.ask_policy(path_of_file_or_dir_in_question, user_question)
@@ -59,4 +60,4 @@ But for proof of concept, the hardware requirement should be lower.
 
 ## License
 
-GPL-2.0+
+MIT/Expat
