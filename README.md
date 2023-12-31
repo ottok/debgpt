@@ -1,28 +1,34 @@
-# DebGPT
+# DebGPT -- Chatting LLM with Debian-specific knowledge
 
-A Chatting LLM with Debian-specific knowledge.
+Large language models (LLMs) are newly emerged tools, which are capable of
+handling tasks that traditional software could never achieve, such as writing
+code based on the specification provided by the user. However, Debian-specific
+knowledge is a kind of niche knowledge, which is not learnt well by commercial
+or open-access LLMs. In this project, we attempt to explore the possibility
+of leveraging LLMs to aid Debian development, in any extent.
 
-We imagine the following use cases:
+Status: proof-of-concept (prompt engineering existing LLMs and wrap it with a set of API)
 
-1. Functionalities inheritied from the original LLM.
-1. We ask the LLM to give us a patch by briefly specifiying the debian-specific changes we want to make. For instance, "add riscv64 to supported architectures".
-1. We ask the LLM to generate a debian-styled response to a mail from the mailing list.
-1. anything else ...
+Discussions: Open an issue for this repo.
 
-Plans:
-
-1. Investigate the training-free prompt engineering as the proof of concept. This is easy and not hardware demanding.
+Mailing-List: Debian Deep Learning Team <debian-ai@lists.debian.org>
 
 ## Proof-Of-Concept (Step 1 for this project)
 
-Prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages. Since we cannot squash all the texts into the same context due to hardware / model limits, we can wrap different prompt engineering tricks into different APIs.
+This step is easy. Does not require any model parameter updates.
 
-Example API design can be found below. One issue is that some documents like the policy is too long. We may need to find some workarounds, or use an LLM with super large context.
+Prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages.
+Since we cannot squash all the texts into the same context due to hardware / model limits, we can wrap different prompt engineering tricks into different APIs.
+
+The imagined use cases will be like the follows:
 
 
 ```python
 import debgpt
 llm = debgpt.llm.from_pretrained()
+
+# The general function just calls the plain LLM backend.
+llm.ask(user_question)
 
 # This function wraps (a part of) debian-policy document in context.
 llm.ask_policy(path_of_file_or_dir_in_question, user_question)
@@ -35,25 +41,57 @@ llm.ask_dh(path_of_file_or_dir_in_question, user_question)
 
 # This function wraps the latest sbuild buildlog at .. in the context.
 llm.ask_build(user_question: str = "why did the build fail?')
+
+1. Functionalities inheritied from the original LLM.
+1. We ask the LLM to give us a patch by briefly specifiying the debian-specific changes we want to make. For instance, "add riscv64 to supported architectures".
+1. We ask the LLM to generate a debian-styled response to a mail from the mailing list.
+1. anything else ...
 ```
 
-In terms of the transformers package -- If we use a 7B LLM, 16~24GB VRAM is needed (fp16 precision). For a 13B model, it will need a 48GB GPU, or two 24GB GPUs. That said, there are other tools like https://github.com/ggerganov/llama.cpp which allows inference on CPUs (even laptops). We should write the code to dispatch to a proper inference backend.
+## TODOs
 
-## Dataset (Step ? far future)
+1. separate the frontend (user cli, sends llm query, and receives llm response, and possibly execute LLM generated code) and backend (LLM inference, exposed through zmq)
+
+## Evaluations
+
+### [Janitor](https://wiki.debian.org/Janitor) Tasks
+
+Janitor tasks are not quite sophisticated
+
+## Hardware/Software Limitations
+
+Not estimated. But a 7B LLM is not quite difficult to deal with. According to
+my experience, 8xA100 GPUs must be sufficient to train a full 7B model.
+LoRA or RAG should require much less than that.
+
+One potential issue is that some documents like the policy is too long. We may
+need to find some workarounds, or use an LLM with super large context.  In
+terms of the transformers package -- If we use a 7B LLM, 16~24GB VRAM is needed
+(fp16 precision). For a 13B model, it will need a 48GB GPU, or two 24GB GPUs.
+That said, there are other tools like https://github.com/ggerganov/llama.cpp
+which allows inference on CPUs (even laptops). We should write the code to
+dispatch to a proper inference backend.
+
+Internet access is not allowed for LLM.
+LLM's file read permission should be explicitly approved by user.
+
+## Future Explorations
+
+### Dataset (Step ? far future)
 
 1. Salsa dump
 2. Debian mailing list dump
 
-## Training (Step ? far future)
+### Training (Step ? far future)
 
 Pick an open-access LLM to fine-tune with LoRA. The concrete choise of a baseline LLM is to be investigated (e.g., should we start from pre-trained LLM or fine-tuned chatting LLM?).
 The additional instruct tuning and RLHF steps are to be investigated.
 
-## Hardware Requirement
+Possible solutions
 
-Not estimated. But a 7B LLM is not quite difficult to deal with. According to my experience, 8xA100 GPUs must be sufficient to train.
+1. LoRA
 
-But for proof of concept, the hardware requirement should be lower.
+2. RAG
 
 ## References
 
