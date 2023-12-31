@@ -7,11 +7,11 @@ knowledge is a kind of niche knowledge, which is not learnt well by commercial
 or open-access LLMs. In this project, we attempt to explore the possibility
 of leveraging LLMs to aid Debian development, in any extent.
 
-Status: proof-of-concept (prompt engineering existing LLMs and wrap it with a set of API)
+*Status:* proof-of-concept (prompt engineering existing LLMs and wrap it with a set of API)
 
-Discussions: Open an issue for this repo.
+*Discussions:* Open an issue for this repo.
 
-Mailing-List: Debian Deep Learning Team <debian-ai@lists.debian.org>
+*Mailing-List:* Debian Deep Learning Team <debian-ai@lists.debian.org>
 
 ## Proof-Of-Concept (Step 1 for this project)
 
@@ -29,34 +29,65 @@ llm = debgpt.llm.from_pretrained()
 
 # The general function just calls the plain LLM backend.
 llm.ask(user_question)
+#   e.g. "who are you?" -- sanity check
 
 # This function wraps (a part of) debian-policy document in context.
-llm.ask_policy(path_of_file_or_dir_in_question, user_question)
+llm.ask_policy(path_of_file_or_dir, user_question)
+#   e.g. debian/control, "what's the difference between Depends: and Pre-Depends: ?"
 
 # This function wraps (a part of) debian-devref document in context.
-llm.ask_devref(path_of_file_or_dir_in_question, user_question)
+llm.ask_devref(path_of_file_or_dir, user_question)
+#   e.g., debian/changelog, "what is the correct release name when I prepare the upload for Debian stable? bookworm? stable? bookworm-proposed-updates? or anything else?"
 
 # This function wraps debhelper documents (e.g., man pages) in the context.
-llm.ask_dh(path_of_file_or_dir_in_question, user_question)
+llm.ask_dh(path_of_file_or_dir, user_question)
+#   e.g., debian/control, "what is the correct way to specify debhelper dependency with compat level 13?"
 
 # This function wraps the latest sbuild buildlog at .. in the context.
-llm.ask_build(user_question: str = "why did the build fail?')
+llm.ask_build(user_question)
+#   e.g.: "why does the build fail?'
 
-1. Functionalities inheritied from the original LLM.
-1. We ask the LLM to give us a patch by briefly specifiying the debian-specific changes we want to make. For instance, "add riscv64 to supported architectures".
-1. We ask the LLM to generate a debian-styled response to a mail from the mailing list.
-1. anything else ...
+# This leverages LLM's capability for summarizing texts.
+llm.bts(bts_number: int, user_question)
+#   e.g.: "briefly summarize it."
+
+# Let LLM do the development work, and generates a patch for you
+llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
+#   e.g., debian/control, "add riscv64 to supported architectures".
+
+# Let LLM behave like a human (it is not good at this)
+llm.reply_mail(debian_bts_or_ml_html_link, user_question:str=None)
 ```
 
 ## TODOs
 
-1. separate the frontend (user cli, sends llm query, and receives llm response, and possibly execute LLM generated code) and backend (LLM inference, exposed through zmq)
+1. separate the frontend (user cli, sends llm query, and receives llm response, and possibly execute LLM generated code) and backend (LLM inference, exposed through zmq). This is postponed after poc stage.
+
+## LLM Selection
+
+Nore certain. But we shall grab one with good performance, and allows free commercial usage (or more permissive ones)
+
+https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
+
+Instruction-tuned and RL-tuned LLMs are preferred. Do not try pretrained raw LLMs -- they are not useful here.
+The pretrained (raw) LLMs and the fine-tuned LLMs (without instruction tuning or RL tuning) are only useful when we plan to collect debian-specific data and fine-tune the model.
+
+*Candidates:*
+
+1. https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1
+1. https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
+1. LLAMA-2 https://huggingface.co/meta-llama
+
 
 ## Evaluations
 
 ### [Janitor](https://wiki.debian.org/Janitor) Tasks
 
-Janitor tasks are not quite sophisticated
+Janitor tasks are not quite sophisticated for LLM. These tasks can be used as sanity checks.
+
+### More complicated tasks
+
+Depends on your imagination.
 
 ## Hardware/Software Limitations
 
