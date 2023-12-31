@@ -31,7 +31,10 @@ llm.ask_policy(path_of_file_or_dir_in_question, user_question)
 llm.ask_devref(path_of_file_or_dir_in_question, user_question)
 
 # This function wraps debhelper documents (e.g., man pages) in the context.
-llm.ask_debhelper(path_of_file_or_dir_in_question, user_question)
+llm.ask_dh(path_of_file_or_dir_in_question, user_question)
+
+# This function wraps the latest sbuild buildlog at .. in the context.
+llm.ask_build(user_question: str = "why did the build fail?')
 ```
 
 In terms of the transformers package -- If we use a 7B LLM, 16~24GB VRAM is needed (fp16 precision). For a 13B model, it will need a 48GB GPU, or two 24GB GPUs. That said, there are other tools like https://github.com/ggerganov/llama.cpp which allows inference on CPUs (even laptops). We should write the code to dispatch to a proper inference backend.
