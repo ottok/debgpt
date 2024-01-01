@@ -52,7 +52,6 @@ dependencies:
   - gmpy2=2.1.2=py310heeb90bb_0
   - gnutls=3.6.15=he1e5248_0
   - grpc-cpp=1.48.2=he1ff14a_1
-  - huggingface_hub=0.17.3=py310h06a4308_0
   - icu=73.1=h6a678d5_0
   - idna=3.4=py310h06a4308_0
   - importlib-metadata=6.0.0=py310h06a4308_0
@@ -170,13 +169,11 @@ dependencies:
   - sympy=1.12=py310h06a4308_0
   - tbb=2021.8.0=hdb19cb5_0
   - tk=8.6.12=h1ccaba5_0
-  - tokenizers=0.13.3=py310h22610ee_0
   - torchaudio=2.1.2=py310_cu118
   - torchtriton=2.1.0=py310
   - torchvision=0.16.2=py310_cu118
   - tqdm=4.65.0=py310h2f386ee_0
   - traitlets=5.7.1=py310h06a4308_0
-  - transformers=4.32.1=py310h06a4308_0
   - typing-extensions=4.7.1=py310h06a4308_0
   - typing_extensions=4.7.1=py310h06a4308_0
   - tzdata=2023c=h04d1e81_0
@@ -192,4 +189,8 @@ dependencies:
   - zipp=3.11.0=py310h06a4308_0
   - zlib=1.2.13=h5eee18b_0
   - zstd=1.5.5=hc292b87_0
+  - pip:
+      - huggingface-hub==0.20.1
+      - tokenizers==0.15.0
+      - transformers==4.36.2
 prefix: /home/lumin/miniconda3/envs/pth212
