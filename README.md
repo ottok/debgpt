@@ -59,6 +59,14 @@ llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 llm.reply_mail(debian_bts_or_ml_html_link, user_question:str=None)
 ```
 
+Command line interfaces
+
+```shell
+$ python3 -m debgpt.backend           # server
+$ python3 -m debgpt.frontend          # client
+$ debgpt                              # client shortcut
+```
+
 ## TODOs
 
 1. separate the frontend (user cli, sends llm query, and receives llm response, and possibly execute LLM generated code) and backend (LLM inference, exposed through zmq). This is postponed after poc stage.
