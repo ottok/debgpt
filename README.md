@@ -16,6 +16,9 @@ of leveraging LLMs to aid Debian development, in any extent.
 *Technical-Details:*
 
 1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
+1. [LLM Evaluation Tasks](doc/llm-evaluation.md)
+1. [Python Environment Setup Guide](doc/install.md)
+1. [Future Ideas](doc/ideas.md)
 
 ## Proof-Of-Concept
 
@@ -99,71 +102,10 @@ $ python3 -m debgpt.backend           # server
 $ debgpt-server                       # server shortcut, convenience wrapper
 ```
 
-## Evaluations
-
-### [Janitor](https://wiki.debian.org/Janitor) Tasks
-
-Janitor tasks are not quite sophisticated for LLM. These tasks can be used as sanity checks.
-
-### [Licensecheck] Tasks
-
-The current implementation of license check is 
-
-### More complicated tasks
-
-Depends on your imagination.
-
-## Setup / Install
-
-The default step requires a GPU that supports CUDA compatibility 7.0 or higher (e.g., V100, RTX20XX, A100, etc)
-
-### Conda / Mamba
-
-1. Install [miniconda distribution](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-installer-links.html).
-For instance, `bash Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -b -p ~/miniconda3`.
-1. `conda init <your-default-shell>` and source the config again.
-For instance, if you use bash: `~/miniconda3/bin/conda init bash; source ~/.bashrc`;
-if you use fish: `~/miniconda3/bin/conda init fish; source ~/.config/fish/config.fish`
-2. (Optional) install mamba from conda-forge to replace conda.
-`conda install -c conda-forge mamba` ; `mamba init <shell>`; `source <shell-rc>`.
-We do this because the default conda is super slow and may sometimes fail to resolve dependencies.
-If this step is skipped, replace the `mamba` into `conda` for all the following commands.
-3. `mamba env create -f conda.yml`. To restore the conda environment.
-4. `mamba activate pth212`. Then we are good.
-
-### Venv + Pip
-
-TODO
-
-### Apt + Venv + Pip
-
-TODO
-
 ## Infrastructure
 
 I don't know how many DDs will be interested in this if it works well.
 Based on the number of DD users, as well as LLM's actual usefulness, we might work with the infrastructure team to setup a LLM inference server to run the backend.
-
-## Future Ideas
-
-### Dataset (Step ? far future)
-
-1. Salsa dump
-2. Debian mailing list dump
-
-### Training (Step ? far future)
-
-Pick an open-access LLM to fine-tune with LoRA. The concrete choise of a baseline LLM is to be investigated (e.g., should we start from pre-trained LLM or fine-tuned chatting LLM?).
-The additional instruct tuning and RLHF steps are to be investigated.
-
-Possible solutions include LoRA and RAG.
-
-2. LoRA paper
-3. InstructGPT paper
-
-## References
-
-1. https://lists.debian.org/debian-project/2023/12/msg00028.html
 
 ## License
 
