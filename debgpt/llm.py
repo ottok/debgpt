@@ -27,19 +27,20 @@ class Mistral7B(AbstractLLM):
     '''
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
 
-    def __init__(self):
+    def __init__(self, *, torch_dtype=th.float16):
         '''
-        dtype: float32 requires 32GB CUDA memory.
-               bfloat16 (default) requires CUDA compute > 8.0 due to vLLM itself.
-               float16 has better compatibility than bfloat16 through vllm.
+        torch_dtype: th.float32 requires 32GB CUDA memory.
+                     th.float16/th.bfloat16 requires 16GB CUDA memory.
+                     th.float16 has better hardware compatibility than bfloat16.
+                     th.float16 has better compatibility than bfloat16.
         '''
         super().__init__()
         console.log(f'Mistral7B> Loading {self.model_id} (float16)')
         self.llm = AutoModelForCausalLM.from_pretrained(self.model_id,
-                                                        torch_dtype=th.float16)
+                                                        torch_dtype=torch_dtype)
         self.llm.to(self.device)
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
-        self.kwargs = {'max_new_tokens': 128, 'do_sample': True,
+        self.kwargs = {'max_new_tokens': 512, 'do_sample': True,
                        'pad_token_id': 2}
 
     @th.no_grad() 
@@ -78,4 +79,4 @@ class Mistral7B(AbstractLLM):
 if __name__ == '__main__':
     llm = Mistral7B()
     import IPython
-    IPython.embed(colors'neutral')
+    IPython.embed(colors='neutral')
