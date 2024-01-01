@@ -13,6 +13,10 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 *Mailing-List:* Debian Deep Learning Team <debian-ai@lists.debian.org>
 
+*Technical-Details:*
+
+1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
+
 ## Proof-Of-Concept
 
 Prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages.
@@ -95,22 +99,6 @@ $ python3 -m debgpt.backend           # server
 $ debgpt-server                       # server shortcut, convenience wrapper
 ```
 
-## LLM Selection
-
-Nore certain. But we shall grab one with good performance, and allows free commercial usage (or more permissive ones)
-
-https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
-
-Instruction-tuned and RL-tuned LLMs are preferred. Do not try pretrained raw LLMs -- they are not useful here.
-The pretrained (raw) LLMs and the fine-tuned LLMs (without instruction tuning or RL tuning) are only useful when we plan to collect debian-specific data and fine-tune the model.
-
-*Candidates:*
-
-1. https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1
-1. https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
-1. LLAMA-2 https://huggingface.co/meta-llama
-
-
 ## Evaluations
 
 ### [Janitor](https://wiki.debian.org/Janitor) Tasks
@@ -124,23 +112,6 @@ The current implementation of license check is
 ### More complicated tasks
 
 Depends on your imagination.
-
-## Hardware/Software Limitations
-
-Not estimated. But a 7B LLM is not quite difficult to deal with. According to
-my experience, 8xA100 GPUs must be sufficient to train a full 7B model.
-LoRA or RAG should require much less than that.
-
-One potential issue is that some documents like the policy is too long. We may
-need to find some workarounds, or use an LLM with super large context.  In
-terms of the transformers package -- If we use a 7B LLM, 16~24GB VRAM is needed
-(fp16 precision). For a 13B model, it will need a 48GB GPU, or two 24GB GPUs.
-That said, there are other tools like https://github.com/ggerganov/llama.cpp
-which allows inference on CPUs (even laptops). We should write the code to
-dispatch to a proper inference backend.
-
-Internet access is not allowed for LLM.
-LLM's file read permission should be explicitly approved by user.
 
 ## Setup / Install
 
