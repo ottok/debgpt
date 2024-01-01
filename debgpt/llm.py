@@ -1,33 +1,37 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+import json
+import os
+import re
+from prompt_toolkit import prompt
+from transformers import pipeline, Conversation
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import numpy as np
+import torch as th
 from typing import *
 import argparse
 import rich
 from rich.panel import Panel
 console = rich.get_console()
-import torch as th
-import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from transformers import pipeline, Conversation
-from prompt_toolkit import prompt
-import re
-import os
-import json
 
 
 class AbstractLLM(object):
     def __init__(self):
-        self.device='cuda' if th.cuda.is_available() else 'cpu'
+        self.device = 'cuda' if th.cuda.is_available() else 'cpu'
+
     @th.no_grad()
-    def generate(self, messages: Union[list,str]):
+    def generate(self, messages: Union[list, str]):
         # Used by backend.py for serving a client
         raise NotImplementedError
+
     @th.no_grad()
     def __call__(self, *args, **kwargs):
         return self.generate(*args, **kwargs)
+
     def chat(self):
         # chat with LLM locally
         raise NotImplementedError
+
     def interact(self):
         # XXX: ipython here is for debugging
         import IPython
@@ -62,8 +66,8 @@ class Mistral7B(AbstractLLM):
                        'do_sample': True,
                        'pad_token_id': 2}
 
-    @th.no_grad() 
-    def generate(self, messages: Union[list,str]):
+    @th.no_grad()
+    def generate(self, messages: Union[list, str]):
         if isinstance(messages, list):
             encoded = self.tok.apply_chat_template(messages, tokenize=True,
                                                    return_tensors='pt',
@@ -81,12 +85,12 @@ class Mistral7B(AbstractLLM):
         decoded = self.tok.batch_decode(generated_ids)
         return messages, decoded
 
-
-    def chat(self, chat = Conversation()):
+    def chat(self, chat=Conversation()):
         '''
         https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.ConversationalPipeline
         '''
-        pipe = pipeline('conversational', model=self.llm, tokenizer=self.tok, device=self.device)
+        pipe = pipeline('conversational', model=self.llm,
+                        tokenizer=self.tok, device=self.device)
         try:
             while text := prompt('Prompt> '):
                 chat.add_message({'role': 'user', 'content': text})
@@ -111,9 +115,12 @@ def create_llm(args) -> AbstractLLM:
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser('Chat with LLM locally.')
-    ag.add_argument('--max_new_tokens', type=int, default=512, help='max length of new token sequences added by llm')
-    ag.add_argument('--debgpt_home', type=str, default=os.path.expanduser('~/.debgpt'))
-    ag.add_argument('--llm', type=str, default='Mistral7B', choices=('Mistral7B',))
+    ag.add_argument('--max_new_tokens', type=int, default=512,
+                    help='max length of new token sequences added by llm')
+    ag.add_argument('--debgpt_home', type=str,
+                    default=os.path.expanduser('~/.debgpt'))
+    ag.add_argument('--llm', type=str, default='Mistral7B',
+                    choices=('Mistral7B',))
     ag = ag.parse_args()
     console.log(ag)
 

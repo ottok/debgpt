@@ -10,8 +10,10 @@ console = rich.get_console()
 class AbstractFrontend():
     def __init__(self, args):
         self.backend = args.backend
+
     def query(self, content):
         raise NotImplementedError
+
     def __call__(self, *args, **kwargs):
         return self.query(self, *args, **kwargs)
 
@@ -22,11 +24,13 @@ class ZMQFrontend(AbstractFrontend):
         self.socket = zmq.Context().socket(zmq.REQ)
         self.socket.connect(self.backend)
         console.log(f'ZMQFrontend> connected to {self.backend}')
+
     def query(self, content: str):
         msg_json = json.dumps({'messages': None, 'instruction': content})
         self.socket.send_string(msg_json)
         msg = self.socket.recv()
         return json.loads(msg)
+
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
