@@ -1,4 +1,4 @@
-# DebGPT -- Chatting LLM with Debian-specific knowledge
+# DebGPT -- Chatting LLM with Debian-Specific Knowledge
 
 Large language models (LLMs) are newly emerged tools, which are capable of
 handling tasks that traditional software could never achieve, such as writing
@@ -13,14 +13,13 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 *Mailing-List:* Debian Deep Learning Team <debian-ai@lists.debian.org>
 
-## Proof-Of-Concept (Step 1 for this project)
-
-This step is easy. Does not require any model parameter updates.
+## Proof-Of-Concept
 
 Prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages.
 Since we cannot squash all the texts into the same context due to hardware / model limits, we can wrap different prompt engineering tricks into different APIs.
+This step is easy. Does not require any model parameter updates.
 
-The imagined use cases will be like the follows:
+The imagined use cases will be like the follows (we will really implement these ideas and evaluate):
 
 
 ```python
@@ -29,7 +28,9 @@ llm = debgpt.llm.from_pretrained()
 
 # The general function just calls the plain LLM backend.
 llm.ask(user_question)
-#   e.g. "who are you?" -- sanity check
+#   e.g., "who are you?" -- sanity check
+#   e.g., "what's the difference between the GPL-2.0 and GPL-3.0?"
+#   e.g., "How to increase the number of Debian project members, as it is an aging FOSS community."
 
 # This function wraps (a part of) debian-policy document in context.
 llm.ask_policy(path_of_file_or_dir, user_question)
@@ -50,6 +51,7 @@ llm.ask_build(user_question)
 # This leverages LLM's capability for summarizing texts.
 llm.bts(bts_number: int, user_question)
 #   e.g.: "briefly summarize it."
+#   e.g.: "src:pytorch", "summarize the unresolved bugs."
 
 # Let LLM do the development work, and generates a patch for you
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
@@ -57,19 +59,41 @@ llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 
 # Let LLM behave like a human (it is not good at this)
 llm.reply_mail(debian_bts_or_ml_html_link, user_question:str=None)
+
+# Let LLM summarize voting information (vote.debian.org)
+llm.vote(vote_id, user_question)
+#   XXX: raise a warning and highlight it in red. This is sensitive. Do not make your vote decision based on LLM's outputs.
+#   e.g., xxx, "explain the difference between different proposals."
+
+# Let LLM do some complicated license check task
+llm.license(file, user_question)
+#   e.g., "src/main.cpp", "what is the license of this file?"
+#         we may want to limit the answer range into SPDX license specifiers.
+
+# Let LLM do mentoring (lists.debian.org/debian-mentors)
+llm.mentor(maling-list-html)
+#   e.g., for reviewing a .dsc package. This is difficult for LLM.
+
+# The use cases are limited by our imaginations.
+llm.what_else()
+#   e.g., join the team and explore more interesting usages!
 ```
 
-Command line interfaces
+Command line interfaces for the frontend.
+The frontend is in charge of user cli, sends llm query, and receives llm response, and possibly execute LLM generated code
 
 ```shell
-$ python3 -m debgpt.backend           # server
-$ python3 -m debgpt.frontend          # client
-$ debgpt                              # client shortcut
+$ python3 -m debgpt.frontend          # directly call client api
+$ debgpt                              # client shortcut, convenience wrapper
 ```
 
-## TODOs
+Command line interfaces for the backend.
+(purely LLM inference, exposed through zmq)
 
-1. separate the frontend (user cli, sends llm query, and receives llm response, and possibly execute LLM generated code) and backend (LLM inference, exposed through zmq). This is postponed after poc stage.
+```
+$ python3 -m debgpt.backend           # server
+$ debgpt-server                       # server shortcut, convenience wrapper
+```
 
 ## LLM Selection
 
@@ -93,6 +117,10 @@ The pretrained (raw) LLMs and the fine-tuned LLMs (without instruction tuning or
 
 Janitor tasks are not quite sophisticated for LLM. These tasks can be used as sanity checks.
 
+### [Licensecheck] Tasks
+
+The current implementation of license check is 
+
 ### More complicated tasks
 
 Depends on your imagination.
@@ -114,7 +142,28 @@ dispatch to a proper inference backend.
 Internet access is not allowed for LLM.
 LLM's file read permission should be explicitly approved by user.
 
-## Future Explorations
+## Setup / Install
+
+### Conda / Mamba
+
+1. Install miniconda distribution.
+2. (Optional) install mamba from conda-forge to replace conda. If this step is done, replace the `conda` into `mamba` for all the following commands.
+3. `conda env create -f conda.yml`
+
+### Venv + Pip
+
+TODO
+
+### Apt + Venv + Pip
+
+TODO
+
+## Infrastructure
+
+I don't know how many DDs will be interested in this if it works well.
+Based on the number of DD users, as well as LLM's actual usefulness, we might work with the infrastructure team to setup a LLM inference server to run the backend.
+
+## Future Ideas
 
 ### Dataset (Step ? far future)
 
@@ -126,18 +175,18 @@ LLM's file read permission should be explicitly approved by user.
 Pick an open-access LLM to fine-tune with LoRA. The concrete choise of a baseline LLM is to be investigated (e.g., should we start from pre-trained LLM or fine-tuned chatting LLM?).
 The additional instruct tuning and RLHF steps are to be investigated.
 
-Possible solutions
+Possible solutions include LoRA and RAG.
 
-1. LoRA
-
-2. RAG
+2. LoRA paper
+3. InstructGPT paper
 
 ## References
 
 1. https://lists.debian.org/debian-project/2023/12/msg00028.html
-2. LoRA paper
-3. InstructGPT paper
 
 ## License
 
+```
+Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 MIT/Expat
+```
