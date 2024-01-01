@@ -6,7 +6,7 @@ import rich
 console = rich.get_console()
 import torch as th
 import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
+import vllm
 from prompt_toolkit import prompt
 
 
@@ -19,58 +19,36 @@ class AbstractLLM(object):
         return self.generate(*args, **kwargs)
 
 
-class vLLM_Mistral7BInstruct(AbstractLLM):
-    __model_id__ = 'mistralai/Mistral-7B-Instruct-v0.2'
-    def __init__(self):
-        super().__init__()
-        raise NotImplementedError
-        # TODO: https://github.com/vllm-project/vllm
-
-
-class Mistral7BInstruct(AbstractLLM):
+class Mistral7B(AbstractLLM):
     '''
     https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
+    https://github.com/vllm-project/vllm
     '''
     __model_id__ = 'mistralai/Mistral-7B-Instruct-v0.2'
+    __impl__ = 'vllm'
 
-    def __init__(self, precision: str = 'fp16'):
+    def __init__(self, *, dtype: str='float16'):
+        '''
+        dtype: float32 requires 32GB CUDA memory.
+               bfloat16 (default) requires CUDA compute > 8.0 due to vLLM itself.
+               float16 has better compatibility than bfloat16 through vllm.
+        '''
         super().__init__()
-        console.log(f'Mistral7BInstruct> Loading {self.__model_id__} ({precision})')
-        llm_args = {'torch_dtype': {'fp32': th.float32, 'fp16': th.float16}[precision],
-                    'load_in_4bit': True if precision == '4bit' else False}
-        self.model = AutoModelForCausalLM.from_pretrained(self.__model_id__, **llm_args).to(0)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.__model_id__)
-        self.model.to(self.device)
+        console.log(f'Mistral7B> Loading {self.__model_id__} ({dtype})')
+        self.llm = vllm.LLM(model='mistralai/Mistral-7B-Instruct-v0.2', dtype=dtype)
+        self.sampling_params = vllm.SamplingParams(temperature=0.8, top_p=0.95)
 
-    def example(self):
-        messages = [
-                {"role": "user", "content": "What is your favourite condiment?"},
-                {"role": "assistant", "content": "Well, I'm quite partial to a good squeeze of fresh lemon juice. It adds just the right amount of zesty flavour to whatever I'm cooking up in the kitchen!"},
-                {"role": "user", "content": "Do you have mayonnaise recipes?"}
-                ]
-        decoded = self.generate(messages)
-        console.print(decoded)
-
-    @th.no_grad() 
-    def generate(self, messages):
-        encoded = self.tokenizer.apply_chat_template(messages, return_tensors='pt').to(0)
-        model_inputs = encoded.to(self.device)
-        generated_ids = self.model.generate(model_inputs, max_new_tokens=1000, do_sample=True)
-        decoded = self.tokenizer.batch_decode(generated_ids)
-        return decoded
-
-    def simple(self, user_input: str, *, max_new_tokens: int=100):
-        encoded = self.tokenizer(user_input, return_tensors='pt').to(0)
-        return self.model.generate(**encoded, max_new_tokens=max_new_tokens)
+    def generate(self, prompt: Union[List,str]):
+        prompt = [prompt] if isinstance(prompt, str) else prompt
+        outputs = self.llm.generate(prompt, self.sampling_params)
+        return [(output.prompt, output.outputs[0].text) for output in outputs]
 
     def interactive(self):
-        while message := prompt('User>'):
-            response = self.simple(message)
-            decoded = self.tokenizer.batch_decode(response)
-            console.print('LLM>', decoded[0])
-
+        while message := prompt('Prompt>'):
+            response = self.generate(message)
+            console.print('LLM>', response[0][1])
 
 if __name__ == '__main__':
-    llm = Mistral7BInstruct()
+    llm = Mistral7B()
     import IPython
     IPython.embed(color='neutral')
