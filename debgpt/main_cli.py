@@ -66,6 +66,10 @@ def parse_args(task, argv):
         # vote.debian.org
         ag.add_argument('--suffix', '-s', type=str, required=True, help='for example, 2023/vote_002')
         ag.add_argument('action', type=str, choices=debian.vote_actions)
+    elif task == 'policy':
+        # policy document (plain text)
+        ag.add_argument('--section', '-s', type=str, required=True)
+        ag.add_argument('action', type=str, choices.debian.policy_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
@@ -107,6 +111,8 @@ def main():
         msg = debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw)
     elif argv[1] == 'vote':
         msg = debian.vote(ag.suffix, ag.action)
+    elif argv[1] == 'policy':
+        msg = debian.policy(ag.section, ag.action)
     else:
         raise NotImplementedError
 

@@ -9,6 +9,8 @@ import re
 from bs4 import BeautifulSoup
 import requests
 import pytest
+from . import policy as debgpt_policy
+import os
 
 
 ########################
@@ -138,14 +140,37 @@ def vote(suffix: str, action: str):
 def test_vote(action):
     print(vote('2023/vote_002', action))
 
+
+# == policy ==
+policy_actions = ('polish', 'free')
+
+def policy(section: str, action: str, *,
+           debgpt_home: str = os.path.expanduser('~/.debgpt')):
+    if not os.path.exists(debgpt_home):
+        os.mkdir(debgpt_home)
+    doc = debgpt_policy.DebianPolicy(os.path.join(debgpt_home, 'policy.txt'))
+    text = doc[section].split('\n')
+    lines = [f'''The following is the section {section} of Debian Policy:''']
+    lines.extend(['```'] + text + ['```', ''])
+    if action == 'polish':
+        lines.append('Please polish the language. The language must be precise. Any vague or ambiguous language is not acceptable.')
+    elif action == 'free':
+        lines.append('Please carefully read this document. I will ask questions later. Be quiet now.')
+    else:
+        raise NotImplementedError(action)
+    return '\n'.join(lines)
+
+
+@pytest.mark.parametrize('action', policy_actions)
+def test_policy(action):
+    print(policy('4.6', action))
+
 # == file ==
 file_actions = ('what', 'licensecheck', 'free')
 
 def file(path: str, action: str):
     text = _load_file(path)
-    lines = []
-    lines.append(
-        f'''The following is a file named {path}:''')
+    lines = [f'''The following is a file named {path}:''']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'what':
         lines.append(

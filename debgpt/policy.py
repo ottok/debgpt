@@ -15,17 +15,18 @@ class DebianPolicy(object):
     and query its sections / subsections.
     see pytest for usage example.
     '''
+    NAME = 'Debian Policy'
     URL = 'https://www.debian.org/doc/debian-policy/policy.txt'
     SEP_SECTION = '***'
     SEP_SUBSECTION = '==='
     SEP_SUBSUBSECTION = '---'
 
     def __init__(self, cache: str = 'policy.txt'):
-        if not os.path.exists('policy.txt'):
+        if not os.path.exists(cache):
             r = requests.get(self.URL)
             with open(cache, 'wb') as f:
                 f.write(r.content)
-            console.log(f'DebianPolicy> cached policy text at {cache}')
+            console.log(f'DebianPolicy> cached {self.NAME} at {cache}')
         with open(cache, 'rt') as f:
             self.lines = [x.rstrip() for x in f.readlines()]
     def __getitem__(self, index: str):
@@ -57,3 +58,17 @@ class DebianPolicy(object):
 def test_debianpolicy(section):
     policy = DebianPolicy()
     print(policy[section])
+
+
+class DebianDevref(DebianPolicy):
+    NAME = "Debian Developer's Reference"
+    URL = 'https://www.debian.org/doc/manuals/developers-reference/developers-reference.en.txt'
+
+    def __init__(self, cache: str = 'devref.txt'):
+        super().__init__(cache)
+
+
+@pytest.mark.parametrize('section', ('2', '2.1', '3.1.1'))
+def test_debiandevref(section):
+    devref = DebianDevref()
+    print(devref[section])
