@@ -34,7 +34,7 @@ def parse_args(task, argv):
     if task == 'none':
         # None. Just talk with llm without context.
         pass
-    if task == 'backend':
+    elif task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
                         help='"11177" looks like "LLM"')
@@ -102,6 +102,8 @@ def main():
         exit()
     ag = parse_args(argv[1], argv[2:])
     console.log(ag)
+    if not os.path.exists(ag.debgpt_home):
+        os.mkdir(ag.debgpt_home)
 
     # create frontend / backend depending on task
     if argv[1] == 'backend':

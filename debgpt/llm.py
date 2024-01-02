@@ -69,7 +69,10 @@ class Mistral7B(AbstractLLM):
             self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, load_in_4bit=True)
         else:
             raise NotImplementedError(precision)
-        self.llm.to(self.device)
+        if precision in ('fp16', 'fp32', 'bf16'):
+            self.llm.to(self.device)
+        else:
+            pass
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
         self.kwargs = {'max_new_tokens': 512,
                        'do_sample': True,
