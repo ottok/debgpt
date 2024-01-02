@@ -7,7 +7,7 @@ knowledge is a kind of niche knowledge, which is not learnt well by commercial
 or open-access LLMs. In this project, we attempt to explore the possibility
 of leveraging LLMs to aid Debian development, in any extent.
 
-*Status:* proof-of-concept (prompt engineering existing LLMs and wrap it with a set of API)
+*Status:* alpha. You can run the demo locally.
 
 *Discussions:* Open an issue for this repo.
 
