@@ -53,7 +53,7 @@ class Mistral7B(AbstractLLM):
         '''
         super().__init__()
         self.device = device  # overrride abstract class
-        console.log(f'Mistral7B> Loading {self.model_id} ({precision})')
+        console.log(f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
         if precision == 'fp16':
             self.dtype = th.float16
             self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
