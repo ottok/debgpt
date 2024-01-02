@@ -2,6 +2,7 @@
 # The json file beneath the command is my session record as a demonstration.
 # you can replay my session with replay.py
 # XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
+# XXX: run examples/download-materials.sh first to download sample files if you want to run debgpt following these demos
 
 # == general chat ==
 debgpt none
