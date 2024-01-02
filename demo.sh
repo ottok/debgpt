@@ -15,5 +15,7 @@ echo python3 -m debgpt.main_cli bts --id 1056388 summary -i
 echo examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
 
 # file specific
-echo python3 -m debgpt.main_cli file -f debgpt/llm.py what
-echo python3 -m debgpt.main_cli file -f debgpt/llm.py licensecheck
+echo python3 -m debgpt.main_cli file -f debgpt/llm.py what -i
+echo examples/6bb4cb48-2823-452d-be80-b9d84b976ef6.json
+echo python3 -m debgpt.main_cli file -f debgpt/llm.py licensecheck -i
+echo examples/c7e40063-003e-4b04-b481-27943d1ad93f.json

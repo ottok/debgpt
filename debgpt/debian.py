@@ -25,7 +25,7 @@ def _load_html(url: str) -> List[str]:
 
 def _load_text(path: str) -> List[str]:
     with open(path, 'rt') as f:
-        lines = [x.strip() for x in f.readlines()]
+        lines = [x.rstrip() for x in f.readlines()]
     return lines
 
 

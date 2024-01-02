@@ -106,7 +106,7 @@ def main():
         console.log(ag)
         f = frontend.create_frontend(ag)
         msg = debian.bts(ag.id, ag.action)
-    elif arrgv[1] == 'file':
+    elif argv[1] == 'file':
         ag = subparser_file(ag, argv[2:])
         console.log(ag)
         f = frontend.create_frontend(ag)
