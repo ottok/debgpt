@@ -32,12 +32,6 @@ class AbstractLLM(object):
         # chat with LLM locally
         raise NotImplementedError
 
-    def interact(self):
-        # XXX: ipython here is for debugging
-        import IPython
-        IPython.embed(colors='neutral')
-
-
 class Mistral7B(AbstractLLM):
     '''
     https://docs.mistral.ai/models/
@@ -64,26 +58,23 @@ class Mistral7B(AbstractLLM):
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
         self.kwargs = {'max_new_tokens': 512,
                        'do_sample': True,
-                       'pad_token_id': self.tok.eos_token}
+                       'pad_token_id': 2}
 
     @th.no_grad()
-    def generate(self, messages: Union[list, str]):
-        if isinstance(messages, list):
-            encoded = self.tok.apply_chat_template(messages, tokenize=True,
-                                                   return_tensors='pt',
-                                                   add_generation_prompt=True).to(0)
-            model_inputs = encoded.to(self.device)
-            generated_ids = self.llm.generate(model_inputs, **self.kwargs)
-        elif isinstance(messages, str):
-            # not recommended to use in this way. This is used for debugging
-            # You may need to manually format the prompt into [INST] user input text [/INST] to make LLM work properly.
-            encoded = self.tok([messages], return_tensors='pt').to(0)
-            model_inputs = encoded.to(self.device)
-            generated_ids = self.llm.generate(**model_inputs, **self.kwargs)
-        else:
-            raise TypeError(f'messages type {type(messages)} is not supprted')
-        decoded = self.tok.batch_decode(generated_ids)
-        return messages, decoded
+    def generate(self, messages: List[Dict]):
+        encoded = self.tok.apply_chat_template(messages, tokenize=True,
+                                               return_tensors='pt',
+                                               add_generation_prompt=True).to(0)
+        model_inputs = encoded.to(self.device)
+        input_length = model_inputs.shape[1]
+        generated_ids = self.llm.generate(model_inputs, **self.kwargs)
+        generated_new_ids = generated_ids[:, input_length:]
+        generated_new_text = llm.tok.batch_decode(generated_new_ids,
+                                            skip_special_tokens=True,
+                                            clean_up_tokenization_spaces=True)[0]
+        new_message = {'role': 'assistant', 'content': generated_new_text}
+        messages.append(new_message)
+        return messages
 
     def chat(self, chat=Conversation()):
         '''
@@ -121,11 +112,21 @@ if __name__ == '__main__':
                     default=os.path.expanduser('~/.debgpt'))
     ag.add_argument('--llm', type=str, default='Mistral7B',
                     choices=('Mistral7B',))
+    ag.add_argument('-i', '--ipython', action='store_true')
     ag = ag.parse_args()
     console.log(ag)
 
     if not os.path.exists(ag.debgpt_home):
         os.mkdir(ag.debgpt_home)
+    
+    # for debugging
+    if ag.ipython:
+        llm = create_llm(ag)
+        # XXX: ipython here is for debugging
+        msg = [{'role': 'user', 'content': 'hi!'}]
+        import IPython
+        IPython.embed(colors='neutral')
+        exit()
 
     # load model and start chat
     llm = create_llm(ag)
