@@ -62,6 +62,17 @@ llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 
 ```
 
+## How to extend the CLI
+
+1. implement your new prompt generator in `debgpt/debian.py`.  The function
+should return a string containing all the texts we will send to the llm.  Some
+other return types like `List` or `Dict` (for advanced usage such as in-context
+learning) are possible (see `debgpt/frontend.py :: ZMQFrontend.query`, but
+those are not explored yet.
+2. add the corresponding cli argument subparser to `debgpt/main_cli.py`.
+3. add the new prompt generation code (for variable `msg`) in `main()` of `debgpt/main_cli.py`.
+4. if in doubt, ask debgpt as `debgpt file -f <file-in-question> what -i`.
+
 ## TODO List
 
 1. `debgpt.backend` error handling ... illegal input format, overlength, etc.
