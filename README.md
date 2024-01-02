@@ -61,6 +61,7 @@ those are not explored yet.
 1. `debgpt.backend` error handling ... illegal input format, overlength, etc.
 2. `debgpt.llm` support 8bit and 4bit inference (cpu)
 3. `debgpt.frontend` implement the frontend instance using OpenAI API.
+4. `debgpt.llm` tune llm parameters like temperature.
 
 ## Infrastructure
 

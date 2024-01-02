@@ -39,14 +39,23 @@ The following command starts the backend server, specifying the max length of LL
 By default the program will automatically use the CUDA device if it is available on the system.
 If not, you can still run the model on CPU. But note that "fp16" (half float precision) is not
 supported for CPU. Each reasponse may takes a couple of minutes on CPU, or a couple of seconds on GPU.
+Here I provided multiple preicisions. You can always trade-off the precision for some speed and RAM/CUDA memory requirement.
 
 ```
-python3 -m debgpt.backend --max_new_tokens=1024
-debgpt backend --max_new_tokens=1024                                # assume you have an 24+GB CUDA device
-debgpt backend --max_new_tokens=1024 --precision 8bit               # assume you have an 12+GB CUDA device (TODO: test)
-debgpt backend --max_new_tokens=1024 --device cpu --precision fp32  # if you want to use CPU. make sure you have 64+GB system RAM. (TODO: test)
-debgpt backend --max_new_tokens=1024 --device cpu --precision 8bit  # trade-off precision with system requirement (TODO: test)
-debgpt backend --max_new_tokens=1024 --device cpu --precision 4bit  # further trade-off precision with system requirement (TODO: test)
+# (default: cuda) assume you have a 24+GB CUDA device
+# the GPU can reply within seconds
+debgpt backend --max_new_tokens=1024 --device cuda
+
+# (cuda) assume you have a 12+GB CUDA device
+debgpt backend --max_new_tokens=1024 --device cuda --precision 8bit
+
+# (cuda) assume you have a 6+GB CUDA device (something like RTX 4070Ti will do)
+debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit
+
+# (cpu) if you want to use CPU. make sure you have 64+GB system RAM.
+# This is really slow. It takes roughly 20 minutes for Xeon Gold 6140 to calculate one reply in the pytorch debian/rules example in demo.sh
+# the other precisions are not supported. 8bit/4bit quantization needs GPU. fp16/bf16 not implemented on cpu. only fp32 available here.
+debgpt backend --max_new_tokens=1024 --device cpu --precision fp32
 ```
 
 * `frontend.py` is a bare ZMQ client. This command is mainly used for debugging.
