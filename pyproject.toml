@@ -20,3 +20,6 @@ license = {text = "MIT License"}
 [project.urls]
 Homepage = "https://salsa.debian.org/deeplearning-team/debgpt"
 Issues = "https://salsa.debian.org/deeplearning-team/debgpt/-/issues"
+
+[project.scripts]
+debgpt = "debgpt.main_cli:main"

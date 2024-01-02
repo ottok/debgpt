@@ -13,6 +13,7 @@ def mailing_list(url: str, action: str):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     text = soup.get_text().strip()
+    text = re.sub('\n\n+\n', '\n\n', text)
     text = [x.strip() for x in text.split('\n')]
     lines = []
     lines.append('The following is an email from a mailing list thread:')
