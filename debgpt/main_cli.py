@@ -37,6 +37,15 @@ def subparser_ml(ag, argv):
     return ag
 
 
+def subparser_bts(ag, argv):
+    '''
+    bts
+    '''
+    ag.add_argument('--id', '-x', type=str, required=True)
+    ag.add_argument('aciton', type=str, Choices=('summary',))
+    return ag.parse_args()
+
+
 def main():
     argv = sys.argv
     if len(argv) < 2:
@@ -69,6 +78,11 @@ def main():
         # create frontend
         f = frontend.create_frontend(ag)
         # create prompt
+        msg = debian.mailing_list(ag.url, ag.action)
+    elif argv[1] == 'bts':
+        ag = subparser_bts(ag, argv[2:])
+        console.log(ag)
+        f = frontend.create_frontend(ag)
         msg = debian.mailing_list(ag.url, ag.action)
     else:
         raise NotImplementedError
