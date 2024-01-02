@@ -49,8 +49,13 @@ class ZMQFrontend(AbstractFrontend):
         self.debgpt_home = args.debgpt_home
         self.session = []
 
-    def query(self, content: str) -> list:
-        self.session.append({'role': 'user', 'content': content})
+    def query(self, content: Union[List,Dict,str]) -> list:
+        if isinstance(content, list):
+            self.session = content
+        elif isinstance(content, dict):
+            self.session.append(content)
+        elif isinstance(content, str):
+            self.session.append({'role': 'user', 'content': content})
         _check(self.session)
         msg_json = json.dumps(self.session)
         if self.debug:
