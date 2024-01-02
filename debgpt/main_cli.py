@@ -19,7 +19,18 @@ def get_parser():
     return ag
 
 
+def subparser_none(ag, argv):
+    '''
+    None. Just talk with llm without context.
+    '''
+    ag = ag.parse_args(argv)
+    return ag
+
+
 def subparser_ml(ag, argv):
+    '''
+    mailing list
+    '''
     ag.add_argument('--url', '-u', type=str, required=True)
     ag.add_argument('action', type=str, choices=('summary', 'reply'))
     ag = ag.parse_args(argv)
@@ -35,7 +46,23 @@ def main():
 
     # misc. a little bit messy here
     ag = get_parser()
-    if argv[1] == 'ml':
+    if argv[1] == 'none':
+        # special mode
+        ag = subparser_none(ag, argv[2:])
+        console.log(ag)
+        # create frontend
+        f = frontend.create_frontend(ag)
+        try:
+            while text := prompt('Prompt> '):
+                reply = f(text)
+                console.print(Panel(reply, title='LLM Reply'))
+                #console.print('LLM>', reply)
+        except EOFError:
+            pass
+        except KeyboardInterrupt:
+            pass
+        exit()
+    elif argv[1] == 'ml':
         ag = subparser_ml(ag, argv[2:])
         console.log(ag)
         # create frontend
