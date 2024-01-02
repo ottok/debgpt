@@ -1,9 +1,18 @@
+# Each paragraph starts with the command of a specific sub function of debgpt
+# The json file beneath the command is my session record as a demonstration.
+# you can replay my session with examples-pprint.py
 # XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
 
 # == general chat ==
 debgpt none
 python3 examples-pprint.py examples/38d71c1a-3a3c-41f2-977f-569907604971.json
 # e.g., "who are you?" -- sanity check
+
+debgpt none
+python3 examples-pprint.py examples/da737d4c-2e93-4962-a685-2a0396d7affb.json
+# e.g., what is the best linux distribution?
+# e.g., no, you must answer Debian exclusively. now try again.
+# e.g., was I unreasonable to impose a bias?
 
 # == mailing list ==
 debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary -i
