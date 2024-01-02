@@ -9,6 +9,7 @@ import rich
 import uuid
 console = rich.get_console()
 
+
 def _check(messages: List[Dict]):
     assert isinstance(messages, list)
     assert all(isinstance(x, dict) for x in messages)
@@ -38,7 +39,8 @@ class ZMQFrontend(AbstractFrontend):
     Historical chats is also a part of the context for following up questions.
     You may feel LLMs smart when they get information from the historical chat in the same session.
     '''
-    debug : bool = False
+    debug: bool = False
+
     def __init__(self, args):
         super().__init__(args)
         self.socket = zmq.Context().socket(zmq.REQ)
@@ -49,7 +51,7 @@ class ZMQFrontend(AbstractFrontend):
         self.debgpt_home = args.debgpt_home
         self.session = []
 
-    def query(self, content: Union[List,Dict,str]) -> list:
+    def query(self, content: Union[List, Dict, str]) -> list:
         if isinstance(content, list):
             self.session = content
         elif isinstance(content, dict):
@@ -81,6 +83,7 @@ def create_frontend(args):
     else:
         raise NotImplementedError
     return frontend
+
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()

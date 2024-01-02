@@ -50,7 +50,8 @@ def create_backend(args):
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
-    ag.add_argument('--port', '-p', type=int, default=11177, help='"11177" looks like "LLM"')
+    ag.add_argument('--port', '-p', type=int, default=11177,
+                    help='"11177" looks like "LLM"')
     ag.add_argument('--host', type=str, default='tcp://*')
     ag.add_argument('--backend', type=str, default='zmq', choices=('zmq',))
     ag.add_argument('--max_new_tokens', type=int, default=512)
