@@ -69,7 +69,7 @@ class Mistral7B(AbstractLLM):
         input_length = model_inputs.shape[1]
         generated_ids = self.llm.generate(model_inputs, **self.kwargs)
         generated_new_ids = generated_ids[:, input_length:]
-        generated_new_text = llm.tok.batch_decode(generated_new_ids,
+        generated_new_text = self.tok.batch_decode(generated_new_ids,
                                             skip_special_tokens=True,
                                             clean_up_tokenization_spaces=True)[0]
         new_message = {'role': 'assistant', 'content': generated_new_text}

@@ -33,12 +33,12 @@ class ZMQFrontend(AbstractFrontend):
     def query(self, content: str) -> list:
         self.session.append({'role': 'user', 'content': content})
         msg_json = json.dumps(self.session)
-        print('send:', msg_json)
+        console.log('send:', msg_json)
         self.socket.send_string(msg_json)
         msg = self.socket.recv()
-        self.session, reply = json.loads(msg)
-        print('recv:', reply)
-        return reply
+        self.session = json.loads(msg)
+        console.log('recv:', self.session[-1])
+        return self.session[-1]['content']
 
 
 if __name__ == '__main__':

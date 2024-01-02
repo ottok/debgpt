@@ -34,10 +34,9 @@ class ZMQBackend(AbstractBackend):
     def server(self):
         for query in self.listen():
             console.log(f'ZMQBackend> received query: {query}')
-            messages, reply = self.llm(query)
-            console.log(f'ZMQBackend> sending messages: {messages}', markup=False)
+            reply = self.llm(query)
             console.log(f'ZMQBackend> sending reply: {reply}', markup=False)
-            msg_json = zmq.utils.jsonapi.dumps([messages, reply])
+            msg_json = zmq.utils.jsonapi.dumps(reply)
             self.socket.send(msg_json)
 
 
