@@ -61,6 +61,7 @@ def main():
             pass
         except KeyboardInterrupt:
             pass
+        f.dump()
         exit()
     elif argv[1] == 'ml':
         ag = subparser_ml(ag, argv[2:])
@@ -88,7 +89,6 @@ def main():
             pass
         except KeyboardInterrupt:
             pass
-
     # dump sessino to json
     f.dump()
 
