@@ -1,5 +1,6 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from typing import *
 import argparse
 import zmq
 import json
@@ -15,7 +16,10 @@ class AbstractFrontend():
         raise NotImplementedError
 
     def __call__(self, *args, **kwargs):
-        return self.query(self, *args, **kwargs)
+        return self.query(*args, **kwargs)
+
+    def dump(self):
+        raise NotImplementedError
 
 
 class ZMQFrontend(AbstractFrontend):
@@ -24,12 +28,17 @@ class ZMQFrontend(AbstractFrontend):
         self.socket = zmq.Context().socket(zmq.REQ)
         self.socket.connect(self.backend)
         console.log(f'ZMQFrontend> connected to {self.backend}')
+        self.session = []
 
-    def query(self, content: str):
-        msg_json = json.dumps({'messages': None, 'instruction': content})
+    def query(self, content: str) -> list:
+        self.session.append({'role': 'user', 'content': content})
+        msg_json = json.dumps(self.session)
+        print('send:', msg_json)
         self.socket.send_string(msg_json)
         msg = self.socket.recv()
-        return json.loads(msg)
+        self.session, reply = json.loads(msg)
+        print('recv:', reply)
+        return reply
 
 
 if __name__ == '__main__':
@@ -39,5 +48,6 @@ if __name__ == '__main__':
     console.print(ag)
 
     frontend = ZMQFrontend(ag)
+    f = frontend
     import IPython
     IPython.embed(colors='neutral')

@@ -2,16 +2,20 @@
 # MIT/Expat License.
 import argparse
 import zmq
+from . import llm
 import rich
 console = rich.get_console()
 
 
 class AbstractBackend:
     def __init__(self, args):
-        self.llm = lambda x: x
+        self.llm = llm.create_llm(args)
 
     def listen(self, args):
-        pass
+        raise NotImplementedError
+
+    def server(self):
+        raise NotImplementedError
 
 
 class ZMQBackend(AbstractBackend):
@@ -20,7 +24,7 @@ class ZMQBackend(AbstractBackend):
         self.socket = zmq.Context().socket(zmq.REP)
         binduri = args.host + ':' + str(args.port)
         self.socket.bind(binduri)
-        console.log(f'ZMQBackend> bind URI {binduri}')
+        console.log(f'ZMQBackend> bind URI {binduri}. Ready to serve.')
 
     def listen(self):
         while True:
@@ -29,21 +33,35 @@ class ZMQBackend(AbstractBackend):
 
     def server(self):
         for query in self.listen():
-            console.log(f'ZMQBackend> processing query {query}')
-            reply = self.llm(query)
-            reply = zmq.utils.jsonapi.dumps(reply)
-            self.socket.send(reply)
+            console.log(f'ZMQBackend> received query: {query}')
+            messages, reply = self.llm(query)
+            console.log(f'ZMQBackend> sending messages: {messages}', markup=False)
+            console.log(f'ZMQBackend> sending reply: {reply}', markup=False)
+            msg_json = zmq.utils.jsonapi.dumps([messages, reply])
+            self.socket.send(msg_json)
+
+
+def create_backend(args):
+    if args.backend == 'zmq':
+        backend = ZMQBackend(args)
+    else:
+        raise NotImplementedError(args.backend)
+    return backend
 
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
-    # "11177" looks like "llM"
-    ag.add_argument('--port', '-p', type=int, default=11177)
+    ag.add_argument('--port', '-p', type=int, default=11177, help='"11177" looks like "LLM"')
     ag.add_argument('--host', type=str, default='tcp://*')
-    ag.add_argument('--backend', type=str,
-                    default='ZMQBackend', choices=('ZMQBackend',))
+    ag.add_argument('--backend', type=str, default='zmq', choices=('zmq',))
+    ag.add_argument('--max_new_tokens', type=int, default=512)
+    ag.add_argument('--llm', type=str, default='Mistral7B')
     ag = ag.parse_args()
-    console.print(ag)
+    console.log(ag)
 
-    backend = globals()[ag.backend](ag)
-    backend.server()
+    backend = create_backend(ag)
+    try:
+        backend.server()
+    except KeyboardInterrupt:
+        pass
+    console.log('Server shut down.')

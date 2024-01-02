@@ -64,14 +64,14 @@ class Mistral7B(AbstractLLM):
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
         self.kwargs = {'max_new_tokens': 512,
                        'do_sample': True,
-                       'pad_token_id': 2}
+                       'pad_token_id': self.tok.eos_token}
 
     @th.no_grad()
     def generate(self, messages: Union[list, str]):
         if isinstance(messages, list):
             encoded = self.tok.apply_chat_template(messages, tokenize=True,
                                                    return_tensors='pt',
-                                                   add_generatio_prompt=True).to(0)
+                                                   add_generation_prompt=True).to(0)
             model_inputs = encoded.to(self.device)
             generated_ids = self.llm.generate(model_inputs, **self.kwargs)
         elif isinstance(messages, str):
@@ -105,7 +105,7 @@ class Mistral7B(AbstractLLM):
 
 def create_llm(args) -> AbstractLLM:
     # factory
-    if ag.llm == 'Mistral7B':
+    if args.llm == 'Mistral7B':
         model = Mistral7B()
         model.kwargs['max_new_tokens'] = args.max_new_tokens
     else:
