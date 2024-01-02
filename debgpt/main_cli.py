@@ -9,6 +9,7 @@ import rich
 console = rich.get_console()
 from prompt_toolkit import prompt
 from rich.panel import Panel
+from rich.status import Status
 
 def get_parser():
     ag = argparse.ArgumentParser('DebGPT')
@@ -42,18 +43,20 @@ def subparser_bts(ag, argv):
     bts
     '''
     ag.add_argument('--id', '-x', type=str, required=True)
-    ag.add_argument('aciton', type=str, Choices=('summary',))
-    return ag.parse_args()
+    ag.add_argument('action', type=str, choices=('summary',))
+    return ag.parse_args(argv)
 
 
 def main():
     argv = sys.argv
+    #print(argv)
     if len(argv) < 2:
         console.print('Please specify the task. Possible tasks are:')
-        console.print([x.lstrip('subparser_') for x in globals().keys() if x.startswith('subparser')])
+        console.print([x.lstrip('subparser')[1:] for x in globals().keys() if x.startswith('subparser')])
         exit()
 
     # misc. a little bit messy here
+    #console.log(argv[2:])
     ag = get_parser()
     if argv[1] == 'none':
         # special mode
@@ -83,20 +86,22 @@ def main():
         ag = subparser_bts(ag, argv[2:])
         console.log(ag)
         f = frontend.create_frontend(ag)
-        msg = debian.mailing_list(ag.url, ag.action)
+        msg = debian.bts(ag.id, ag.action)
     else:
         raise NotImplementedError
     console.print(Panel(msg, title='Initial Prompt'))
 
     # query the backend
-    reply = f(msg)
+    with Status('LLM Computing ...', spinner='line'):
+        reply = f(msg)
     console.print(Panel(reply, title='LLM Reply'))
     #console.print('LLM>', reply)
 
     if ag.interactive:
         try:
             while text := prompt('Prompt> '):
-                reply = f(text)
+                with Status('LLM Computing ...', spinner='line'):
+                    reply = f(text)
                 console.print(Panel(reply, title='LLM Reply'))
                 #console.print('LLM>', reply)
         except EOFError:

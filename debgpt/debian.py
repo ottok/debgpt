@@ -52,7 +52,7 @@ def bts(identifier: str, action: str):
     lines.extend(text)
     lines.append('```')
     if action == 'summary':
-        lines.append('Could you please summarize the webpage? If possible, you can organize the information in a pretty ANSI table.')
+        lines.append('Could you please summarize the webpage? If possible, you can organize the information in a pretty table with ANSI tabular characters.')
     else:
         raise NotImplementedError(action)
     return '\n'.join(lines)
