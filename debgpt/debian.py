@@ -74,7 +74,6 @@ def test_bts():
     print(bts('1056388', 'summary'))
 
 
-
 def file(path: str, action: str):
     text = _load_text(path)
     lines = []
@@ -84,10 +83,11 @@ def file(path: str, action: str):
     lines.extend(text)
     lines.append('```')
     if action == 'what':
-        lines.append('''What is the purpose of this file? Please explain in detail.''')
+        lines.append(
+            '''What is the purpose of this file? Please explain in detail.''')
     elif action == 'licensecheck':
-        lines.append('What is the copyright and license of this file? Use SPDX format.')
+        lines.append(
+            'What is the copyright and license of this file? Use SPDX format.')
     else:
         raise NotImplementedError(action)
     return '\n'.join(lines)
-
