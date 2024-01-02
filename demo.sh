@@ -68,3 +68,7 @@ python3 replay.py examples/bab71c6f-1102-41ed-831b-897c80e3acfb.json
 debgpt policy -s 4.6 polish -i
 python3 replay.py examples/540b6093-d4db-4782-a789-69bf02085673.json
 # polish the language of policy section 4.6
+
+debgpt policy -s 7.2 free -i
+python3 replay.py examples/d346152c-dc0c-4291-b8c6-f3c3f13e2154.json
+# what's the difference between Depends: and Pre-Depends:
