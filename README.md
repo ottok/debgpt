@@ -23,17 +23,37 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 ## Proof-Of-Concept
 
-Prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages.
-Since we cannot squash all the texts into the same context due to hardware / model limits, we can wrap different prompt engineering tricks into different APIs.
-This step is easy. Does not require any model parameter updates.
+Prompt-engineering an existing Chatting LLM with debian-specific documents,
+like debian-policy, debian developer references, and some man pages.  Since we
+cannot squash all the texts into the same context due to hardware / model
+limits, we can wrap different prompt engineering tricks into different APIs.
+
+The examples included in [demo.sh](demo.sh) are already run-able.
+The contents of this script are also shown below.
+
+```shell
+# XXX: "python3 -m debgpt.maimn_cli" is equivalent to "debgpt"
+
+# general chat
+echo python3 -m debgpt.main_cli none
+echo python3 examples-pprint.py examples/38d71c1a-3a3c-41f2-977f-569907604971.json
+
+# mailing list
+echo python3 -m debgpt.main_cli ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary -i
+echo python3 examples-pprint.py examples/95e9759b-1b67-49d4-854a-2dedfff07640.json
+
+# bts
+echo python3 -m debgpt.main_cli bts --id src:pytorch summary -i
+echo examples/42387633-14a3-4cf3-97e1-d3e0e1c8ac5f.json
+echo python3 -m debgpt.main_cli bts --id 1056388 summary -i
+echo examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
+```
+
 
 The imagined use cases will be like the follows (we will really implement these ideas and evaluate):
 
 
 ```python
-import debgpt
-llm = debgpt.llm.from_pretrained()
-
 # The general function just calls the plain LLM backend.
 llm.ask(user_question)
 #   e.g., "who are you?" -- sanity check
@@ -85,22 +105,6 @@ llm.mentor(maling-list-html)
 # The use cases are limited by our imaginations.
 llm.what_else()
 #   e.g., join the team and explore more interesting usages!
-```
-
-Command line interfaces for the frontend.
-The frontend is in charge of user cli, sends llm query, and receives llm response, and possibly execute LLM generated code
-
-```shell
-$ python3 -m debgpt.frontend          # directly call client api
-$ debgpt                              # client shortcut, convenience wrapper
-```
-
-Command line interfaces for the backend.
-(purely LLM inference, exposed through zmq)
-
-```
-$ python3 -m debgpt.backend           # server
-$ debgpt-server                       # server shortcut, convenience wrapper
 ```
 
 ## Infrastructure
