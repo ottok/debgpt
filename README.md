@@ -33,7 +33,7 @@ The contents of this script are also shown below.
 I uploaded my LLM session of each command in the examples/ directory.
 
 ```shell
-# XXX: "python3 -m debgpt.maimn_cli" is equivalent to "debgpt"
+# XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
 
 # general chat
 debgpt none

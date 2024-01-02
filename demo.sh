@@ -1,4 +1,4 @@
-# XXX: "python3 -m debgpt.maimn_cli" is equivalent to "debgpt"
+# XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
 
 # general chat
 echo python3 -m debgpt.main_cli none
