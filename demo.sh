@@ -47,3 +47,7 @@ python3 examples-pprint.py examples/c7e40063-003e-4b04-b481-27943d1ad93f.json
 # e.g., 'what's the SPDX identifier for the license of this file?'
 # e.g., "what's the difference between the GPL-2.0 and GPL-3.0?"
 
+debgpt file -f debgpt/main_cli.py what -i
+python3 examples-pprint.py examples/dd62d15a-723a-4f57-b8d2-6e3212ebcfe3.json
+# e.g., help me rewrite the argparse subparsers.
+
