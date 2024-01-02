@@ -40,14 +40,9 @@ Some imagined use cases, not yet implemented:
 
 
 ```python
-# This function wraps (a part of) debian-devref document in context.
-llm.ask_devref(path_of_file_or_dir, user_question)
-#   e.g., debian/changelog, "what is the correct release name when I prepare the upload for Debian stable? bookworm? stable? bookworm-proposed-updates? or anything else?"
-
 # Let LLM do the development work, and generates a patch for you
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 #   e.g., debian/control, "add riscv64 to supported architectures".
-
 ```
 
 ## How to extend the CLI
