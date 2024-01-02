@@ -44,7 +44,7 @@ class Mistral7B(AbstractLLM):
     '''
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
 
-    def __init__(self, *, torch_dtype=th.float16):
+    def __init__(self, *, device: str, torch_dtype=th.float16):
         '''
         torch_dtype: th.float32 requires 32GB CUDA memory.
                      th.float16/th.bfloat16 requires 16GB CUDA memory.
@@ -52,6 +52,7 @@ class Mistral7B(AbstractLLM):
                      th.float16 has better compatibility than bfloat16.
         '''
         super().__init__()
+        self.device = device  # overrride abstract class
         console.log(f'Mistral7B> Loading {self.model_id} (float16)')
         self.llm = AutoModelForCausalLM.from_pretrained(self.model_id,
                                                         torch_dtype=torch_dtype)
@@ -98,7 +99,7 @@ class Mistral7B(AbstractLLM):
 def create_llm(args) -> AbstractLLM:
     # factory
     if args.llm == 'Mistral7B':
-        model = Mistral7B()
+        model = Mistral7B(device=args.device)
         model.kwargs['max_new_tokens'] = args.max_new_tokens
     else:
         raise NotImplementedError(f'{args.llm} is not yet implemented')
@@ -114,6 +115,7 @@ if __name__ == '__main__':
     ag.add_argument('--llm', type=str, default='Mistral7B',
                     choices=('Mistral7B',))
     ag.add_argument('-i', '--ipython', action='store_true')
+    ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
     ag = ag.parse_args()
     console.log(ag)
 
