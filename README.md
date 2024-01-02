@@ -40,17 +40,9 @@ Some imagined use cases, not yet implemented:
 
 
 ```python
-# This function wraps (a part of) debian-policy document in context.
-llm.ask_policy(path_of_file_or_dir, user_question)
-#   e.g. debian/control, "what's the difference between Depends: and Pre-Depends: ?"
-
 # This function wraps (a part of) debian-devref document in context.
 llm.ask_devref(path_of_file_or_dir, user_question)
 #   e.g., debian/changelog, "what is the correct release name when I prepare the upload for Debian stable? bookworm? stable? bookworm-proposed-updates? or anything else?"
-
-# This function wraps debhelper documents (e.g., man pages) in the context.
-llm.ask_dh(path_of_file_or_dir, user_question)
-#   e.g., debian/control, "what is the correct way to specify debhelper dependency with compat level 13?"
 
 # Let LLM do the development work, and generates a patch for you
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)

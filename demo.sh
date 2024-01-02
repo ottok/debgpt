@@ -75,8 +75,8 @@ python3 replay.py examples/d346152c-dc0c-4291-b8c6-f3c3f13e2154.json
 # what's the difference between Depends: and Pre-Depends:
 
 # == devref ==
-debgpt devref -s 1 free -i
-# TODO: not fully implemented yet. but can reuse the same code as policy
+debgpt devref -s 5.5 free -i
+# which distribution should I write in d/changelog when uploading to stable? Is it bookworm? stable? stable-updates? stable-proposed-update? bookworm-proposed-updates? stable-pu? bookworm-pu? I have already forgot it.
 
 # == man ==
 debgpt man --man debhelper-compat-upgrade-checklist free -i  # note, this requires 40GB of CUDA memory due to manual page being too long

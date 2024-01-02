@@ -177,16 +177,27 @@ def test_policy(action):
 
 
 # == devref ==
-devref_actions = ('polish', 'free')
+devref_actions = ('free',)
 
 
 def devref(section: str, action: str, *,
            debgpt_home: str = os.path.expanduser('~/.debgpt')):
-    raise NotImplementedError('implementing this is easy. just copy the above code for policy')
+    if not os.path.exists(debgpt_home):
+        os.mkdir(debgpt_home)
+    doc = debgpt_policy.DebianDevref(os.path.join(debgpt_home, 'devref.txt'))
+    text = doc[section].split('\n')
+    lines = [f'''The following is the section {section} of Debian Developer's Reference:''']
+    lines.extend(['```'] + text + ['```', ''])
+    if action == 'free':
+        lines.append('Please carefully read this document. I will ask questions later. For now please be quiet.')
+    else:
+        raise NotImplementedError(action)
+    return '\n'.join(lines)
 
 
+@pytest.mark.parametrize('action', devref_actions)
 def test_devref(action):
-    pass
+    print(devref('5.5', action))
 
 
 # == man ==
