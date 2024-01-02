@@ -11,7 +11,7 @@ python3 -m debgpt.llm
 ## `backend.py` exposes an LLM instance through ZMQ
 
 ```
-python3 -m debgpt.backend      # start the server
+python3 -m debgpt.backend --max_new_tokens=1024     # start the server
 ```
 
 ## `frontend.py` is a bare ZMQ client which communicates with the backend instance

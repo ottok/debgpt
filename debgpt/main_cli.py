@@ -10,6 +10,7 @@ from . import frontend
 from . import debian
 import rich
 console = rich.get_console()
+from rich.markup import escape
 
 __list_of_tasks__ = ('none', 'ml', 'bts', 'file')
 
@@ -33,16 +34,17 @@ def parse_args(task, argv):
     elif task == 'ml':
         # mailing list
         ag.add_argument('--url', '-u', type=str, required=True)
-        ag.add_argument('action', type=str, choices=('summary', 'reply'))
+        ag.add_argument('action', type=str, choices=debian.mailing_list_actions)
     elif task == 'bts':
         # bts
         ag.add_argument('--id', '-x', type=str, required=True)
-        ag.add_argument('action', type=str, choices=('summary',))
+        ag.add_argument('action', type=str, choices=debian.bts_actions)
     elif task == 'file':
         # ask questions regarding a specific file
         # e.g., license check (SPDX format), code improvement, code explain
+        # TODO: support multiple files (nargs=+)
         ag.add_argument('--file', '-f', type=str, required=True)
-        ag.add_argument('action', type=str)
+        ag.add_argument('action', type=str, choices=debian.file_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
@@ -76,12 +78,12 @@ def main():
 
     # print the prompt and do the first query, if specified
     if msg is not None:
-        console.print(Panel(msg, title='Initial Prompt'))
+        console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
         with Status('LLM Computing ...', spinner='line'):
             reply = f(msg)
-        console.print(Panel(reply, title='LLM Reply'))
+        console.print(Panel(escape(reply), title='LLM Reply'))
         # console.print('LLM>', reply)
 
     # drop the user into interactive mode if specified (-i)
@@ -90,7 +92,7 @@ def main():
             while text := prompt('Prompt> '):
                 with Status('LLM Computing ...', spinner='line'):
                     reply = f(text)
-                console.print(Panel(reply, title='LLM Reply'))
+                console.print(Panel(escape(reply), title='LLM Reply'))
                 # console.print('LLM>', reply)
         except EOFError:
             pass

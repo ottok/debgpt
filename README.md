@@ -28,7 +28,7 @@ like debian-policy, debian developer references, and some man pages.
 The examples included in [`demo.sh`](demo.sh) are already run-able.
 The contents of this script are also shown below.
 I uploaded my LLM session of each command in the `examples/` directory.
-You can use [`examples-pprint.py`](examples-pprint.py) to reply these sessions.
+You can use [`pprint.py`](pprint.py) to reply these sessions.
 
 The usage of LLM is limited by our imaginations. Please provide more
 ideas on how we can use it.
