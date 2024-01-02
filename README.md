@@ -15,9 +15,10 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 *Technical-Details:*
 
+1. [Python Environment Setup Guide](doc/install.md)
+1. [Usage Instructions](doc/usage.md)
 1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
 1. [LLM Evaluation Tasks](doc/llm-evaluation.md)
-1. [Python Environment Setup Guide](doc/install.md)
 1. [Future Ideas](doc/ideas.md)
 
 ## Proof-Of-Concept
