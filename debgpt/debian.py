@@ -77,7 +77,7 @@ def test_mailing_list(action):
 buildd_actions = ('status', 'free')
 
 def buildd(p: str, action: str, suite: str = 'sid'):
-    text = _load_html_raw(f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}')
+    text = _load_html(f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}')
     lines = [f'The following is the webpage about the build status of package {p}:']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'status':

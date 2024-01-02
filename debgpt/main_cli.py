@@ -77,9 +77,9 @@ def main():
 
     # create frontend / backend depending on task
     if argv[1] == 'backend':
-        backend = backend.create_backend(ag)
+        b = backend.create_backend(ag)
         try:
-            backend.server()
+            b.server()
         except KeyboardInterrupt:
             pass
         console.log('Server shut down.')
