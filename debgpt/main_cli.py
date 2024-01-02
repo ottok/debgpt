@@ -1,5 +1,9 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+'''
+sorry for the weird non-standard subparser implementation in this file.
+I really dislike the argparse subparsers API.
+'''
 from rich.status import Status
 from rich.panel import Panel
 from prompt_toolkit import prompt
@@ -51,6 +55,16 @@ def subparser_bts(ag, argv):
     return ag.parse_args(argv)
 
 
+def subparser_file(ag, argv):
+    '''
+    ask questions regarding a specific file
+    e.g., license check (SPDX format), code improvement, code explain
+    '''
+    ag.add_argument('--file', '-f', type=str, required=True)
+    ag.add_argument('action', type=str)
+    return ag.parse_args(argv)
+
+
 def main():
     argv = sys.argv
     # print(argv)
@@ -92,6 +106,11 @@ def main():
         console.log(ag)
         f = frontend.create_frontend(ag)
         msg = debian.bts(ag.id, ag.action)
+    elif arrgv[1] == 'file':
+        ag = subparser_file(ag, argv[2:])
+        console.log(ag)
+        f = frontend.create_frontend(ag)
+        msg = debian.file(ag.file, ag.action)
     else:
         raise NotImplementedError
     console.print(Panel(msg, title='Initial Prompt'))

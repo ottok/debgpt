@@ -13,3 +13,7 @@ echo python3 -m debgpt.main_cli bts --id src:pytorch summary -i
 echo examples/42387633-14a3-4cf3-97e1-d3e0e1c8ac5f.json
 echo python3 -m debgpt.main_cli bts --id 1056388 summary -i
 echo examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
+
+# file specific
+echo python3 -m debgpt.main_cli file -f debgpt/llm.py what
+echo python3 -m debgpt.main_cli file -f debgpt/llm.py licensecheck

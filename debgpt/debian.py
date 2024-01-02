@@ -23,6 +23,12 @@ def _load_html(url: str) -> List[str]:
     return text
 
 
+def _load_text(path: str) -> List[str]:
+    with open(path, 'rt') as f:
+        lines = [x.strip() for x in f.readlines()]
+    return lines
+
+
 def mailing_list(url: str, action: str):
     text = _load_html(url)
     lines = []
@@ -66,3 +72,22 @@ def bts(identifier: str, action: str):
 def test_bts():
     print(bts('src:pytorch', 'summary'))
     print(bts('1056388', 'summary'))
+
+
+
+def file(path: str, action: str):
+    text = _load_text(path)
+    lines = []
+    lines.append(
+        f'''The following is a file named {path}:''')
+    lines.append('```')
+    lines.extend(text)
+    lines.append('```')
+    if action == 'what':
+        lines.append('''What is the purpose of this file? Please explain in detail.''')
+    elif action == 'licensecheck':
+        lines.append('What is the copyright and license of this file? Use SPDX format.')
+    else:
+        raise NotImplementedError(action)
+    return '\n'.join(lines)
+
