@@ -54,6 +54,8 @@ dependencies:
   - libdeflate=1.17=h5eee18b_1
   - libffi=3.4.4=h6a678d5_0
   - libgcc-ng=11.2.0=h1234567_1
+  - libgfortran-ng=11.2.0=h00389a5_1
+  - libgfortran5=11.2.0=h1234567_1
   - libgomp=11.2.0=h1234567_1
   - libiconv=1.16=h7f8727e_2
   - libidn2=2.3.4=h5eee18b_0
@@ -114,6 +116,7 @@ dependencies:
   - readline=8.2=h5eee18b_0
   - requests=2.31.0=py310h06a4308_0
   - rich=13.3.5=py310h06a4308_0
+  - scipy=1.11.4=py310h5f9d8c6_0
   - setuptools=68.2.2=py310h06a4308_0
   - six=1.16.0=pyhd3eb1b0_1
   - soupsieve=2.5=py310h06a4308_0
@@ -138,11 +141,14 @@ dependencies:
   - zlib=1.2.13=h5eee18b_0
   - zstd=1.5.5=hc292b87_0
   - pip:
+      - accelerate==0.25.0
+      - bitsandbytes==0.41.3.post2
       - fsspec==2023.12.2
       - huggingface-hub==0.20.1
+      - psutil==5.9.7
       - regex==2023.12.25
       - safetensors==0.4.1
       - tokenizers==0.15.0
       - tqdm==4.66.1
       - transformers==4.36.2
-prefix: /home/lumin/miniconda3/envs/debgpt
+prefix: /home/mzhou32/miniconda3/envs/debgpt
