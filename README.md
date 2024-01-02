@@ -34,6 +34,10 @@ ideas on how we can use it.
 
 Some imagined use cases, not yet implemented:
 
+1. Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do some more complicated things
+1. Extend Lintian with LLM for complicated checks?
+1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length.
+
 
 ```python
 # This function wraps (a part of) debian-policy document in context.
@@ -56,12 +60,6 @@ llm.ask_build(user_question)
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 #   e.g., debian/control, "add riscv64 to supported architectures".
 
-# Let LLM do mentoring (lists.debian.org/debian-mentors)
-llm.mentor(maling-list-html)
-#   e.g., for reviewing a .dsc package. This is difficult for LLM.
-
-# Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do
-# some more complicated things
 ```
 
 ## TODO List
@@ -72,8 +70,20 @@ llm.mentor(maling-list-html)
 
 ## Infrastructure
 
-I don't know how many DDs will be interested in this if it works well.
-Based on the number of DD users, as well as LLM's actual usefulness, we might work with the infrastructure team to setup a LLM inference server to run the backend.
+I don't know how many DDs will be interested in this if it works well.  Based
+on the number of DD users, as well as LLM's actual usefulness, we might work
+with the infrastructure team to setup a LLM inference server to run the
+backend.
+
+Or, alternatively, we can subscribe the commercial LLM API for the organization
+(to integrate into infrastructure), or for the individuals (for development
+work, as a part of debian member benefit) with debian funding if it turns to be
+really useful to people. The commercial LLMs supports much longer context
+length than the one we hosted locally, and they are backed by strong hardware.
+With the subscription, we can implement a new frontend using the commercial
+API.
+
+I have not talked with the leader about any of these yet.
 
 ## License
 
