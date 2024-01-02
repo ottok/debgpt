@@ -14,7 +14,7 @@ console = rich.get_console()
 from rich.markup import escape
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
-                     'vote', 'policy', 'devref')
+                     'vote', 'policy', 'devref', 'man')
 
 
 def parse_args(task, argv):
@@ -75,6 +75,9 @@ def parse_args(task, argv):
         # devref document
         ag.add_argument('--section', '-s', type=str, required=True)
         ag.add_argument('action', type=str, choices=debian.devref_actions)
+    elif task == 'man':
+        ag.add_argument('--man', '-m', type=str, required=True)
+        ag.add_argument('action', type=str, choices=debian.man_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
@@ -118,6 +121,10 @@ def main():
         msg = debian.vote(ag.suffix, ag.action)
     elif argv[1] == 'policy':
         msg = debian.policy(ag.section, ag.action)
+    elif argv[1] == 'devref':
+        msg = debian.devref(ag.section, ag.action)
+    elif argv[1] == 'man':
+        msg = debian.man(ag.man, ag.action)
     else:
         raise NotImplementedError
 

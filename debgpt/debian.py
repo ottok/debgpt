@@ -11,6 +11,7 @@ import requests
 import pytest
 from . import policy as debgpt_policy
 import os
+import subprocess
 
 
 ########################
@@ -49,6 +50,15 @@ def _load_file(path: str) -> List[str]:
     with open(path, 'rt') as f:
         lines = [x.rstrip() for x in f.readlines()]
     return lines
+
+
+def _load_cmdline(cmd: Union[str,List]) -> List[str]:
+    if isinstance(cmd, str):
+        cmd = cmd.split(' ')
+    stdout = subprocess.check_output(cmd).decode()
+    lines = [x.rstrip() for x in stdout.split('\n')]
+    return lines
+
 
 # == mailing list ==
 mailing_list_actions = ('summary', 'reply', 'free')
@@ -177,6 +187,21 @@ def devref(section: str, action: str, *,
 
 def test_devref(action):
     pass
+
+
+# == man ==
+man_actions = ('free',)
+
+
+def man(name: str, action: str):
+    text = _load_cmdline(f'man {name}')
+    lines = [f'''The following is the contents of the manual page for {name}, as enclosed by "```" marks.''']
+    lines.extend(['```'] + text + ['```', ''])
+    if action == 'free':
+        lines.append('Read it carefully. I will ask you questions later. For now please be quiet.')
+    else:
+        raise NotImplementedError(action)
+    return '\n'.join(lines)
 
 
 # == file ==

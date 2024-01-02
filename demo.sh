@@ -72,3 +72,12 @@ python3 replay.py examples/540b6093-d4db-4782-a789-69bf02085673.json
 debgpt policy -s 7.2 free -i
 python3 replay.py examples/d346152c-dc0c-4291-b8c6-f3c3f13e2154.json
 # what's the difference between Depends: and Pre-Depends:
+
+# == devref ==
+debgpt devref -s 1 free -i
+# TODO: not fully implemented yet. but can reuse the same code as policy
+
+# == man ==
+debgpt man --man debhelper-compat-upgrade-checklist free -i  # note, this requires 40GB of CUDA memory due to manual page being too long
+python3 replay.py examples/e0f13937-9891-4681-bfa2-ecb0518e3b01.json
+# what should I do to upgrade the compat from 13 to 14?
