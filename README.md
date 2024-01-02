@@ -15,8 +15,7 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 *Technical-Details:*
 
-1. [Python Environment Setup Guide](doc/install.md)
-1. [Usage Instructions](doc/usage.md)
+1. [Install and Usage Guide](doc/install-and-usage.md)
 1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
 1. [Future Ideas](doc/ideas.md)
 
@@ -69,6 +68,11 @@ llm.mentor(maling-list-html)
 # Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do
 # some more complicated things
 ```
+
+## TODO List
+
+1. `debgpt.backend` error handling ... illegal input format, overlength, etc.
+2. `debgpt.llm` support 8bit and 4bit inference (cpu)
 
 ## Infrastructure
 
