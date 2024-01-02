@@ -1,6 +1,6 @@
 # Setup
 
-The default step requires a GPU that supports CUDA compatibility 7.0 or higher (e.g., V100, RTX20XX, A100, etc)
+The default step requires a nvidia driver that supports at least CUDA 11.8
 
 ### Conda / Mamba
 
