@@ -245,8 +245,8 @@ dev_actions = ('free',)
 
 def dev(path: str, action: str, *,
         policy: str = None,
-        debgpt_home: str = os.path.expanduser('~/.debgpt'):
-        )
+        debgpt_home: str = os.path.expanduser('~/.debgpt'),
+        ):
     '''
     the file-to-edit is path
     the additional information, such as policy, are used to LLM to learn
@@ -254,8 +254,8 @@ def dev(path: str, action: str, *,
     '''
     # load the file to develop
     text_of_interest = _load_file(path)
-    lines = [f'''The following is the content of a file named {path}, enclosed by the "```" mark:''']
-    lines.extend(['```'] + text + ['```', ''])
+    lines = [f'''The following is the content of a file named `{path}`, enclosed by the "```" mark:''']
+    lines.extend(['```'] + text_of_interest + ['```', ''])
     lines.append('Read this file carefully.')
 
     # load policy section if specified
@@ -263,12 +263,13 @@ def dev(path: str, action: str, *,
         if not os.path.exists(debgpt_home):
             os.mkdir(debgpt_home)
         doc = debgpt_policy.DebianPolicy(os.path.join(debgpt_home, 'policy.txt'))
-        text = doc[section].split('\n')
-        lines = [f'''The following is the section {section} of Debian Policy, enclosed by the "```" marks:''']
+        text = doc[policy].split('\n')
+        lines.append('')
+        lines.append(f'''The following is the section {policy} of Debian Policy, enclosed by the "```" marks:''')
         lines.extend(['```'] + text + ['```', ''])
 
     if action == 'free':
-        lines.append(f'Later I will ask you to edit the provided file `{path}` and generate a unix-format patch. You may find some reference material in the context. Please be quiet for now.')
+        lines.append(f'Later I will ask you to edit the provided file `{path}` and generate a unix-format patch. The other information, if provided, might help you make the specified edits later. Please be quiet for now and wait for the instruction.')
     else:
         raise NotImplementedError(action)
     return '\n'.join(lines)

@@ -3,6 +3,7 @@
 # you can replay my session with replay.py
 # XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
 # XXX: run examples/download-materials.sh first to download sample files if you want to run debgpt following these demos
+# XXX: when you actually try to chat with LLM, note that the way you ask a question significant impacts the quality of the results you will get. make sure to provide as much information as possible.
 
 # == general chat ==
 debgpt none
@@ -85,4 +86,14 @@ python3 replay.py examples/e0f13937-9891-4681-bfa2-ecb0518e3b01.json
 # what should I do to upgrade the compat from 13 to 14?
 
 # == dev ==
-debgpt x -f examples/pytorch/debian/control --policy 4.9.1 free -i
+debgpt x -f examples/pytorch/debian/control free -i
+python3 replay.py examples/e98f8167-be4d-4c27-bc49-ac4b5411258f.json
+# let llm add armhf and delete kfreebsd-amd64 from architecture list
+
+debgpt x -f examples/pytorch/debian/control --policy 7.4 free -i
+examples/ee171968-e5c6-49ee-9934-d814f99ea9ee.json
+# let llm read policy section 7.4 and modify control file to add libtorch-rocm-2.1 to Conflicts+Repalces.
+
+debgpt x -f examples/pytorch/debian/rules --policy 4.9.1 free -i
+python3 replay.py examples/84d5a49c-8436-4970-9955-d14592ef1de1.json
+# let llm help me implement the "nocheck" support in d/rules.
