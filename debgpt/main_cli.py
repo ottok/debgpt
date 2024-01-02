@@ -21,7 +21,7 @@ def get_parser():
 
 def subparser_ml(ag, argv):
     ag.add_argument('--url', '-u', type=str, required=True)
-    ag.add_argument('--action', '-a', type=str, required=True, choices=('summary', 'reply'))
+    ag.add_argument('action', type=str, choices=('summary', 'reply'))
     ag = ag.parse_args(argv)
     return ag
 
