@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "debgpt.__version__"}
+
+[project]
+dynamic = ["version"]
+name = 'debgpt'
+description = "DebGPT -- Chatting LLM with Debian-Specific Knowledge"
+requires-python = ">= 3.10"
+dependencies = []
+authors = [
+  {name = "Mo Zhou", email = "lumin@debian.org"},
+]
+readme = "README.md"
+license = {text = "MIT License"}
+
+[project.urls]
+Homepage = "https://salsa.debian.org/deeplearning-team/debgpt"
+Issues = "https://salsa.debian.org/deeplearning-team/debgpt/-/issues"
