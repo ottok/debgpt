@@ -27,7 +27,7 @@ like debian-policy, debian developer references, and some man pages.
 The examples included in [`demo.sh`](demo.sh) are already run-able.
 The contents of this script are also shown below.
 I uploaded my LLM session of each command in the `examples/` directory.
-You can use [`pprint.py`](pprint.py) to reply these sessions.
+You can use [`replay.py`](replay.py) to reply these sessions.
 
 The usage of LLM is limited by our imaginations. Please provide more
 ideas on how we can use it.
@@ -73,6 +73,7 @@ llm.mentor(maling-list-html)
 
 1. `debgpt.backend` error handling ... illegal input format, overlength, etc.
 2. `debgpt.llm` support 8bit and 4bit inference (cpu)
+3. `debgpt.frontend` implement the frontend instance using OpenAI API.
 
 ## Infrastructure
 

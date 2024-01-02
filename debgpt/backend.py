@@ -41,10 +41,10 @@ class ZMQBackend(AbstractBackend):
 
 
 def create_backend(args):
-    if args.backend == 'zmq':
+    if args.backend_impl == 'zmq':
         backend = ZMQBackend(args)
     else:
-        raise NotImplementedError(args.backend)
+        raise NotImplementedError(args.backend_impl)
     return backend
 
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     ag.add_argument('--port', '-p', type=int, default=11177,
                     help='"11177" looks like "LLM"')
     ag.add_argument('--host', type=str, default='tcp://*')
-    ag.add_argument('--backend', type=str, default='zmq', choices=('zmq',))
+    ag.add_argument('--backend_impl', type=str, default='zmq', choices=('zmq',))
     ag.add_argument('--max_new_tokens', type=int, default=512)
     ag.add_argument('--llm', type=str, default='Mistral7B')
     ag = ag.parse_args()

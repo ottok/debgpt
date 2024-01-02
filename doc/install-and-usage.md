@@ -36,9 +36,9 @@ python3 -m debgpt.llm
 
 * `backend.py` exposes LLM instance through ZMQ.
 The following command starts the backend server, specifying the max length of LLM response.
-
 ```
 python3 -m debgpt.backend --max_new_tokens=1024
+debgpt backend --max_new_tokens=1024
 ```
 
 * `frontend.py` is a bare ZMQ client. This command is mainly used for debugging.

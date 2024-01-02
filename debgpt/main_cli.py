@@ -8,11 +8,12 @@ import os
 import sys
 from . import frontend
 from . import debian
+from . import backend
 import rich
 console = rich.get_console()
 from rich.markup import escape
 
-__list_of_tasks__ = ('none', 'ml', 'bts', 'file')
+__list_of_tasks__ = ('none', 'ml', 'bts', 'file', 'buildd')
 
 
 def parse_args(task, argv):
@@ -20,7 +21,7 @@ def parse_args(task, argv):
     this non-standard subparser implementation requires me to write much
     less code compared to the standard one.
     '''
-    ag = argparse.ArgumentParser('DebGPT')
+    ag = argparse.ArgumentParser(f'debgpt {task}')
     ag.add_argument('--backend', '-B', type=str,
                     default='tcp://localhost:11177')
     ag.add_argument('--debgpt_home', type=str,
@@ -31,6 +32,14 @@ def parse_args(task, argv):
     if task == 'none':
         # None. Just talk with llm without context.
         pass
+    if task == 'backend':
+        # special mode for backend server.
+        ag.add_argument('--port', '-p', type=int, default=11177,
+                        help='"11177" looks like "LLM"')
+        ag.add_argument('--host', type=str, default='tcp://*')
+        ag.add_argument('--backend_impl', type=str, default='zmq', choices=('zmq',))
+        ag.add_argument('--max_new_tokens', type=int, default=512)
+        ag.add_argument('--llm', type=str, default='Mistral7B')
     elif task == 'ml':
         # mailing list
         ag.add_argument('--url', '-u', type=str, required=True)
@@ -39,6 +48,11 @@ def parse_args(task, argv):
         # bts
         ag.add_argument('--id', '-x', type=str, required=True)
         ag.add_argument('action', type=str, choices=debian.bts_actions)
+    elif task == 'buildd':
+        # buildd
+        ag.add_argument('--package', '-p', type=str, required=True)
+        ag.add_argument('--suite', '-s', type=str, default='sid')
+        ag.add_argument('action', type=str, choices=debian.buildd_actions)
     elif task == 'file':
         # ask questions regarding a specific file
         # e.g., license check (SPDX format), code improvement, code explain
@@ -61,8 +75,17 @@ def main():
     ag = parse_args(argv[1], argv[2:])
     console.log(ag)
 
-    # create frontend
-    f = frontend.create_frontend(ag)
+    # create frontend / backend depending on task
+    if argv[1] == 'backend':
+        backend = backend.create_backend(ag)
+        try:
+            backend.server()
+        except KeyboardInterrupt:
+            pass
+        console.log('Server shut down.')
+        exit(1)
+    else:
+        f = frontend.create_frontend(ag)
 
     # create task-specific prompts
     if argv[1] == 'none':
@@ -73,6 +96,8 @@ def main():
         msg = debian.bts(ag.id, ag.action)
     elif argv[1] == 'file':
         msg = debian.file(ag.file, ag.action)
+    elif argv[1] == 'buildd':
+        msg = debian.buildd(ag.package, ag.action, ag.suite)
     else:
         raise NotImplementedError
 

@@ -30,10 +30,14 @@ def _load_html(url: str) -> List[str]:
 
 def _load_html_raw(url: str) -> List[str]:
     '''
-    read the raw HTML
+    read the raw HTML.
+    XXX: if we do not preprocess the raw HTML, the input sequence to LLM
+    will be very long. It may trigger CUDA out-of-memory in the backend
+    when the length exceeds a certain value, depending on the CUDA memory
+    available in the backend machine.
     '''
     r = requests.get(url)
-    text = r.text().strip()
+    text = r.text.strip()
     text = re.sub('\n\n+\n', '\n\n', text)
     text = [x.strip() for x in text.split('\n')]
     return text
@@ -68,6 +72,26 @@ def mailing_list(url: str, action: str):
 def test_mailing_list(action):
     url = 'https://lists.debian.org/debian-project/2023/12/msg00029.html'
     print(mailing_list(url, action))
+
+# == buildd ==
+buildd_actions = ('status', 'free')
+
+def buildd(p: str, action: str, suite: str = 'sid'):
+    text = _load_html_raw(f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}')
+    lines = [f'The following is the webpage about the build status of package {p}:']
+    lines.extend(['```'] + text + ['```', ''])
+    if action == 'status':
+        lines.append('Briefly describe the build status of this package. If it failed on some architectures, briefly list them and explain the reasons.')
+    elif action == 'free':
+        lines.append('Read this webpage carefully. I will ask you a few questions next.')
+    else:
+        raise NotImplementedError(action)
+    return '\n'.join(lines)
+
+@pytest.mark.parametrize('action', buildd_actions)
+def test_buildd(action):
+    print(buildd('pytorch', action))
+
 
 # == bts ==
 bts_actions = ('summary', 'free')
