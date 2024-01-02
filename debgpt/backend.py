@@ -53,11 +53,14 @@ if __name__ == '__main__':
     ag.add_argument('--port', '-p', type=int, default=11177,
                     help='"11177" looks like "LLM"')
     ag.add_argument('--host', type=str, default='tcp://*')
-    ag.add_argument('--backend_impl', type=str, default='zmq', choices=('zmq',))
+    ag.add_argument('--backend_impl', type=str,
+                    default='zmq', choices=('zmq',))
     ag.add_argument('--max_new_tokens', type=int, default=512)
     ag.add_argument('--llm', type=str, default='Mistral7B')
-    ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
-    ag.add_argument('--precision', type=str, default='fp16' if th.cuda.is_available() else '4bit')
+    ag.add_argument('--device', type=str,
+                    default='cuda' if th.cuda.is_available() else 'cpu')
+    ag.add_argument('--precision', type=str,
+                    default='fp16' if th.cuda.is_available() else '4bit')
     ag = ag.parse_args()
     console.log(ag)
 

@@ -1,5 +1,6 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from rich.markup import escape
 from rich.status import Status
 from rich.panel import Panel
 from prompt_toolkit import prompt
@@ -12,7 +13,6 @@ from . import backend
 import torch as th
 import rich
 console = rich.get_console()
-from rich.markup import escape
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
                      'vote', 'policy', 'devref', 'man', 'dev', 'x')
@@ -39,16 +39,20 @@ def parse_args(task, argv):
         ag.add_argument('--port', '-p', type=int, default=11177,
                         help='"11177" looks like "LLM"')
         ag.add_argument('--host', type=str, default='tcp://*')
-        ag.add_argument('--backend_impl', type=str, default='zmq', choices=('zmq',))
+        ag.add_argument('--backend_impl', type=str,
+                        default='zmq', choices=('zmq',))
         ag.add_argument('--max_new_tokens', type=int, default=512)
         ag.add_argument('--llm', type=str, default='Mistral7B')
-        ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
-        ag.add_argument('--precision', type=str, default='fp16' if th.cuda.is_available() else '4bit')
+        ag.add_argument('--device', type=str,
+                        default='cuda' if th.cuda.is_available() else 'cpu')
+        ag.add_argument('--precision', type=str,
+                        default='fp16' if th.cuda.is_available() else '4bit')
     elif task == 'ml':
         # mailing list
         ag.add_argument('--url', '-u', type=str, required=True)
         ag.add_argument('--raw', action='store_true', help='use raw html')
-        ag.add_argument('action', type=str, choices=debian.mailing_list_actions)
+        ag.add_argument('action', type=str,
+                        choices=debian.mailing_list_actions)
     elif task == 'bts':
         # bts
         ag.add_argument('--id', '-x', type=str, required=True)
@@ -68,7 +72,8 @@ def parse_args(task, argv):
         ag.add_argument('action', type=str, choices=debian.file_actions)
     elif task == 'vote':
         # vote.debian.org
-        ag.add_argument('--suffix', '-s', type=str, required=True, help='for example, 2023/vote_002')
+        ag.add_argument('--suffix', '-s', type=str, required=True,
+                        help='for example, 2023/vote_002')
         ag.add_argument('action', type=str, choices=debian.vote_actions)
     elif task == 'policy':
         # policy document (plain text)
@@ -84,8 +89,10 @@ def parse_args(task, argv):
         ag.add_argument('action', type=str, choices=debian.man_actions)
     elif task in ('dev', 'x'):
         # code editing with context
-        ag.add_argument('--file', '-f', type=str, required=True, help='path to file you want to edit')
-        ag.add_argument('--policy', type=str, default=None, help='which section of policy to look at?')
+        ag.add_argument('--file', '-f', type=str, required=True,
+                        help='path to file you want to edit')
+        ag.add_argument('--policy', type=str, default=None,
+                        help='which section of policy to look at?')
         ag.add_argument('action', type=str, choices=debian.dev_actions)
     else:
         raise NotImplementedError(task)
@@ -173,7 +180,9 @@ def main():
         # sensitive category
         console.print(Panel('''[bold white on red]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information, and do not let LLM mislead your decision on sensitive tasks, such as debian voting.[/bold white on red]''', title='!!! Warning !!!'))
     else:
-        console.print(Panel('''[green]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information[/green]''', title='Note'))
+        console.print(Panel(
+            '''[green]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information[/green]''', title='Note'))
+
 
 if __name__ == '__main__':
     main()

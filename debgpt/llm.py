@@ -53,20 +53,26 @@ class Mistral7B(AbstractLLM):
         '''
         super().__init__()
         self.device = device  # overrride abstract class
-        console.log(f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
+        console.log(
+            f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
         if precision == 'fp16':
             self.dtype = th.float16
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype=self.dtype)
         elif precision == 'fp32':
             self.dtype = th.float32
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype=self.dtype)
         elif precision == 'bf16':
             self.dtype = th.bfloat16
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype=self.dtype)
         elif precision == '8bit':
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, load_in_8bit=True)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, load_in_8bit=True)
         elif precision == '4bit':
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, load_in_4bit=True)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, load_in_4bit=True)
         else:
             raise NotImplementedError(precision)
         if precision in ('fp16', 'fp32', 'bf16'):
@@ -131,8 +137,10 @@ if __name__ == '__main__':
     ag.add_argument('--llm', type=str, default='Mistral7B',
                     choices=('Mistral7B',))
     ag.add_argument('-i', '--ipython', action='store_true')
-    ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
-    ag.add_argument('--precision', type=str, default='fp16' if th.cuda.is_available() else '4bit')
+    ag.add_argument('--device', type=str,
+                    default='cuda' if th.cuda.is_available() else 'cpu')
+    ag.add_argument('--precision', type=str,
+                    default='fp16' if th.cuda.is_available() else '4bit')
     ag = ag.parse_args()
     console.log(ag)
 
