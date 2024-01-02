@@ -165,6 +165,20 @@ def policy(section: str, action: str, *,
 def test_policy(action):
     print(policy('4.6', action))
 
+
+# == devref ==
+devref_actions = ('polish', 'free')
+
+
+def devref(section: str, action: str, *,
+           debgpt_home: str = os.path.expanduser('~/.debgpt')):
+    raise NotImplementedError('implementing this is easy. just copy the above code for policy')
+
+
+def test_devref(action):
+    pass
+
+
 # == file ==
 file_actions = ('what', 'licensecheck', 'free')
 
