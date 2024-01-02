@@ -44,7 +44,7 @@ class Mistral7B(AbstractLLM):
     '''
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
 
-    def __init__(self, *, device: str, torch_dtype=th.float16):
+    def __init__(self, *, device: str, precision: str):
         '''
         torch_dtype: th.float32 requires 32GB CUDA memory.
                      th.float16/th.bfloat16 requires 16GB CUDA memory.
@@ -53,9 +53,22 @@ class Mistral7B(AbstractLLM):
         '''
         super().__init__()
         self.device = device  # overrride abstract class
-        console.log(f'Mistral7B> Loading {self.model_id} (float16)')
-        self.llm = AutoModelForCausalLM.from_pretrained(self.model_id,
-                                                        torch_dtype=torch_dtype)
+        console.log(f'Mistral7B> Loading {self.model_id} ({precision})')
+        if precision == 'fp16':
+            self.dtype = th.float16
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+        elif precision == 'fp32':
+            self.dtype = th.float32
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+        elif precision == 'bf16':
+            self.dtype = th.bfloat16
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=self.dtype)
+        elif precision == '8bit':
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, load_in_8bit=True)
+        elif precision == '4bit':
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, load_in_4bit=True)
+        else:
+            raise NotImplementedError(precision)
         self.llm.to(self.device)
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
         self.kwargs = {'max_new_tokens': 512,
@@ -99,7 +112,7 @@ class Mistral7B(AbstractLLM):
 def create_llm(args) -> AbstractLLM:
     # factory
     if args.llm == 'Mistral7B':
-        model = Mistral7B(device=args.device)
+        model = Mistral7B(device=args.device, precision=args.precision)
         model.kwargs['max_new_tokens'] = args.max_new_tokens
     else:
         raise NotImplementedError(f'{args.llm} is not yet implemented')
@@ -116,6 +129,7 @@ if __name__ == '__main__':
                     choices=('Mistral7B',))
     ag.add_argument('-i', '--ipython', action='store_true')
     ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
+    ag.add_argument('--precision', type=str, default='fp16' if th.cuda.is_available() else '4bit')
     ag = ag.parse_args()
     console.log(ag)
 

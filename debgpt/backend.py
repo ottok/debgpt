@@ -57,6 +57,7 @@ if __name__ == '__main__':
     ag.add_argument('--max_new_tokens', type=int, default=512)
     ag.add_argument('--llm', type=str, default='Mistral7B')
     ag.add_argument('--device', type=str, default='cuda' if th.cuda.is_available() else 'cpu')
+    ag.add_argument('--precision', type=str, default='fp16' if th.cuda.is_available() else '4bit')
     ag = ag.parse_args()
     console.log(ag)
 
