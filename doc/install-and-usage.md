@@ -23,7 +23,8 @@ If this step is skipped, replace the `mamba` into `conda` for all the following 
 3. `pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` (from https://pytorch.org)
 4. `pip3 install transformers accelerate bitsandbytes bitsandbytes`
 5. `pip3 install beautifulsoup4 rich prompt_toolkit ipython`
-6. `pip3 install pyzmq pytest`
+6. `pip3 install pyzmq pytest scipy`
+7. `sudo apt install libcudart11.0 libcusparse11` (this is for cuda 11)
 7. we are good now.
 
 
