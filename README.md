@@ -30,7 +30,8 @@ limits, we can wrap different prompt engineering tricks into different APIs.
 
 The examples included in [demo.sh](demo.sh) are already run-able.
 The contents of this script are also shown below.
-I uploaded my LLM session of each command in the examples/ directory.
+I uploaded my LLM session of each command in the `examples/` directory.
+You can use [`examples-pprint.py`](examples-pprint.py) to reply these sessions.
 
 ```shell
 # XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
