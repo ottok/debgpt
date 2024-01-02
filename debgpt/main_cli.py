@@ -14,7 +14,7 @@ console = rich.get_console()
 from rich.markup import escape
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
-                     'vote', 'policy', 'devref', 'man')
+                     'vote', 'policy', 'devref', 'man', 'dev', 'x')
 
 
 def parse_args(task, argv):
@@ -76,8 +76,14 @@ def parse_args(task, argv):
         ag.add_argument('--section', '-s', type=str, required=True)
         ag.add_argument('action', type=str, choices=debian.devref_actions)
     elif task == 'man':
+        # manual page
         ag.add_argument('--man', '-m', type=str, required=True)
         ag.add_argument('action', type=str, choices=debian.man_actions)
+    elif task in ('dev', 'x'):
+        # code editing with context
+        ag.add_argument('--file', '-f', type=str, required=True, help='path to file you want to edit')
+        ag.add_argument('--policy', type=str, default=None, help='which section of policy to look at?')
+        ag.add_argument('action', type=str, choices=debian.dev_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
@@ -125,6 +131,9 @@ def main():
         msg = debian.devref(ag.section, ag.action)
     elif argv[1] == 'man':
         msg = debian.man(ag.man, ag.action)
+    elif argv[1] in ('dev', 'x'):
+        msg = debian.dev(ag.file, ag.action, policy=ag.policy,
+                         debgpt_home=ag.debgpt_home)
     else:
         raise NotImplementedError
 

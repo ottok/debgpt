@@ -83,3 +83,6 @@ python3 replay.py examples/6bc35248-ffe7-4bc3-93a2-0298cf45dbae.json
 debgpt man --man debhelper-compat-upgrade-checklist free -i  # note, this requires 40GB of CUDA memory due to manual page being too long
 python3 replay.py examples/e0f13937-9891-4681-bfa2-ecb0518e3b01.json
 # what should I do to upgrade the compat from 13 to 14?
+
+# == dev ==
+debgpt x -f examples/pytorch/debian/control --policy 4.9.1 free -i
