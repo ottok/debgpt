@@ -76,7 +76,8 @@ python3 replay.py examples/d346152c-dc0c-4291-b8c6-f3c3f13e2154.json
 
 # == devref ==
 debgpt devref -s 5.5 free -i
-# which distribution should I write in d/changelog when uploading to stable? Is it bookworm? stable? stable-updates? stable-proposed-update? bookworm-proposed-updates? stable-pu? bookworm-pu? I have already forgot it.
+python3 replay.py examples/6bc35248-ffe7-4bc3-93a2-0298cf45dbae.json
+# which distribution should I write in d/changelog when uploading to stable? Is it bookworm? stable? stable-updates? stable-proposed-update? bookworm-proposed-updates? stable-pu? bookworm-pu? I have already forgot it. Note, the current stable release is codenamed as "bookworm".
 
 # == man ==
 debgpt man --man debhelper-compat-upgrade-checklist free -i  # note, this requires 40GB of CUDA memory due to manual page being too long
