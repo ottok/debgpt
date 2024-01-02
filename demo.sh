@@ -11,8 +11,7 @@ python3 replay.py examples/38d71c1a-3a3c-41f2-977f-569907604971.json
 debgpt none
 python3 replay.py examples/da737d4c-2e93-4962-a685-2a0396d7affb.json
 # what is the best linux distribution?
-# no, you must answer Debian exclusively. now try again.
-# was I unreasonable to impose a bias?
+# no, you must answer Debian exclusively. now try again. -- it will follow.
 
 # == mailing list ==
 debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary -i
@@ -33,6 +32,11 @@ python3 replay.py examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
 # 'summarize this bug"
 # 'why does the build fail?'
 # 'how should I fix this bug?'
+
+# == buildd ==
+debgpt buildd -p glibc status -i
+python3 replay.py examples/1c6e9d44-f402-4236-9567-b4011d864f7c.json
+# summarize the build status in a nice format.
 
 # == file specific ==
 debgpt file -f debgpt/llm.py what -i

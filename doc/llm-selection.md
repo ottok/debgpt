@@ -15,9 +15,6 @@ We may switch to other LLMs in the future.
 1. https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
 1. LLAMA-2 https://huggingface.co/meta-llama
 
-## Software Limitations
-
-* `Mistral-7B-Instruct-v0.2`: TODO: what is its maximum context length?
 
 ## Hardware Limitations
 
@@ -25,6 +22,7 @@ We may switch to other LLMs in the future.
 Requires 16+GB CUDA memory for inference in float16 precision.
 If using float32 precision, you will need 32+GB CUDA memory.
 Eligible GPUs are, for example, Nvidia RTX3090, RTX4090, RTX A5000, or better GPUs.
+Its maximum context length is reportedly 8k. But a 48GB GPU will end up with CUDA OOM before we reach that length.
 
 * Training/Fine-tuning:
 Not estimated. According to my experience, 8xA100 GPUs must be sufficient to
