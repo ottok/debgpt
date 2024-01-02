@@ -138,7 +138,6 @@ dependencies:
   - zlib=1.2.13=h5eee18b_0
   - zstd=1.5.5=hc292b87_0
   - pip:
-      - debgpt==0.0
       - fsspec==2023.12.2
       - huggingface-hub==0.20.1
       - regex==2023.12.25
