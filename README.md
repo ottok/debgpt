@@ -52,10 +52,6 @@ llm.ask_devref(path_of_file_or_dir, user_question)
 llm.ask_dh(path_of_file_or_dir, user_question)
 #   e.g., debian/control, "what is the correct way to specify debhelper dependency with compat level 13?"
 
-# This function wraps the latest sbuild buildlog at .. in the context.
-llm.ask_build(user_question)
-#   e.g.: "why does the build fail?'
-
 # Let LLM do the development work, and generates a patch for you
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 #   e.g., debian/control, "add riscv64 to supported architectures".
