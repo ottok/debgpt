@@ -62,6 +62,10 @@ def parse_args(task, argv):
         # TODO: support multiple files (nargs=+)
         ag.add_argument('--file', '-f', type=str, required=True)
         ag.add_argument('action', type=str, choices=debian.file_actions)
+    elif task == 'vote':
+        # vote.debian.org
+        ag.add_argument('--suffix', '-s', type=str, required=True, help='for example, 2023/vote_002')
+        ag.add_argument('action', type=str, choices=debian.vote_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
@@ -101,6 +105,8 @@ def main():
         msg = debian.file(ag.file, ag.action)
     elif argv[1] == 'buildd':
         msg = debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw)
+    elif argv[1] == 'vote':
+        msg = debian.vote(ag.suffix, ag.action)
     else:
         raise NotImplementedError
 
@@ -130,6 +136,12 @@ def main():
     # dump session to json
     f.dump()
 
+    # some notifications
+    if argv[1] in ('vote',):
+        # sensitive category
+        console.print(Panel('''[bold white on red]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information, and do not let LLM mislead your decision on sensitive tasks, such as debian voting.[/bold white on red]''', title='!!! Warning !!!'))
+    else:
+        console.print(Panel('''[green]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information[/green]''', title='Note'))
 
 if __name__ == '__main__':
     main()

@@ -56,11 +56,6 @@ llm.ask_build(user_question)
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 #   e.g., debian/control, "add riscv64 to supported architectures".
 
-# Let LLM summarize voting information (vote.debian.org)
-llm.vote(vote_id, user_question)
-#   XXX: raise a warning and highlight it in red. This is sensitive. Do not make your vote decision based on LLM's outputs.
-#   e.g., xxx, "explain the difference between different proposals."
-
 # Let LLM do mentoring (lists.debian.org/debian-mentors)
 llm.mentor(maling-list-html)
 #   e.g., for reviewing a .dsc package. This is difficult for LLM.

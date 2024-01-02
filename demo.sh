@@ -58,3 +58,8 @@ python3 replay.py examples/dd62d15a-723a-4f57-b8d2-6e3212ebcfe3.json
 debgpt file -f pyproject.toml free -i
 python3 replay.py examples/0d4dcf50-ba5a-480b-8126-7e8c5d95cf62.json
 # convert pyproject.toml into setup.py
+
+# == vote ==
+debgpt vote -s 2023/vote_002 diff
+python3 replay.py examples/bab71c6f-1102-41ed-831b-897c80e3acfb.json
+# explain the difference between those proposals
