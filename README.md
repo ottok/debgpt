@@ -39,12 +39,6 @@ Some imagined use cases, not yet implemented:
 1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length.
 
 
-```python
-# Let LLM do the development work, and generates a patch for you
-llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
-#   e.g., debian/control, "add riscv64 to supported architectures".
-```
-
 ## How to extend the CLI
 
 1. implement your new prompt generator in `debgpt/debian.py`.  The function
