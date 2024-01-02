@@ -153,7 +153,7 @@ def policy(section: str, action: str, *,
     lines = [f'''The following is the section {section} of Debian Policy:''']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'polish':
-        lines.append('Please polish the language. The language must be precise. Any vague or ambiguous language is not acceptable.')
+        lines.append('Please polish the language enclosed by the "```" marks. While polishing this document, the language must be precise. Additionally, any vague or ambiguous language is not acceptable. Furthermore, do not change the original meaning of the text while polishing. Now go ahead.')
     elif action == 'free':
         lines.append('Please carefully read this document. I will ask questions later. Be quiet now.')
     else:

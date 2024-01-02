@@ -69,7 +69,7 @@ def parse_args(task, argv):
     elif task == 'policy':
         # policy document (plain text)
         ag.add_argument('--section', '-s', type=str, required=True)
-        ag.add_argument('action', type=str, choices.debian.policy_actions)
+        ag.add_argument('action', type=str, choices=debian.policy_actions)
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)

@@ -63,3 +63,8 @@ python3 replay.py examples/0d4dcf50-ba5a-480b-8126-7e8c5d95cf62.json
 debgpt vote -s 2023/vote_002 diff
 python3 replay.py examples/bab71c6f-1102-41ed-831b-897c80e3acfb.json
 # explain the difference between those proposals
+
+# == policy ==
+debgpt policy -s 4.6 polish -i
+python3 replay.py examples/540b6093-d4db-4782-a789-69bf02085673.json
+# polish the language of policy section 4.6
