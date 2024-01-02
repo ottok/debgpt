@@ -43,15 +43,18 @@ def parse_args(task, argv):
     elif task == 'ml':
         # mailing list
         ag.add_argument('--url', '-u', type=str, required=True)
+        ag.add_argument('--raw', action='store_true', help='use raw html')
         ag.add_argument('action', type=str, choices=debian.mailing_list_actions)
     elif task == 'bts':
         # bts
         ag.add_argument('--id', '-x', type=str, required=True)
+        ag.add_argument('--raw', action='store_true', help='use raw html')
         ag.add_argument('action', type=str, choices=debian.bts_actions)
     elif task == 'buildd':
         # buildd
         ag.add_argument('--package', '-p', type=str, required=True)
         ag.add_argument('--suite', '-s', type=str, default='sid')
+        ag.add_argument('--raw', action='store_true', help='use raw html')
         ag.add_argument('action', type=str, choices=debian.buildd_actions)
     elif task == 'file':
         # ask questions regarding a specific file
@@ -91,13 +94,13 @@ def main():
     if argv[1] == 'none':
         msg = None
     elif argv[1] == 'ml':
-        msg = debian.mailing_list(ag.url, ag.action)
+        msg = debian.mailing_list(ag.url, ag.action, raw=ag.raw)
     elif argv[1] == 'bts':
-        msg = debian.bts(ag.id, ag.action)
+        msg = debian.bts(ag.id, ag.action, raw=ag.raw)
     elif argv[1] == 'file':
         msg = debian.file(ag.file, ag.action)
     elif argv[1] == 'buildd':
-        msg = debian.buildd(ag.package, ag.action, ag.suite)
+        msg = debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw)
     else:
         raise NotImplementedError
 

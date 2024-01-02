@@ -52,10 +52,9 @@ def _load_file(path: str) -> List[str]:
 mailing_list_actions = ('summary', 'reply', 'free')
 
 
-def mailing_list(url: str, action: str):
-    text = _load_html(url)
-    lines = []
-    lines.append('The following is an email from a mailing list thread:')
+def mailing_list(url: str, action: str, *, raw:bool=False):
+    text = _load_html_raw(url) if raw else _load_html(url)
+    lines = ['The following is an email from a mailing list thread:']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'summary':
         lines.append('Could you please summarize this email for me?')
@@ -76,8 +75,9 @@ def test_mailing_list(action):
 # == buildd ==
 buildd_actions = ('status', 'free')
 
-def buildd(p: str, action: str, suite: str = 'sid'):
-    text = _load_html(f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}')
+def buildd(p: str, action: str, *, suite: str = 'sid', raw: bool = False):
+    url = f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}'
+    text = _load_html_raw(url) if raw else _load_html(url)
     lines = [f'The following is the webpage about the build status of package {p}:']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'status':
@@ -96,11 +96,10 @@ def test_buildd(action):
 # == bts ==
 bts_actions = ('summary', 'free')
 
-def bts(identifier: str, action: str):
-    text = _load_html(f'https://bugs.debian.org/{identifier}')
-    lines = []
-    lines.append(
-        '''The following is a webpage from Debian's bug tracking system:''')
+def bts(identifier: str, action: str, *, raw:bool=False):
+    url = f'https://bugs.debian.org/{identifier}'
+    text = _load_html_raw(url) if raw else _load_html(url)
+    lines = ["The following is a webpage from Debian's bug tracking system:"]
     lines.extend(['```'] + text + ['```', ''])
     if action == 'summary':
         lines.append(
