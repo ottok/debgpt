@@ -51,17 +51,13 @@ debgpt bts --id 1056388 summary -i
 cat examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
 ```
 
+The usage of LLM is limited by our imaginations. Please provide more
+ideas on how we can use it.
 
-The imagined use cases will be like the follows (we will really implement these ideas and evaluate):
+The imagined use cases, not yet implemented:
 
 
 ```python
-# The general function just calls the plain LLM backend.
-llm.ask(user_question)
-#   e.g., "who are you?" -- sanity check
-#   e.g., "what's the difference between the GPL-2.0 and GPL-3.0?"
-#   e.g., "How to increase the number of Debian project members, as it is an aging FOSS community."
-
 # This function wraps (a part of) debian-policy document in context.
 llm.ask_policy(path_of_file_or_dir, user_question)
 #   e.g. debian/control, "what's the difference between Depends: and Pre-Depends: ?"
@@ -78,35 +74,21 @@ llm.ask_dh(path_of_file_or_dir, user_question)
 llm.ask_build(user_question)
 #   e.g.: "why does the build fail?'
 
-# This leverages LLM's capability for summarizing texts.
-llm.bts(bts_number: int, user_question)
-#   e.g.: "briefly summarize it."
-#   e.g.: "src:pytorch", "summarize the unresolved bugs."
-
 # Let LLM do the development work, and generates a patch for you
 llm.dev(path_of_file_or_dir, user_question, *, inplace:bool=False)
 #   e.g., debian/control, "add riscv64 to supported architectures".
-
-# Let LLM behave like a human (it is not good at this)
-llm.reply_mail(debian_bts_or_ml_html_link, user_question:str=None)
 
 # Let LLM summarize voting information (vote.debian.org)
 llm.vote(vote_id, user_question)
 #   XXX: raise a warning and highlight it in red. This is sensitive. Do not make your vote decision based on LLM's outputs.
 #   e.g., xxx, "explain the difference between different proposals."
 
-# Let LLM do some complicated license check task
-llm.license(file, user_question)
-#   e.g., "src/main.cpp", "what is the license of this file?"
-#         we may want to limit the answer range into SPDX license specifiers.
-
 # Let LLM do mentoring (lists.debian.org/debian-mentors)
 llm.mentor(maling-list-html)
 #   e.g., for reviewing a .dsc package. This is difficult for LLM.
 
-# The use cases are limited by our imaginations.
-llm.what_else()
-#   e.g., join the team and explore more interesting usages!
+# Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do
+# some more complicated things
 ```
 
 ## Infrastructure

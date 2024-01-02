@@ -1,21 +1,40 @@
 # XXX: "python3 -m debgpt.main_cli" is equivalent to "debgpt"
 
-# general chat
-echo python3 -m debgpt.main_cli none
-echo python3 examples-pprint.py examples/38d71c1a-3a3c-41f2-977f-569907604971.json
+# == general chat ==
+debgpt none
+python3 examples-pprint.py examples/38d71c1a-3a3c-41f2-977f-569907604971.json
+# e.g., "who are you?" -- sanity check
 
-# mailing list
-echo python3 -m debgpt.main_cli ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary -i
-echo python3 examples-pprint.py examples/95e9759b-1b67-49d4-854a-2dedfff07640.json
+# == mailing list ==
+debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary -i
+python3 examples-pprint.py examples/95e9759b-1b67-49d4-854a-2dedfff07640.json
+# e.g., 'summarize the mail'
+# e.g., 'where is the debgpt repository?'
+# e.g., 'try to reply to this email'
+# e.g., "How to increase the number of Debian project members?"
 
-# bts
-echo python3 -m debgpt.main_cli bts --id src:pytorch summary -i
-echo examples/42387633-14a3-4cf3-97e1-d3e0e1c8ac5f.json
-echo python3 -m debgpt.main_cli bts --id 1056388 summary -i
-echo examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
+# == bts ==
+debgpt bts --id src:pytorch summary -i
+python3 examples-pprint.py examples/42387633-14a3-4cf3-97e1-d3e0e1c8ac5f.json
+# e.g., 'summarize the current bugs and print nicely'
+# e.g., 'filter out some data using natural language and re-summarize'
 
-# file specific
-echo python3 -m debgpt.main_cli file -f debgpt/llm.py what -i
-echo examples/6bb4cb48-2823-452d-be80-b9d84b976ef6.json
-echo python3 -m debgpt.main_cli file -f debgpt/llm.py licensecheck -i
-echo examples/c7e40063-003e-4b04-b481-27943d1ad93f.json
+debgpt bts --id 1056388 summary -i
+python3 examples-pprint.py examples/6ae3b04f-a406-4eb9-8cd0-1e540b850ca9.json
+# e.g., 'summarize this bug"
+# e.g., 'why does the build fail?'
+# e.g., 'how should I fix this bug?'
+
+# == file specific ==
+debgpt file -f debgpt/llm.py what -i
+python3 examples-pprint.py examples/6bb4cb48-2823-452d-be80-b9d84b976ef6.json
+# e.g., 'what is the code doing?"
+# e.g., 'where does this script save LLM chatting record?"
+# e.g., 'explain the new python feature :="
+# e.g., 'rewrite the exception handling code for me' -- result is actually good.
+
+debgpt file -f debgpt/llm.py licensecheck -i
+python3 examples-pprint.py examples/c7e40063-003e-4b04-b481-27943d1ad93f.json
+# e.g., 'what's the SPDX identifier for the license of this file?'
+# e.g., "what's the difference between the GPL-2.0 and GPL-3.0?"
+
