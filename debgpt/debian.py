@@ -5,6 +5,7 @@ This file is in charge of organizaing (debian specific) user prompts,
 which are subsequently sent through frontend to the backend for LLM to process.
 '''
 from typing import *
+import re
 import pytest
 from bs4 import BeautifulSoup
 import requests
