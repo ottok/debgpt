@@ -1,4 +1,9 @@
+# frontend
 frontend = 'zmq'  # zmq or openai
-stream = true
-openai_model_id = 'gpt-4'
+stream = true  # only works when frontend=openai
+backend = 'tcp://localhost:11177'  # only works when frontend=zmq
+
+# == openai-specific
+# for instance, gpt-4 (expensive), gpt-3.5-turbo (4k context), gpt-3.5-turbo-16k (16k context)
+openai_model_id = 'gpt-3.5-turbo-16k'
 OPENAI_API_KEY = "fill-in-your-key-here"
