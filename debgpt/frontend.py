@@ -93,8 +93,7 @@ class OpenAIFrontend(AbstractFrontend):
         self.stream = getattr(args, 'stream', False)
         # e.g., gpt-3.5-turbo, gpt-4
         self.model_id = getattr(args, 'openai_model_id', self.model_id)
-        console.log(f'{self.NAME}> instantiated with model={
-                    self.model_id} stream={self.stream}.')
+        console.log(f'{self.NAME}> instantiated with model={self.model_id} stream={self.stream}.')
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')

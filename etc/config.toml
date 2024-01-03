@@ -1,2 +1,4 @@
+frontend = 'zmq'  # zmq or openai
+stream = true
 openai_model_id = 'gpt-4'
 OPENAI_API_KEY = "fill-in-your-key-here"

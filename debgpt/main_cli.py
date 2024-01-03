@@ -25,6 +25,7 @@ def parse_args(task, argv):
     less code compared to the standard one.
     '''
     conf = defaults.Config()
+    #console.print(conf.toml)
     ag = argparse.ArgumentParser(f'debgpt {task}')
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'])
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
@@ -33,7 +34,7 @@ def parse_args(task, argv):
                     help='keep chatting with LLM. do not quit after the first reply.')
     ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
                     help='default to streaming mode when openai frontend is used')
-    ag.add_argument('--openai_model_id', type=str, default=conf['oepnai_model_id'])
+    ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
     if task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
@@ -103,6 +104,9 @@ def parse_args(task, argv):
     else:
         raise NotImplementedError(task)
     ag = ag.parse_args(argv)
+    if ag.frontend == 'zmq' and ag.stream == True:
+        console.log('disabling streaming because it is not yet supported for ZMQ frontend')
+        ag.stream = False
     return ag
 
 

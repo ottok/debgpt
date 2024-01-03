@@ -6,7 +6,7 @@ try:
 except:
     import pip._vendor.tomli as tomllib  # for python < 3.10
 
-HOME = os.expanduser('~/.debgpt')
+HOME = os.path.expanduser('~/.debgpt')
 CONFIG = os.path.join(HOME, 'config.toml')
 
 class Config(object):
@@ -16,11 +16,15 @@ class Config(object):
                      'debgpt_home': HOME,
                      'frontend': 'zmq',
                      'stream': True,
-                     'openai_model_id': 'gpt-4'
+                     'openai_model_id': 'gpt-4',
                      }
         # the defaults will be overriden by config file
         with open(config, 'rb') as f:
-            self.toml.update(tomllib.load(f))
+            content = tomllib.load(f)
+            #print('DEBUG', content)
+            #for k, v in content.items():
+            #    self.toml[k] = v
+            self.toml.update(content)
         # XXX: the config file will be overriden by command line
     def __getitem__(self, index):
         return self.toml.__getitem__(index)
