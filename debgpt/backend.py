@@ -1,12 +1,12 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from rich.status import Status
 from typing import *
 import argparse
 import zmq
 from . import llm
 import rich
 console = rich.get_console()
-from rich.status import Status
 
 
 class AbstractBackend:
@@ -22,7 +22,7 @@ class AbstractBackend:
 
 def stat_messages(messages: List[Dict], llm):
     context_size = llm.tok.apply_chat_template(messages, tokenize=True,
-                   return_tensors='pt').size(1)
+                                               return_tensors='pt').size(1)
     ret = f'num_msgs={len(messages)}, ctx_size={context_size}; '
     ret += f'lastest={messages[-1]}'
     return ret
@@ -43,10 +43,12 @@ class ZMQBackend(AbstractBackend):
 
     def server(self):
         for query in self.listen():
-            console.log(f'ZMQBackend> recv query: {stat_messages(query, self.llm)}', markup=False)
+            console.log(
+                f'ZMQBackend> recv query: {stat_messages(query, self.llm)}', markup=False)
             with Status('LLM Calculating ...', spinner='line'):
                 reply = self.llm(query)
-            console.log(f'ZMQBackend> send reply: {stat_messages(reply, self.llm)}', markup=False)
+            console.log(
+                f'ZMQBackend> send reply: {stat_messages(reply, self.llm)}', markup=False)
             msg_json = zmq.utils.jsonapi.dumps(reply)
             self.socket.send(msg_json)
 
