@@ -7,6 +7,7 @@ import zmq
 import json
 import rich
 import uuid
+import sys
 console = rich.get_console()
 try:
     import tomllib  # requires python >= 3.10
@@ -87,6 +88,7 @@ class OpenAIFrontend(AbstractFrontend):
         self.session = []
         #self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
         self.session.append({"role": "system", "content": "You are an excellent free software developer. You write high-quality code. You aim to provide people with prefessional and accurate information. You cherrish software freedom. You obey the Debian Social Contract and the Debian Free Software Guideline. You follow the Debian Policy."})
+        self.stream = getattr(args, 'stream', False)  # streaming for fancy terminal effects
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
@@ -99,8 +101,21 @@ class OpenAIFrontend(AbstractFrontend):
         self.update_session(messages)
         if self.debug:
             console.log('send:', self.session[-1])
-        completion = self.client.chat.completions.create(model=self.model_id, messages=self.session)
-        generated_text = completion.choices[0].message.content
+        completion = self.client.chat.completions.create(model=self.model_id, messages=self.session, stream=self.stream)
+        if self.stream:
+            chunks = []
+            for chunk in completion:
+                if chunk.choices[0].delta.content is not None:
+                    piece = chunk.choices[0].delta.content
+                    chunks.append(piece)
+                    print(piece, end="")
+                    sys.stdout.flush()
+            generated_text = ''.join(chunks)
+            if not generated_text.endswith('\n'):
+                print()
+                sys.stdout.flush()
+        else:
+            generated_text = completion.choices[0].message.content
         new_message = {'role': 'assistant', 'content': generated_text}
         self.update_session(new_message)
         if self.debug:

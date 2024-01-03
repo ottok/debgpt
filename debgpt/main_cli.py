@@ -30,6 +30,7 @@ def parse_args(task, argv):
     ag.add_argument('--frontend', '-F', type=str, default='zmq', choices=('zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
+    ag.add_argument('--stream', '-S', type=bool, default=True, help='default to streaming mode when openai frontend is used')
     if task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
@@ -167,12 +168,16 @@ def main():
     # drop the user into interactive mode if specified (-i)
     if ag.interactive:
         # create prompt_toolkit style
-        prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'), ('', 'ansiwhite')])
+        prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
         try:
-            while text := prompt('Prompt> ', style=prompt_style):
-                with Status('LLM', spinner='line'):
+            while text := prompt(f'{os.getlogin()} [{len(f.session)}]> ', style=prompt_style):
+                if ag.stream:
+                    console.print(f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
                     reply = f(text)
-                console.print(Panel(escape(reply), title='LLM Reply'))
+                else:
+                    with Status('LLM', spinner='line'):
+                        reply = f(text)
+                    console.print(Panel(escape(reply), title='LLM Reply'))
                 # console.print('LLM>', reply)
         except EOFError:
             pass
