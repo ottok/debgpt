@@ -12,6 +12,7 @@ from . import debian
 import torch as th
 import rich
 console = rich.get_console()
+from prompt_toolkit.styles import Style
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
                      'vote', 'policy', 'devref', 'man', 'dev', 'x')
@@ -26,7 +27,7 @@ def parse_args(task, argv):
                     default='tcp://localhost:11177')
     ag.add_argument('--debgpt_home', type=str,
                     default=os.path.expanduser('~/.debgpt'))
-    ag.add_argument('--frontend', '-F', type=str, default='zmq')
+    ag.add_argument('--frontend', '-F', type=str, default='zmq', choices=('zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
     if task == 'backend':
@@ -158,16 +159,18 @@ def main():
         console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
-        with Status('LLM Computing ...', spinner='line'):
+        with Status('LLM', spinner='line'):
             reply = f(msg)
         console.print(Panel(escape(reply), title='LLM Reply'))
         # console.print('LLM>', reply)
 
     # drop the user into interactive mode if specified (-i)
     if ag.interactive:
+        # create prompt_toolkit style
+        prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'), ('', 'ansiwhite')])
         try:
-            while text := prompt('Prompt> '):
-                with Status('LLM Computing ...', spinner='line'):
+            while text := prompt('Prompt> ', style=prompt_style):
+                with Status('LLM', spinner='line'):
                     reply = f(text)
                 console.print(Panel(escape(reply), title='LLM Reply'))
                 # console.print('LLM>', reply)

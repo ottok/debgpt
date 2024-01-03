@@ -64,7 +64,7 @@ class OpenAIFrontend(AbstractFrontend):
     https://platform.openai.com/docs/quickstart?context=python
     '''
     NAME = 'OpenAIFrontend'
-    debug = True
+    debug = False
     model_id = "gpt-3.5-turbo"
 
     def __init__(self, args):
