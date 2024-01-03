@@ -2,6 +2,21 @@
 
 The default step requires a nvidia driver that supports at least CUDA 11.8
 
+# Hardware requirement
+
+
+* `Mistral7B` (default LLM) + `fp16`. 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 9k).
+* `Mistral7B` (default LLM) + `8bit`. at least 12+GB. 24+GB preferred (so you can run all demo).
+* `Mistral7B` (default LLM) + `4bit`. at least 6+GB. 12+GB preferred (so you can run all demo).
+
+* `Mixtral8x7B` (larger) + `4bit`. 23+GB
+* `Mixtral8x7B` (larger) + `8bit`. 45+GB
+* `Mixtral8x7B` (larger) + `fp16`. 90+GB
+
+Note, Multi-GPU inference is supported.
+If you have multiple GPUs, this memory requirement for each GPU is roughly divided by your number of GPUs.
+See also https://huggingface.co/blog/mixtral
+
 ### Conda / Mamba
 
 1. Install [miniconda distribution](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-installer-links.html).
@@ -48,6 +63,7 @@ By default the program will automatically use the CUDA device if it is available
 If not, you can still run the model on CPU. But note that "fp16" (half float precision) is not
 supported for CPU. Each reasponse may takes a couple of minutes on CPU, or a couple of seconds on GPU.
 Here I provided multiple preicisions. You can always trade-off the precision for some speed and RAM/CUDA memory requirement.
+The argument `max_new_tokens` does not matter much and you can adjust it (it is the maximum length of each llm reply).
 
 ```
 # (default: cuda) assume you have a 24+GB CUDA device
@@ -64,6 +80,13 @@ debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit
 # This is really slow. It takes roughly 20 minutes for Xeon Gold 6140 to calculate one reply in the pytorch debian/rules example in demo.sh
 # the other precisions are not supported. 8bit/4bit quantization needs GPU. fp16/bf16 not implemented on cpu. only fp32 available here.
 debgpt backend --max_new_tokens=1024 --device cpu --precision fp32
+```
+
+If you want to run the Mixtral8x7B model (much larger) instead of the default Mistral7B:
+
+```
+# check the above hardware requirement first.
+debgpt backend --llm Mixtral8x7B --max_new_tokens=1024 --device cuda --precision fp16
 ```
 
 * `frontend.py` is a bare ZMQ client. This command is mainly used for debugging.
