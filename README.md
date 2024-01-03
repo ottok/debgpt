@@ -55,6 +55,7 @@ those are not explored yet.
 1. `debgpt.backend` error handling ... illegal input format, overlength, CUDA OOM, etc.
 3. `debgpt.frontend` implement the frontend instance using OpenAI API.
 4. `debgpt.llm` tune llm parameters like temperature.
+5. implement very simple CoT https://arxiv.org/pdf/2205.11916.pdf
 
 ## Infrastructure
 

@@ -31,10 +31,7 @@ def parse_args(task, argv):
     ag.add_argument('--frontend', '-F', type=str, default='zmq')
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
-    if task == 'none':
-        # None. Just talk with llm without context.
-        pass
-    elif task == 'backend':
+    if task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
                         help='"11177" looks like "LLM"')
@@ -47,6 +44,12 @@ def parse_args(task, argv):
                         default='cuda' if th.cuda.is_available() else 'cpu')
         ag.add_argument('--precision', type=str,
                         default='fp16' if th.cuda.is_available() else '4bit')
+    elif task == 'none':
+        # None. Just talk with llm without context.
+        pass
+    elif task == 'stdin':
+        # read stdin. special mode. no actions to be specified.
+        pass
     elif task == 'ml':
         # mailing list
         ag.add_argument('--url', '-u', type=str, required=True)
@@ -146,6 +149,8 @@ def main():
     elif argv[1] in ('dev', 'x'):
         msg = debian.dev(ag.file, ag.action, policy=ag.policy,
                          debgpt_home=ag.debgpt_home)
+    elif argv[1] == 'stdin':
+        msg = debian.stdin()
     else:
         raise NotImplementedError
 

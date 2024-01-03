@@ -12,6 +12,7 @@ import pytest
 from . import policy as debgpt_policy
 import os
 import subprocess
+import sys
 
 
 ########################
@@ -57,6 +58,11 @@ def _load_cmdline(cmd: Union[str, List]) -> List[str]:
         cmd = cmd.split(' ')
     stdout = subprocess.check_output(cmd).decode()
     lines = [x.rstrip() for x in stdout.split('\n')]
+    return lines
+
+
+def _load_stdin() -> List[str]:
+    lines = [x.rstrip() for x in sys.stdin.readlines()]
     return lines
 
 
@@ -235,12 +241,27 @@ def man(name: str, action: str):
     return '\n'.join(lines)
 
 
+# == stdin ==
+stdin_actions = ()  # empty tuple. We don't know what the user wants. stdin is too flexible.
+
+
+def stdin():
+    text = _load_stdin()
+    return '\n'.join(text)
+
+
+def test_stdin():
+    pass # I dont know how to test this but the two lines of code does not seem to have bug.
+
+
 # == file ==
-file_actions = ('what', 'licensecheck', 'free')
+file_actions = ('what', 'licensecheck', 'free', 'none')
 
 
 def file(path: str, action: str):
     text = _load_file(path)
+    if action == 'none':
+        return '\n'.join(text)
     lines = [f'''The following is a file named {path}:''']
     lines.extend(['```'] + text + ['```', ''])
     if action == 'what':
