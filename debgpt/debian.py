@@ -6,7 +6,6 @@ which are subsequently sent through frontend to the backend for LLM to process.
 '''
 from typing import *
 import re
-from bs4 import BeautifulSoup
 import requests
 import pytest
 from . import policy as debgpt_policy
@@ -24,6 +23,7 @@ def _load_html(url: str) -> List[str]:
     '''
     read HTML from url, convert it into plain text, then list of lines
     '''
+    from bs4 import BeautifulSoup
     r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     text = soup.get_text().strip()

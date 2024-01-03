@@ -9,14 +9,12 @@ import os
 import sys
 from . import frontend
 from . import debian
-from . import backend
 import torch as th
 import rich
 console = rich.get_console()
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
                      'vote', 'policy', 'devref', 'man', 'dev', 'x')
-
 
 def parse_args(task, argv):
     '''
@@ -117,6 +115,7 @@ def main():
 
     # create frontend / backend depending on task
     if argv[1] == 'backend':
+        from . import backend
         b = backend.create_backend(ag)
         try:
             b.server()
