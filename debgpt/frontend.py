@@ -77,19 +77,24 @@ class OpenAIFrontend(AbstractFrontend):
                 with open(config_path, 'rb') as f:
                     self.env = tomllib.load(f)
             else:
-                raise FileNotFoundError(f'Please put your OPENAI_API_KEY in environt variables or {config_path}')
+                raise FileNotFoundError(
+                    f'Please put your OPENAI_API_KEY in environt variables or {config_path}')
             if 'OPENAI_API_KEY' not in self.env:
-                raise KeyError(f'the OPENAI_API_KEY is not found in environment variables, neither the config file {config_path}')
+                raise KeyError(
+                    f'the OPENAI_API_KEY is not found in environment variables, neither the config file {config_path}')
             api_key = self.env['OPENAI_API_KEY']
         self.client = OpenAI(api_key=api_key)
         self.uuid = uuid.uuid4()
         self.debgpt_home = args.debgpt_home
         self.session = []
-        #self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
+        # self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
         self.session.append({"role": "system", "content": "You are an excellent free software developer. You write high-quality code. You aim to provide people with prefessional and accurate information. You cherrish software freedom. You obey the Debian Social Contract and the Debian Free Software Guideline. You follow the Debian Policy."})
-        self.stream = getattr(args, 'stream', False)  # streaming for fancy terminal effects
-        self.model_id = getattr(args, 'openai_model_id', self.model_id) # e.g., gpt-3.5-turbo, gpt-4
-        console.log(f'{self.NAME}> instantiated with model={self.model_id} stream={self.stream}.')
+        # streaming for fancy terminal effects
+        self.stream = getattr(args, 'stream', False)
+        # e.g., gpt-3.5-turbo, gpt-4
+        self.model_id = getattr(args, 'openai_model_id', self.model_id)
+        console.log(f'{self.NAME}> instantiated with model={
+                    self.model_id} stream={self.stream}.')
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
@@ -102,7 +107,8 @@ class OpenAIFrontend(AbstractFrontend):
         self.update_session(messages)
         if self.debug:
             console.log('send:', self.session[-1])
-        completion = self.client.chat.completions.create(model=self.model_id, messages=self.session, stream=self.stream)
+        completion = self.client.chat.completions.create(
+            model=self.model_id, messages=self.session, stream=self.stream)
         if self.stream:
             chunks = []
             for chunk in completion:
@@ -182,7 +188,8 @@ def create_frontend(args):
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
     ag.add_argument('--backend', '-B', default='tcp://localhost:11177')
-    ag.add_argument('--frontend', '-F', default='zmq', choices=('zmq', 'openai'))
+    ag.add_argument('--frontend', '-F', default='zmq',
+                    choices=('zmq', 'openai'))
     ag.add_argument('--debgpt_home', default=os.path.expanduser('~/.debgpt'))
     ag = ag.parse_args()
     console.print(ag)

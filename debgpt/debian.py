@@ -242,7 +242,8 @@ def man(name: str, action: str):
 
 
 # == stdin ==
-stdin_actions = ()  # empty tuple. We don't know what the user wants. stdin is too flexible.
+# empty tuple. We don't know what the user wants. stdin is too flexible.
+stdin_actions = ()
 
 
 def stdin():
@@ -251,7 +252,8 @@ def stdin():
 
 
 def test_stdin():
-    pass # I dont know how to test this but the two lines of code does not seem to have bug.
+    # I dont know how to test this but the two lines of code does not seem to have bug.
+    pass
 
 
 # == file ==

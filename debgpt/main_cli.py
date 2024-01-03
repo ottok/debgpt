@@ -1,5 +1,6 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from prompt_toolkit.styles import Style
 from rich.markup import escape
 from rich.status import Status
 from rich.panel import Panel
@@ -12,10 +13,10 @@ from . import debian
 import torch as th
 import rich
 console = rich.get_console()
-from prompt_toolkit.styles import Style
 
 __list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
                      'vote', 'policy', 'devref', 'man', 'dev', 'x')
+
 
 def parse_args(task, argv):
     '''
@@ -27,10 +28,12 @@ def parse_args(task, argv):
                     default='tcp://localhost:11177')
     ag.add_argument('--debgpt_home', type=str,
                     default=os.path.expanduser('~/.debgpt'))
-    ag.add_argument('--frontend', '-F', type=str, default='zmq', choices=('zmq', 'openai'))
+    ag.add_argument('--frontend', '-F', type=str,
+                    default='zmq', choices=('zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
-    ag.add_argument('--stream', '-S', type=bool, default=True, help='default to streaming mode when openai frontend is used')
+    ag.add_argument('--stream', '-S', type=bool, default=True,
+                    help='default to streaming mode when openai frontend is used')
     ag.add_argument('--openai_model_id', type=str, default='gpt-4')
     if task == 'backend':
         # special mode for backend server.
@@ -162,7 +165,8 @@ def main():
 
         # query the backend
         if ag.stream:
-            console.print(f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
+            console.print(
+                f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
             reply = f(msg)
         else:
             with Status('LLM', spinner='line'):
@@ -173,11 +177,13 @@ def main():
     # drop the user into interactive mode if specified (-i)
     if ag.interactive:
         # create prompt_toolkit style
-        prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
+        prompt_style = Style(
+            [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
         try:
             while text := prompt(f'{os.getlogin()} [{len(f.session)}]> ', style=prompt_style):
                 if ag.stream:
-                    console.print(f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
+                    console.print(
+                        f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
                     reply = f(text)
                 else:
                     with Status('LLM', spinner='line'):
