@@ -1,6 +1,22 @@
 Changelog
 =========
 
+v0.3.0 -- 2024-01-03
+--------------------
+
+Major updates:
+
+* support OpenAI API now. you can specify `--openai_model_id` to specify a model.
+When OpenAI Frontend is used, we will enable the streaming mode, which prints
+LLM outputs in real time (word by word) to the terminal.
+
+Minor updates:
+
+* optimize frontend/cli loading speed.
+* support config file (default is ~/.debgpt/config.toml)
+* added `debgpt stdin < some-file.txt` and `debgpt file ... none`.
+* fix device for pipeline when the user specified cpu.
+
 v0.2.1 -- 2024-01-03
 --------------------
 
