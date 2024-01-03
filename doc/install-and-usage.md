@@ -9,9 +9,9 @@ The default step requires a nvidia driver that supports at least CUDA 11.8
 * `Mistral7B` (default LLM) + `8bit`. at least 12+GB. 24+GB preferred (so you can run all demo).
 * `Mistral7B` (default LLM) + `4bit`. at least 6+GB. 12+GB preferred (so you can run all demo).
 
-* `Mixtral8x7B` (larger) + `4bit`. 23+GB
-* `Mixtral8x7B` (larger) + `8bit`. 45+GB
-* `Mixtral8x7B` (larger) + `fp16`. 90+GB
+* `Mixtral8x7B` (larger but better than default) + `fp16`. 90+GB
+* `Mixtral8x7B` (larger but better than default) + `8bit`. 45+GB
+* `Mixtral8x7B` (larger but better than default) + `4bit`. 23+GB. But in order to run all the demo, you still need 2x 48GB GPUs in 4bit precision, as the context length is nearly 10k.
 
 Note, Multi-GPU inference is supported.
 If you have multiple GPUs, this memory requirement for each GPU is roughly divided by your number of GPUs.
