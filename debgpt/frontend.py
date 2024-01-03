@@ -3,7 +3,6 @@
 from typing import *
 import argparse
 import os
-import zmq
 import json
 import rich
 import uuid
@@ -139,6 +138,7 @@ class ZMQFrontend(AbstractFrontend):
     debug: bool = False
 
     def __init__(self, args):
+        import zmq
         super().__init__(args)
         self.socket = zmq.Context().socket(zmq.REQ)
         self.socket.connect(self.backend)

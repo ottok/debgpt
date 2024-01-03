@@ -11,7 +11,6 @@ import sys
 from . import frontend
 from . import debian
 from . import defaults
-import torch as th
 import rich
 console = rich.get_console()
 
@@ -44,10 +43,8 @@ def parse_args(task, argv):
                         default='zmq', choices=('zmq',))
         ag.add_argument('--max_new_tokens', type=int, default=512)
         ag.add_argument('--llm', type=str, default='Mistral7B')
-        ag.add_argument('--device', type=str,
-                        default='cuda' if th.cuda.is_available() else 'cpu')
-        ag.add_argument('--precision', type=str,
-                        default='fp16' if th.cuda.is_available() else '4bit')
+        ag.add_argument('--device', type=str, default='cuda')
+        ag.add_argument('--precision', type=str, default='fp16')
     elif task == 'none':
         # None. Just talk with llm without context.
         pass
