@@ -127,8 +127,8 @@ class Mistral7B(AbstractLLM):
             pipe = pipeline('conversational', model=self.llm,
                             tokenizer=self.tok, device=self.device)
 
-        streamer = TextStreamer(self.tok, skip_prompt=True)
-        prompt_style = Style([('prompt', 'bold fg:ansibrightgreen'), ('', 'bold ansiwhite')])
+        streamer = TextStreamer(self.tok, skip_prompt=True, clean_up_tokenization_spaces=True, skip_special_tokens=True)
+        prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'), ('', 'ansiwhite')])
         try:
             while text := prompt(f'Prompt[{len(chat.messages)}]> ', style=prompt_style):
                 chat.add_message({'role': 'user', 'content': text})
@@ -137,16 +137,15 @@ class Mistral7B(AbstractLLM):
                     if self.is_pipeline:
                         templated = self.tok.apply_chat_template(chat.messages, tokenize=False,
                                                                  add_generation_prompt=True)
-                        print(f'\x1b[1;34mStream[{len(chat.messages)}]>\x1b[0m \x1b[0;34m', end='')
-                        outputs = pipe(templated, **self.kwargs, streamer=streamer, eos_token_id=self.tok.eos_token_id)
+                        print(f'\x1b[1;32mStream[{len(chat.messages)}]>\x1b[0m \x1b[0;32m', end='')
+                        outputs = pipe(templated, **self.kwargs, streamer=streamer, clean_up_tokenization_spaces=True)
                         print('\x1b[0m', end='')
-                        generated = outputs[0]['generated_text'][len(
-                            templated):].lstrip()
+                        generated = outputs[0]['generated_text'][len(templated):]
                         chat.add_message(
                             {'role': 'assistant', 'content': generated})
                     else:
                         chat = pipe(chat, **self.kwargs)
-                console.print(Panel(chat[-1]['content'], title=f'[bold blue]LLM ({self.NAME})[/bold blue]', border_style='blue'), markup=False)
+                #console.print(Panel(chat[-1]['content'], title=f'[bold blue]LLM ({self.NAME})[/bold blue]', border_style='blue'), markup=False)
         except EOFError:
             pass
         except KeyboardInterrupt:
