@@ -39,6 +39,7 @@ class Mistral7B(AbstractLLM):
     https://huggingface.co/docs/transformers/model_doc/mistral
     https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
     https://huggingface.co/docs/transformers/main/chat_templating
+    https://huggingface.co/blog/mixtral
 
     TODO: also support 4bit and 8bit for CPU inference. Not everybody has expensive GPUs.
     '''
@@ -55,26 +56,20 @@ class Mistral7B(AbstractLLM):
         self.device = device  # overrride abstract class
         console.log(
             f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
+        llm_kwargs = {'torch_dtype': th.float16, 'load_in_8bit': False, 'load_in_4bit': False}
         if precision == 'fp16':
-            self.dtype = th.float16
-            self.llm = AutoModelForCausalLM.from_pretrained(
-                self.model_id, torch_dtype=self.dtype)
+            llm_kwargs['torch_dtype'] = th.float16
         elif precision == 'fp32':
-            self.dtype = th.float32
-            self.llm = AutoModelForCausalLM.from_pretrained(
-                self.model_id, torch_dtype=self.dtype)
+            llm_kwargs['torch_dtype'] = th.float32
         elif precision == 'bf16':
-            self.dtype = th.bfloat16
-            self.llm = AutoModelForCausalLM.from_pretrained(
-                self.model_id, torch_dtype=self.dtype)
+            llm_kwargs['torch_dtype'] = th.bfloat16
         elif precision == '8bit':
-            self.llm = AutoModelForCausalLM.from_pretrained(
-                self.model_id, load_in_8bit=True)
+            llm_kwargs['load_in_8bit'] = True
         elif precision == '4bit':
-            self.llm = AutoModelForCausalLM.from_pretrained(
-                self.model_id, load_in_4bit=True)
+            llm_kwargs['load_in_4bit'] = True
         else:
             raise NotImplementedError(precision)
+        self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, llm_kwargs)
         if precision in ('fp16', 'fp32', 'bf16'):
             self.llm.to(self.device)
         else:
