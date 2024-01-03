@@ -25,7 +25,7 @@ def stat_messages(messages: List[Dict], llm):
     context_size = llm.tok.apply_chat_template(messages, tokenize=True,
                                                return_tensors='pt').size(1)
     ret = f'num_msgs={len(messages)}, ctx_size={context_size}; '
-    ret += f'lastest={messages[-1]}'
+    ret += f'latest={messages[-1]}'
     return ret
 
 
