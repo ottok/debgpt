@@ -80,7 +80,7 @@ class Mistral7B(AbstractLLM):
             raise NotImplementedError(precision)
         if self.is_pipeline:
             self.llm = transformers.pipeline('text-generation', model=self.model_id,
-                                             model_kwargs=llm_kwargs, tokenizer=self.tok, device_map='auto')
+                                             model_kwargs=llm_kwargs, tokenizer=self.tok, device_map='auto' if self.device == 'cuda' else self.device)
         else:
             self.llm = AutoModelForCausalLM.from_pretrained(
                 self.model_id, llm_kwargs)
