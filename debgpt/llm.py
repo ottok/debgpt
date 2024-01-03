@@ -45,6 +45,7 @@ class Mistral7B(AbstractLLM):
 
     TODO: also support 4bit and 8bit for CPU inference. Not everybody has expensive GPUs.
     '''
+    NAME = 'Mistral7B'
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
     is_pipeline = True
 
@@ -58,7 +59,7 @@ class Mistral7B(AbstractLLM):
         super().__init__()
         self.device = device  # overrride abstract class
         console.log(
-            f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
+            f'{self.NAME}> Loading {self.model_id} ({device}/{precision})')
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
         llm_kwargs = {'torch_dtype': th.float16, 'load_in_8bit': False, 'load_in_4bit': False}
         if precision == 'fp16':
@@ -71,6 +72,7 @@ class Mistral7B(AbstractLLM):
             llm_kwargs['load_in_8bit'] = True
         elif precision == '4bit':
             llm_kwargs['load_in_4bit'] = True
+            llm_kwargs['bnb_4bit_compute_dtype'] = th.float16
         else:
             raise NotImplementedError(precision)
         if self.is_pipeline:
@@ -123,7 +125,7 @@ class Mistral7B(AbstractLLM):
         try:
             while text := prompt('Prompt> '):
                 chat.add_message({'role': 'user', 'content': text})
-                with Status('LLM ...', spinner='line'):
+                with Status(f'{self.NAME}', spinner='line'):
                     if self.is_pipeline:
                         templated = self.tok.apply_chat_template(chat.messages, tokenize=False,
                                                                  add_generation_prompt=True)
@@ -140,10 +142,19 @@ class Mistral7B(AbstractLLM):
         return chat
 
 
+class Mixtral8x7B(Mistral7B):
+    NAME = 'Mixtral8x7B'
+    model_id = 'mistralai/Mixtral-8x7B-Instruct-v0.1'
+    is_pipeline = True
+
+
 def create_llm(args) -> AbstractLLM:
     # factory
     if args.llm == 'Mistral7B':
         model = Mistral7B(device=args.device, precision=args.precision)
+        model.kwargs['max_new_tokens'] = args.max_new_tokens
+    elif args.llm == 'Mixtral8x7B':
+        model = Mixtral8x7B(device=args.device, precision=args.precision)
         model.kwargs['max_new_tokens'] = args.max_new_tokens
     else:
         raise NotImplementedError(f'{args.llm} is not yet implemented')
@@ -157,7 +168,7 @@ if __name__ == '__main__':
     ag.add_argument('--debgpt_home', type=str,
                     default=os.path.expanduser('~/.debgpt'))
     ag.add_argument('--llm', type=str, default='Mistral7B',
-                    choices=('Mistral7B',))
+                    choices=('Mistral7B', 'Mixtral8x7B'))
     ag.add_argument('-i', '--ipython', action='store_true')
     ag.add_argument('--device', type=str,
                     default='cuda' if th.cuda.is_available() else 'cpu')
