@@ -13,8 +13,15 @@ with open(sys.argv[1]) as f:
 for entry in J:
     if entry['role'] == 'user':
         title = 'User Input'
+        border_style = 'cyan'
     elif entry['role'] == 'assistant':
         title = 'LLM Response'
+        border_style = 'green'
+    elif entry['role'] == 'system':
+        title = 'System Message'
+        border_style = 'red'
+    else:
+        raise ValueError(f'unknown role')
 
-    panel = Panel(escape(entry['content']), title=title)
+    panel = Panel(escape(entry['content']), title=title, border_style=border_style)
     console.print(panel)

@@ -85,7 +85,8 @@ class OpenAIFrontend(AbstractFrontend):
         self.uuid = uuid.uuid4()
         self.debgpt_home = args.debgpt_home
         self.session = []
-        self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
+        #self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
+        self.session.append({"role": "system", "content": "You are an excellent free software developer. You write high-quality code. You aim to provide people with prefessional and accurate information. You cherrish software freedom. You obey the Debian Social Contract and the Debian Free Software Guideline. You follow the Debian Policy."})
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')

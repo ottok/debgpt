@@ -5,6 +5,10 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.dynamic]
 version = {attr = "debgpt.__version__"}
 
+[tool.setuptools.packages.find]
+include = ["debgpt*"]
+exclude = ["doc*", "tests*"]
+
 [project]
 dynamic = ["version"]
 name = 'debgpt'
