@@ -1,5 +1,6 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from rich.status import Status
 import json
 import os
 import re
@@ -14,7 +15,6 @@ import argparse
 import rich
 from rich.panel import Panel
 console = rich.get_console()
-from rich.status import Status
 
 
 class AbstractLLM(object):
@@ -61,7 +61,8 @@ class Mistral7B(AbstractLLM):
         console.log(
             f'{self.NAME}> Loading {self.model_id} ({device}/{precision})')
         self.tok = AutoTokenizer.from_pretrained(self.model_id)
-        llm_kwargs = {'torch_dtype': th.float16, 'load_in_8bit': False, 'load_in_4bit': False}
+        llm_kwargs = {'torch_dtype': th.float16,
+                      'load_in_8bit': False, 'load_in_4bit': False}
         if precision == 'fp16':
             llm_kwargs['torch_dtype'] = th.float16
         elif precision == 'fp32':
@@ -77,9 +78,10 @@ class Mistral7B(AbstractLLM):
             raise NotImplementedError(precision)
         if self.is_pipeline:
             self.llm = transformers.pipeline('text-generation', model=self.model_id,
-                 model_kwargs=llm_kwargs, tokenizer=self.tok, device_map='auto')
+                                             model_kwargs=llm_kwargs, tokenizer=self.tok, device_map='auto')
         else:
-            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, llm_kwargs)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                self.model_id, llm_kwargs)
         if precision in ('fp16', 'fp32', 'bf16') and not self.is_pipeline:
             self.llm.to(self.device)
         else:
@@ -93,7 +95,7 @@ class Mistral7B(AbstractLLM):
     def generate(self, messages: List[Dict]):
         if self.is_pipeline:
             templated = self.tok.apply_chat_template(messages, tokenize=False,
-                                                  add_generation_prompt=True)
+                                                     add_generation_prompt=True)
             outputs = self.llm(templated, **self.kwargs)
             generated = outputs[0]['generated_text'][len(templated):].lstrip()
             messages.append({'role': 'assistant', 'content': generated})
@@ -130,8 +132,10 @@ class Mistral7B(AbstractLLM):
                         templated = self.tok.apply_chat_template(chat.messages, tokenize=False,
                                                                  add_generation_prompt=True)
                         outputs = pipe(templated, **self.kwargs)
-                        generated = outputs[0]['generated_text'][len(templated):].lstrip()
-                        chat.add_message({'role': 'assistant', 'content': generated})
+                        generated = outputs[0]['generated_text'][len(
+                            templated):].lstrip()
+                        chat.add_message(
+                            {'role': 'assistant', 'content': generated})
                     else:
                         chat = pipe(chat, **self.kwargs)
                 console.print('LLM> ', chat[-1]['content'])
