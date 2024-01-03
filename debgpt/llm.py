@@ -6,6 +6,7 @@ import re
 from prompt_toolkit import prompt
 from transformers import pipeline, Conversation
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import transformers
 import numpy as np
 import torch as th
 from typing import *
@@ -13,6 +14,7 @@ import argparse
 import rich
 from rich.panel import Panel
 console = rich.get_console()
+from rich.status import Status
 
 
 class AbstractLLM(object):
@@ -44,6 +46,7 @@ class Mistral7B(AbstractLLM):
     TODO: also support 4bit and 8bit for CPU inference. Not everybody has expensive GPUs.
     '''
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
+    is_pipeline = True
 
     def __init__(self, *, device: str, precision: str):
         '''
@@ -56,6 +59,7 @@ class Mistral7B(AbstractLLM):
         self.device = device  # overrride abstract class
         console.log(
             f'Mistral7B> Loading {self.model_id} ({device}/{precision})')
+        self.tok = AutoTokenizer.from_pretrained(self.model_id)
         llm_kwargs = {'torch_dtype': th.float16, 'load_in_8bit': False, 'load_in_4bit': False}
         if precision == 'fp16':
             llm_kwargs['torch_dtype'] = th.float16
@@ -69,42 +73,65 @@ class Mistral7B(AbstractLLM):
             llm_kwargs['load_in_4bit'] = True
         else:
             raise NotImplementedError(precision)
-        self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, llm_kwargs)
-        if precision in ('fp16', 'fp32', 'bf16'):
+        if self.is_pipeline:
+            self.llm = transformers.pipeline('text-generation', model=self.model_id,
+                 model_kwargs=llm_kwargs, tokenizer=self.tok, device_map='auto')
+        else:
+            self.llm = AutoModelForCausalLM.from_pretrained(self.model_id, llm_kwargs)
+        if precision in ('fp16', 'fp32', 'bf16') and not self.is_pipeline:
             self.llm.to(self.device)
         else:
             pass
-        self.tok = AutoTokenizer.from_pretrained(self.model_id)
+        # TODO: temperature, top_k, top_p
         self.kwargs = {'max_new_tokens': 512,
                        'do_sample': True,
                        'pad_token_id': 2}
 
     @th.no_grad()
     def generate(self, messages: List[Dict]):
-        encoded = self.tok.apply_chat_template(messages, tokenize=True,
-                                               return_tensors='pt',
-                                               add_generation_prompt=True).to(0)
-        model_inputs = encoded.to(self.device)
-        input_length = model_inputs.shape[1]
-        generated_ids = self.llm.generate(model_inputs, **self.kwargs)
-        generated_new_ids = generated_ids[:, input_length:]
-        generated_new_text = self.tok.batch_decode(generated_new_ids,
-                                                   skip_special_tokens=True,
-                                                   clean_up_tokenization_spaces=True)[0]
-        new_message = {'role': 'assistant', 'content': generated_new_text}
-        messages.append(new_message)
-        return messages
+        if self.is_pipeline:
+            templated = self.tok.apply_chat_template(messages, tokenize=False,
+                                                  add_generation_prompt=True)
+            outputs = self.llm(templated, **self.kwargs)
+            generated = outputs[0]['generated_text'][len(templated):].lstrip()
+            messages.append({'role': 'assistant', 'content': generated})
+            return messages
+        else:
+            encoded = self.tok.apply_chat_template(messages, tokenize=True,
+                                                   return_tensors='pt',
+                                                   add_generation_prompt=True).to(0)
+            model_inputs = encoded.to(self.device)
+            input_length = model_inputs.shape[1]
+            generated_ids = self.llm.generate(model_inputs, **self.kwargs)
+            generated_new_ids = generated_ids[:, input_length:]
+            generated_new_text = self.tok.batch_decode(generated_new_ids,
+                                                       skip_special_tokens=True,
+                                                       clean_up_tokenization_spaces=True)[0]
+            new_message = {'role': 'assistant', 'content': generated_new_text}
+            messages.append(new_message)
+            return messages
 
     def chat(self, chat=Conversation()):
         '''
         https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.ConversationalPipeline
         '''
-        pipe = pipeline('conversational', model=self.llm,
-                        tokenizer=self.tok, device=self.device)
+        if self.is_pipeline:
+            pipe = self.llm
+        else:
+            pipe = pipeline('conversational', model=self.llm,
+                            tokenizer=self.tok, device=self.device)
         try:
             while text := prompt('Prompt> '):
                 chat.add_message({'role': 'user', 'content': text})
-                chat = pipe(chat, **self.kwargs)
+                with Status('LLM ...', spinner='line'):
+                    if self.is_pipeline:
+                        templated = self.tok.apply_chat_template(chat.messages, tokenize=False,
+                                                                 add_generation_prompt=True)
+                        outputs = pipe(templated, **self.kwargs)
+                        generated = outputs[0]['generated_text'][len(templated):].lstrip()
+                        chat.add_message({'role': 'assistant', 'content': generated})
+                    else:
+                        chat = pipe(chat, **self.kwargs)
                 console.print('LLM> ', chat[-1]['content'])
         except EOFError:
             pass

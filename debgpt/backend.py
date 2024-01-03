@@ -6,6 +6,7 @@ import argparse
 import zmq
 from . import llm
 import rich
+import torch as th
 console = rich.get_console()
 
 
