@@ -88,10 +88,15 @@ class Mistral7B(AbstractLLM):
             self.llm.to(self.device)
         else:
             pass
-        # TODO: temperature, top_k, top_p
         self.kwargs = {'max_new_tokens': 512,
                        'do_sample': True,
-                       'pad_token_id': 2}
+                       'pad_token_id': 2,
+                       # default parameters for mixtral
+                       # https://huggingface.co/blog/mixtral
+                       'temperature': 0.7,
+                       'top_k': 50,
+                       'top_p': 0.95,
+                       }
 
     @th.no_grad()
     def generate(self, messages: List[Dict]):
