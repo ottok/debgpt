@@ -72,7 +72,7 @@ class OpenAIFrontend(AbstractFrontend):
         super().__init__(args)
         from openai import OpenAI
         if (api_key := os.getenv('OPENAI_API_KEY', None)) is None:
-            config_path = os.path.join(args.debgpt_home, 'env.toml')
+            config_path = os.path.join(args.debgpt_home, 'config.toml')
             if os.path.exists(config_path):
                 with open(config_path, 'rb') as f:
                     self.env = tomllib.load(f)

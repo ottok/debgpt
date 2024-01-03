@@ -10,6 +10,7 @@ import os
 import sys
 from . import frontend
 from . import debian
+from . import defaults
 import torch as th
 import rich
 console = rich.get_console()
@@ -23,18 +24,16 @@ def parse_args(task, argv):
     this non-standard subparser implementation requires me to write much
     less code compared to the standard one.
     '''
+    conf = defaults.Config()
     ag = argparse.ArgumentParser(f'debgpt {task}')
-    ag.add_argument('--backend', '-B', type=str,
-                    default='tcp://localhost:11177')
-    ag.add_argument('--debgpt_home', type=str,
-                    default=os.path.expanduser('~/.debgpt'))
-    ag.add_argument('--frontend', '-F', type=str,
-                    default='zmq', choices=('zmq', 'openai'))
+    ag.add_argument('--backend', '-B', type=str, default=conf['backend'])
+    ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
+    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
-    ag.add_argument('--stream', '-S', type=bool, default=True,
+    ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
                     help='default to streaming mode when openai frontend is used')
-    ag.add_argument('--openai_model_id', type=str, default='gpt-4')
+    ag.add_argument('--openai_model_id', type=str, default=conf['oepnai_model_id'])
     if task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
