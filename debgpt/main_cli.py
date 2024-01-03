@@ -31,6 +31,7 @@ def parse_args(task, argv):
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
     ag.add_argument('--stream', '-S', type=bool, default=True, help='default to streaming mode when openai frontend is used')
+    ag.add_argument('--openai_model_id', type=str, default='gpt-4')
     if task == 'backend':
         # special mode for backend server.
         ag.add_argument('--port', '-p', type=int, default=11177,
@@ -160,9 +161,13 @@ def main():
         console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
-        with Status('LLM', spinner='line'):
+        if ag.stream:
+            console.print(f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
             reply = f(msg)
-        console.print(Panel(escape(reply), title='LLM Reply'))
+        else:
+            with Status('LLM', spinner='line'):
+                reply = f(msg)
+            console.print(Panel(escape(reply), title='LLM Reply'))
         # console.print('LLM>', reply)
 
     # drop the user into interactive mode if specified (-i)

@@ -82,13 +82,14 @@ class OpenAIFrontend(AbstractFrontend):
                 raise KeyError(f'the OPENAI_API_KEY is not found in environment variables, neither the config file {config_path}')
             api_key = self.env['OPENAI_API_KEY']
         self.client = OpenAI(api_key=api_key)
-        console.log(f'{self.NAME}> client instantiated.')
         self.uuid = uuid.uuid4()
         self.debgpt_home = args.debgpt_home
         self.session = []
         #self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
         self.session.append({"role": "system", "content": "You are an excellent free software developer. You write high-quality code. You aim to provide people with prefessional and accurate information. You cherrish software freedom. You obey the Debian Social Contract and the Debian Free Software Guideline. You follow the Debian Policy."})
         self.stream = getattr(args, 'stream', False)  # streaming for fancy terminal effects
+        self.model_id = getattr(args, 'openai_model_id', self.model_id) # e.g., gpt-3.5-turbo, gpt-4
+        console.log(f'{self.NAME}> instantiated with model={self.model_id} stream={self.stream}.')
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
