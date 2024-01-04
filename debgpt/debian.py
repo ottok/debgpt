@@ -257,7 +257,7 @@ def test_stdin():
 
 
 # == file ==
-file_actions = ('what', 'licensecheck', 'free', 'none')
+file_actions = ('what', 'brief', 'licensecheck', 'free', 'none')
 
 
 def file(path: str, action: str):
@@ -269,6 +269,9 @@ def file(path: str, action: str):
     if action == 'what':
         lines.append(
             '''What is the purpose of this file? Please explain in detail.''')
+    elif action == 'brief':
+        lines.append(
+            '''Briefly explain the purpose of this file. Your answer must not exceed the twitter number of character limit.''')
     elif action == 'licensecheck':
         lines.append(
             'What is the copyright and license of this file? Use SPDX format.')
