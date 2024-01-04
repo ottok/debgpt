@@ -28,8 +28,12 @@ def task_backend(ag) -> None:
     except KeyboardInterrupt:
         pass
     console.log('Server shut down.')
-    exit(1)
+    exit(0)
 
+def task_replay(ag) -> None:
+    from . import replay
+    replay.replay(ag.json_file_path)
+    exit(0)
 
 def parse_args():
     '''
@@ -80,6 +84,11 @@ def parse_args():
     # FIXME: deprecated.
     ps_none = subps.add_parser('none', help='degenerate into general chat without debian specific stuff')
     ps_none.set_defaults(func=lambda ag: None)
+
+    # -- replay (special mode)
+    ps_replay = subps.add_parser('replay', help='replay a conversation from a JSON file')
+    ps_replay.add_argument('json_file_path', type=str, help='path to the JSON file')
+    ps_replay.set_defaults(func=task_replay)
 
     # -- stdin
     ps_stdin = subps.add_parser('stdin', help='read stdin. special mode. no actions to be specified.')

@@ -24,16 +24,20 @@ def process_entry(entry):
     panel = Panel(escape(entry['content']), title=title, border_style=border_style)
     console.print(panel)
 
-def main():
-    parser = argparse.ArgumentParser(description='Replay chat messages from a JSON file.')
-    parser.add_argument('input_file', metavar='FILE', help='JSON file containing the chat messages')
-    args = parser.parse_args()
-
-    with open(args.input_file) as f:
+def replay(path):
+    with open(path) as f:
         J = json.load(f)
 
     for entry in J:
         process_entry(entry)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Replay chat messages from a JSON file.')
+    parser.add_argument('input_file', metavar='FILE', help='JSON file containing the chat messages')
+    args = parser.parse_args()
+    replay(args.input_file)
+
 
 if __name__ == '__main__':
     main()
