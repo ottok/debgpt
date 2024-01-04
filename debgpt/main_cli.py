@@ -1,5 +1,10 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+
+# suppress all warnings.
+import warnings
+warnings.filterwarnings("ignore")
+
 from prompt_toolkit.styles import Style
 from rich.markup import escape
 from rich.status import Status
