@@ -8,16 +8,20 @@ necessary.
 ## Hardware requirement (if you want to self-host LLM backend)
 
 The default step (for self-hosted LLM backend) requires a nvidia driver that
-supports at least CUDA 11.8
+supports at least CUDA 11.8. The default LLM is `Mistral7B`, which takes roughly
+15GB disk space. The `Mixtral8x7B` is a mixture of experts model, which is
+significantly larger, taking roughly ~100GB disk space (TODO: concrete number)
+and performs better than `Mistral7B`.
 
 
-* `Mistral7B` (default LLM) + `fp16`. 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 9k).
-* `Mistral7B` (default LLM) + `8bit`. at least 12+GB. 24+GB preferred (so you can run all demo).
-* `Mistral7B` (default LLM) + `4bit`. at least 6+GB. 12+GB preferred (so you can run all demo).
+* `Mistral7B` + `fp16` (cuda). 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as ~10k).
+* `Mistral7B` + `8bit` (cuda). at least 12+GB. 24+GB preferred (so you can run all demo).
+* `Mistral7B` + `4bit` (cuda). at least 6+GB. 12+GB preferred (so you can run all demo).
+* `Mistral7B` + `fp32` (cpu). This requires 64+GB of RAM, but CPU is at least 100~400 times slower than GPU on this. Not recommended.
 
-* `Mixtral8x7B` (larger but better than default) + `fp16`. 90+GB
-* `Mixtral8x7B` (larger but better than default) + `8bit`. 45+GB
-* `Mixtral8x7B` (larger but better than default) + `4bit`. 23+GB. But in order to run all the demo, you still need 2x 48GB GPUs in 4bit precision, as the context length is nearly 10k.
+* `Mixtral8x7B` + `fp16`. 90+GB
+* `Mixtral8x7B` + `8bit`. 45+GB
+* `Mixtral8x7B` + `4bit`. 23+GB. But in order to run all the demo, you still need 2x 48GB GPUs in 4bit precision, as the context length is ~10k.
 
 Note, Multi-GPU inference is supported.
 If you have multiple GPUs, this memory requirement for each GPU is roughly divided by your number of GPUs.
