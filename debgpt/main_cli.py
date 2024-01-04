@@ -61,7 +61,7 @@ def parse_args():
     # CLI behavior
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
-    ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt')
+    ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
@@ -170,7 +170,8 @@ def parse_args():
 def main():
     # parse args and prepare debgpt_home
     ag = parse_args()
-    console.log(ag)
+    if not ag.hide_first_prompt:
+        console.log(ag)
     if not os.path.exists(ag.debgpt_home):
         os.mkdir(ag.debgpt_home)
 
