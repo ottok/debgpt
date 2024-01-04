@@ -7,14 +7,6 @@ knowledge is a kind of niche knowledge, which is not learnt well by commercial
 or open-access LLMs. In this project, we attempt to explore the possibility
 of leveraging LLMs to aid Debian development, in any extent.
 
-*Status:* alpha. You can run the demo locally.
-
-*Discussions:* Open an issue for this repo.
-
-*Mailing-List:* Debian Deep Learning Team <debian-ai@lists.debian.org>
-
-*Technical-Details:*
-
 1. [Install and Usage Guide](doc/install-and-usage.md)
 1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
 1. [Future Ideas](doc/ideas.md)
@@ -23,11 +15,7 @@ of leveraging LLMs to aid Debian development, in any extent.
 
 Prompt-engineering an existing Chatting LLM with debian-specific documents,
 like debian-policy, debian developer references, and some man pages.
-
-The examples included in [`demo.sh`](demo.sh) are already run-able.
-The contents of this script are also shown below.
-I uploaded my LLM session of each command in the `examples/` directory.
-You can use [`replay.py`](replay.py) to reply these sessions.
+Some examples are in [`demo.sh`](demo.sh).
 
 The usage of LLM is limited by our imaginations. Please provide more
 ideas on how we can use it.
@@ -37,7 +25,6 @@ Some imagined use cases, not yet implemented:
 1. Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do some more complicated things
 1. Extend Lintian with LLM for complicated checks?
 1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length.
-
 
 ## How to extend the CLI
 
