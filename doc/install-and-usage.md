@@ -64,11 +64,24 @@ dependencies. The stripped dependency list is TODO.
 Just `pip3 install .` for `pyproject.toml`-based project.
 If this step is skipped, just replace `debgpt` into `python3 -m debgpt.main_cli` in every command that starts with `debgpt`.
 
-# Usage
+# Usage of `debgpt` (main user interface)
+
+```shell
+debgpt                  # you need to do "pip3 install ." first.
+debgpt -F openai        # use the openai frontend
+debgpt -h               # print supported taskss, and the the arguments shared across all tasks
+debgpt <task> -h        # print the help of a task
+```
+
+check `demo.sh` at the root directory for a list of samples.
+The configuration file is located at `~/.debgpt/config.toml`.
+Check `/etc/config.toml` for example.
+
+
+# Usage (developers)
 
 The (debugging) tag means the corresponding usage is for debugging purpose.
 The (backend) tag means the corresponding usage is for self-hosted LLM inference. You only need a backend if the ZMQ frontend is used.
-The (user) tag means the corresponding usage is targeted for the general audience.
 
 ## `llm.py` LLM inference (debugging)
 
@@ -118,15 +131,3 @@ The main user interface will wrap the frontend.
 ```shell
 $ python3 -m debgpt.frontend
 ```
-
-## `debgpt` (`main_cli.py`) or  main user interface. The following two commands are equilvalent (user)
-
-```shell
-python3 -m debgpt.main_cli    # development mode
-debgpt                        # you need to do "pip3 install ." first.
-debgpt -F openai              # use the openai frontend
-```
-
-check `demo.sh` at the root directory for a list of samples.
-The configuration file is located at `~/.debgpt/config.toml`.
-Check `/etc/config.toml` for example.
