@@ -19,96 +19,136 @@ from . import defaults
 import rich
 console = rich.get_console()
 
-__list_of_tasks__ = ('none', 'backend', 'ml', 'bts', 'buildd', 'file',
-                     'vote', 'policy', 'devref', 'man', 'dev', 'x')
+
+def task_backend(ag) -> None:
+    from . import backend
+    b = backend.create_backend(ag)
+    try:
+        b.server()
+    except KeyboardInterrupt:
+        pass
+    console.log('Server shut down.')
+    exit(1)
 
 
-def parse_args(task, argv):
+def parse_args():
     '''
-    this non-standard subparser implementation requires me to write much
-    less code compared to the standard one.
+    argparse with subparsers
     '''
     conf = defaults.Config()
-    #console.print(conf.toml)
-    ag = argparse.ArgumentParser(f'debgpt {task}')
+    ag = argparse.ArgumentParser()
+
+    # LLM inference arguments
     ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'])
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
-    ag.add_argument('--backend', '-B', type=str, default=conf['backend'])
+
+    # general frontend
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
     ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
-    ag.add_argument('--interactive', '-i', action='store_true',
-                    help='keep chatting with LLM. do not quit after the first reply.')
-    ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+
+    # ZMQ frontend
+    ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
+
+    # openai frontend
     ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
                     help='default to streaming mode when openai frontend is used')  # FIXME: this argument does not work
     ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
-    if task == 'backend':
-        # special mode for backend server.
-        ag.add_argument('--port', '-p', type=int, default=11177,
-                        help='"11177" looks like "LLM"')
-        ag.add_argument('--host', type=str, default='tcp://*')
-        ag.add_argument('--backend_impl', type=str,
-                        default='zmq', choices=('zmq',))
-        ag.add_argument('--max_new_tokens', type=int, default=512)
-        ag.add_argument('--llm', type=str, default='Mistral7B')
-        ag.add_argument('--device', type=str, default='cuda')
-        ag.add_argument('--precision', type=str, default='fp16')
-    elif task == 'none':
-        # None. Just talk with llm without context.
-        pass
-    elif task == 'stdin':
-        # read stdin. special mode. no actions to be specified.
-        pass
-    elif task == 'ml':
-        # mailing list
-        ag.add_argument('--url', '-u', type=str, required=True)
-        ag.add_argument('--raw', action='store_true', help='use raw html')
-        ag.add_argument('action', type=str,
-                        choices=debian.mailing_list_actions)
-    elif task == 'bts':
-        # bts
-        ag.add_argument('--id', '-x', type=str, required=True)
-        ag.add_argument('--raw', action='store_true', help='use raw html')
-        ag.add_argument('action', type=str, choices=debian.bts_actions)
-    elif task == 'buildd':
-        # buildd
-        ag.add_argument('--package', '-p', type=str, required=True)
-        ag.add_argument('--suite', '-s', type=str, default='sid')
-        ag.add_argument('--raw', action='store_true', help='use raw html')
-        ag.add_argument('action', type=str, choices=debian.buildd_actions)
-    elif task == 'file':
-        # ask questions regarding a specific file
-        # e.g., license check (SPDX format), code improvement, code explain
-        # TODO: support multiple files (nargs=+)
-        ag.add_argument('--file', '-f', type=str, required=True)
-        ag.add_argument('action', type=str, choices=debian.file_actions)
-    elif task == 'vote':
-        # vote.debian.org
-        ag.add_argument('--suffix', '-s', type=str, required=True,
-                        help='for example, 2023/vote_002')
-        ag.add_argument('action', type=str, choices=debian.vote_actions)
-    elif task == 'policy':
-        # policy document (plain text)
-        ag.add_argument('--section', '-s', type=str, required=True)
-        ag.add_argument('action', type=str, choices=debian.policy_actions)
-    elif task == 'devref':
-        # devref document
-        ag.add_argument('--section', '-s', type=str, required=True)
-        ag.add_argument('action', type=str, choices=debian.devref_actions)
-    elif task == 'man':
-        # manual page
-        ag.add_argument('--man', '-m', type=str, required=True)
-        ag.add_argument('action', type=str, choices=debian.man_actions)
-    elif task in ('dev', 'x'):
-        # code editing with context
-        ag.add_argument('--file', '-f', type=str, required=True,
+
+    # CLI behavior
+    ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
+    ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+
+    # The following are task-specific subparsers
+    subps = ag.add_subparsers(help='task help')
+    ag.set_defaults(func=lambda ag: None)  # if no subparser specified
+
+    # -- backend (special mode)
+    ps_backend = subps.add_parser('backend', help='special mode: start backend server (self-hosted LLM inference)')
+    ps_backend.add_argument('--port', '-p', type=int, default=11177,
+                            help='"11177" looks like "LLM"')
+    ps_backend.add_argument('--host', type=str, default='tcp://*')
+    ps_backend.add_argument('--backend_impl', type=str,
+                            default='zmq', choices=('zmq',))
+    ps_backend.add_argument('--max_new_tokens', type=int, default=512)
+    ps_backend.add_argument('--llm', type=str, default='Mistral7B')
+    ps_backend.add_argument('--device', type=str, default='cuda')
+    ps_backend.add_argument('--precision', type=str, default='fp16')
+    ps_backend.set_defaults(func=task_backend)
+
+    # -- none (special mode)
+    ps_none = subps.add_parser('none', help='degenerate into general chat without debian specific stuff')
+    ps_none.set_defaults(func=lambda ag: None)
+
+    # -- stdin
+    ps_stdin = subps.add_parser('stdin', help='read stdin. special mode. no actions to be specified.')
+    ps_none.set_defaults(func=lambda ag: debian.stdin())
+
+    # -- mailing list
+    ps_ml = subps.add_parser('ml', help='mailing list') 
+    ps_ml.add_argument('--url', '-u', type=str, required=True)
+    ps_ml.add_argument('--raw', action='store_true', help='use raw html')
+    ps_ml.add_argument('action', type=str, choices=debian.mailing_list_actions)
+    ps_ml.set_defaults(func=lambda ag: debian.mailing_list(ag.url, ag.action, raw=ag.raw))
+
+    # --bts
+    ps_bts = subps.add_parser('bts', help='BTS')
+    ps_bts.add_argument('--id', '-x', type=str, required=True)
+    ps_bts.add_argument('--raw', action='store_true', help='use raw html')
+    ps_bts.set_defaults(func=lambda ag: debian.bts(ag.id, ag.action, raw=ag.raw))
+
+    # -- buildd
+    ps_buildd = subps.add_parser('buildd', help='buildd')
+    ps_buildd.add_argument('--package', '-p', type=str, required=True)
+    ps_buildd.add_argument('--suite', '-s', type=str, default='sid')
+    ps_buildd.add_argument('--raw', action='store_true', help='use raw html')
+    ps_buildd.add_argument('action', type=str, choices=debian.buildd_actions)
+    ps_buildd.set_defaults(func=lambda ag: debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw))
+
+    # -- file
+    # e.g., license check (SPDX format), code improvement, code explain
+    # TODO: support multiple files (nargs=+)
+    ps_file = subps.add_parser('file', help='ask questions regarding a specific file')
+    ps_file.add_argument('--file', '-f', type=str, required=True)
+    ps_file.add_argument('action', type=str, choices=debian.file_actions)
+    ps_file.set_defaults(func=lambda ag: debian.file(ag.file, ag.action))
+
+    # -- vote
+    ps_vote = subps.add_parser('vote', help='vote.debian.org')
+    ps_vote.add_argument('--suffix', '-s', type=str, required=True,
+                    help='for example, 2023/vote_002')
+    ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
+    ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
+
+    # -- policy
+    ps_policy = subps.add_parser('policy', help='policy document (plain text)')
+    ps_policy.add_argument('--section', '-s', type=str, required=True)
+    ps_policy.add_argument('action', type=str, choices=debian.policy_actions)
+    ps_policy.set_defaults(func=lambda ag: debian.policy(ag.section, ag.action))
+
+    # -- devref
+    ps_devref = subps.add_parser('devref', help='devref document')
+    ps_devref.add_argument('--section', '-s', type=str, required=True)
+    ps_devref.add_argument('action', type=str, choices=debian.devref_actions)
+    ps_devref.set_defaults(func=lambda ag: debian.devref(ag.section, ag.action))
+
+    # -- man page
+    ps_man = subps.add_parser('man', help='manual page')
+    ps_man.add_argument('--man', '-m', type=str, required=True)
+    ps_man.add_argument('action', type=str, choices=debian.man_actions)
+    ps_man.set_defaults(func=lambda ag: debian.man(ag.man, ag.action))
+
+    # -- dev mode
+    ps_dev = subps.add_parser('dev', aliases=['x'], help='code editing with context')
+    ps_dev.add_argument('--file', '-f', type=str, required=True,
                         help='path to file you want to edit')
-        ag.add_argument('--policy', type=str, default=None,
+    ps_dev.add_argument('--policy', type=str, default=None,
                         help='which section of policy to look at?')
-        ag.add_argument('action', type=str, choices=debian.dev_actions)
-    else:
-        raise NotImplementedError(f'{task} is not implemented. The supported tasks are {__list_of_tasks__}')
-    ag = ag.parse_args(argv)
+    ps_dev.add_argument('action', type=str, choices=debian.dev_actions)
+    ps_dev.set_defaults(func=lambda ag: debian.dev(ag.file, ag.action,
+                        policy=ag.policy, debgpt_home=ag.debgpt_home))
+
+    # -- parse and sanitize
+    ag = ag.parse_args()
     if ag.frontend == 'zmq' and ag.stream == True:
         console.log('disabling streaming because it is not yet supported for ZMQ frontend')
         ag.stream = False
@@ -116,60 +156,16 @@ def parse_args(task, argv):
 
 
 def main():
-    # parse args
-    argv = sys.argv
-    if len(argv) == 2 and argv[-1] in ('-h', '--help'):
-        console.print('Usage: debgpt <task> ...')
-        console.print(f'  Supported <task>s include {__list_of_tasks__}')
-        console.print('  Use `debgpt <task> -h` to expand the help for the subparser')
-        exit()
-    if len(argv) < 2:
-        # assume task == `none` when nothing is given
-        argv.extend(['none', '-i'])
-    ag = parse_args(argv[1], argv[2:])
+    # parse args and prepare debgpt_home
+    ag = parse_args()
     console.log(ag)
     if not os.path.exists(ag.debgpt_home):
         os.mkdir(ag.debgpt_home)
 
-    # create frontend / backend depending on task
-    if argv[1] == 'backend':
-        from . import backend
-        b = backend.create_backend(ag)
-        try:
-            b.server()
-        except KeyboardInterrupt:
-            pass
-        console.log('Server shut down.')
-        exit(1)
-    else:
-        f = frontend.create_frontend(ag)
-
-    # create task-specific prompts
-    if argv[1] == 'none':
-        msg = None
-    elif argv[1] == 'ml':
-        msg = debian.mailing_list(ag.url, ag.action, raw=ag.raw)
-    elif argv[1] == 'bts':
-        msg = debian.bts(ag.id, ag.action, raw=ag.raw)
-    elif argv[1] == 'file':
-        msg = debian.file(ag.file, ag.action)
-    elif argv[1] == 'buildd':
-        msg = debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw)
-    elif argv[1] == 'vote':
-        msg = debian.vote(ag.suffix, ag.action)
-    elif argv[1] == 'policy':
-        msg = debian.policy(ag.section, ag.action)
-    elif argv[1] == 'devref':
-        msg = debian.devref(ag.section, ag.action)
-    elif argv[1] == 'man':
-        msg = debian.man(ag.man, ag.action)
-    elif argv[1] in ('dev', 'x'):
-        msg = debian.dev(ag.file, ag.action, policy=ag.policy,
-                         debgpt_home=ag.debgpt_home)
-    elif argv[1] == 'stdin':
-        msg = debian.stdin()
-    else:
-        raise NotImplementedError
+    # create task-specific prompts. note, some special tasks will exit()
+    # in their subparser default function when then finished, such as backend
+    msg = ag.func(ag)
+    f = frontend.create_frontend(ag)
 
     # in dryrun mode, we simply print the generated initial prompts
     # then the user can copy the prompt, and paste them into web-based
@@ -195,7 +191,7 @@ def main():
         # console.print('LLM>', reply)
 
     # drop the user into interactive mode if specified (-i)
-    if ag.interactive:
+    if not ag.quit:
         # create prompt_toolkit style
         prompt_style = Style(
             [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
@@ -220,7 +216,7 @@ def main():
     f.dump()
 
     # some notifications
-    if argv[1] in ('vote',):
+    if any(x in sys.argv for x in ('vote',)):
         # sensitive category
         console.print(Panel('''[bold white on red]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information, and do not let LLM mislead your decision on sensitive tasks, such as debian voting.[/bold white on red]''', title='!!! Warning !!!'))
     else:
