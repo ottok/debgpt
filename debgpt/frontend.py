@@ -93,7 +93,7 @@ class OpenAIFrontend(AbstractFrontend):
         # e.g., gpt-3.5-turbo, gpt-4
         self.model_id = getattr(args, 'openai_model_id', self.model_id)
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
-        console.log(f'{self.NAME}> instantiated with model={repr(self.model_id)}, stream={self.stream}, T={args.temperature}, top_p={args.top_p}')
+        console.log(f'{self.NAME}> instantiated with model={repr(self.model_id)}, stream={self.stream}, temperature={args.temperature}, top_p={args.top_p}')
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')

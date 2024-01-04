@@ -9,7 +9,7 @@ from prompt_toolkit.styles import Style
 from rich.markup import escape
 from rich.status import Status
 from rich.panel import Panel
-from prompt_toolkit import prompt
+from prompt_toolkit import prompt, PromptSession
 import argparse
 import os
 import sys
@@ -38,8 +38,9 @@ def parse_args(task, argv):
     ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
+    ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
     ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
-                    help='default to streaming mode when openai frontend is used')
+                    help='default to streaming mode when openai frontend is used')  # FIXME: this argument does not work
     ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
     if task == 'backend':
         # special mode for backend server.
@@ -194,8 +195,9 @@ def main():
         # create prompt_toolkit style
         prompt_style = Style(
             [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
+        prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
         try:
-            while text := prompt(f'{os.getlogin()} [{len(f.session)}]> ', style=prompt_style):
+            while text := prompt_session.prompt(f'{os.getlogin()} [{len(f.session)}]> '):
                 if ag.stream:
                     console.print(
                         f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
