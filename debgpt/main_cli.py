@@ -35,7 +35,7 @@ def parse_args(task, argv):
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'])
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
-    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('zmq', 'openai'))
+    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
     ag.add_argument('--interactive', '-i', action='store_true',
                     help='keep chatting with LLM. do not quit after the first reply.')
     ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
@@ -165,6 +165,14 @@ def main():
         msg = debian.stdin()
     else:
         raise NotImplementedError
+
+    # in dryrun mode, we simply print the generated initial prompts
+    # then the user can copy the prompt, and paste them into web-based
+    # LLMs like the free web-based ChatGPT (OpenAI), claude.ai (Anthropic),
+    # Bard (google), Gemini (google), huggingchat (huggingface), etc.
+    if ag.frontend == 'dryrun':
+        console.print(msg)
+        exit()
 
     # print the prompt and do the first query, if specified
     if msg is not None:

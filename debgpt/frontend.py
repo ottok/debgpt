@@ -186,6 +186,8 @@ def create_frontend(args):
         frontend = ZMQFrontend(args)
     elif args.frontend == 'openai':
         frontend = OpenAIFrontend(args)
+    elif args.frontend == 'dryrun':
+        frontend = None
     else:
         raise NotImplementedError
     return frontend
