@@ -50,14 +50,20 @@ If this step is skipped, just replace `debgpt` into `python3 -m debgpt.main_cli`
 
 # Usage
 
-* `llm.py` LLM inference engine abstraction. 
+The (debugging) tag means the corresponding usage is for debugging purpose.
+The (backend) tag means the corresponding usage is for self-hosted LLM inference. You only need a backend if the ZMQ frontend is used.
+The (user) tag means the corresponding usage is targeted for the general audience.
+
+## `llm.py` LLM inference (debugging)
+
 Directly calling this module is to chat with an LLM locally.
 
 ```
 python3 -m debgpt.llm
 ```
 
-* `backend.py` exposes LLM instance through ZMQ.
+## `backend.py` exposes llm inference through ZMQ (backend
+
 The following command starts the backend server, specifying the max length of LLM response.
 By default the program will automatically use the CUDA device if it is available on the system.
 If not, you can still run the model on CPU. But note that "fp16" (half float precision) is not
@@ -89,16 +95,22 @@ If you want to run the Mixtral8x7B model (much larger) instead of the default Mi
 debgpt backend --llm Mixtral8x7B --max_new_tokens=1024 --device cuda --precision fp16
 ```
 
-* `frontend.py` is a bare ZMQ client. This command is mainly used for debugging.
+## `frontend.py` collection of frontends, like ZMQ and OpenAI (debugging)
+
 The main user interface will wrap the frontend.
 
 ```shell
 $ python3 -m debgpt.frontend
 ```
 
-* `main_cli.py` main user interface. The following two commands are equilvalent
+## `debgpt` (`main_cli.py`) or  main user interface. The following two commands are equilvalent (user)
 
 ```shell
 python3 -m debgpt.main_cli    # development mode
 debgpt                        # you need to do "pip3 install ." first.
+debgpt -F openai              # use the openai frontend
 ```
+
+check `demo.sh` at the root directory for a list of samples.
+The configuration file is located at `~/.debgpt/config.toml`.
+Check `/etc/config.toml` for example.
