@@ -17,14 +17,13 @@ class Config(object):
                      'frontend': 'zmq',
                      'stream': True,
                      'openai_model_id': 'gpt-4',
+                     'temperature': 0.9,
+                     'top_p': 1.0,
                      }
         # the defaults will be overriden by config file
         with open(config, 'rb') as f:
             content = tomllib.load(f)
-            #print('DEBUG', content)
-            #for k, v in content.items():
-            #    self.toml[k] = v
             self.toml.update(content)
-        # XXX: the config file will be overriden by command line
+        # the config file will be overriden by command line next
     def __getitem__(self, index):
         return self.toml.__getitem__(index)

@@ -26,6 +26,8 @@ def parse_args(task, argv):
     conf = defaults.Config()
     #console.print(conf.toml)
     ag = argparse.ArgumentParser(f'debgpt {task}')
+    ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'])
+    ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'])
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
     ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('zmq', 'openai'))
@@ -203,8 +205,7 @@ def main():
         # sensitive category
         console.print(Panel('''[bold white on red]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information, and do not let LLM mislead your decision on sensitive tasks, such as debian voting.[/bold white on red]''', title='!!! Warning !!!'))
     else:
-        console.print(Panel(
-            '''[green]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information[/green]''', title='Note'))
+        pass
 
 
 if __name__ == '__main__':

@@ -92,7 +92,8 @@ class OpenAIFrontend(AbstractFrontend):
         self.stream = getattr(args, 'stream', False)
         # e.g., gpt-3.5-turbo, gpt-4
         self.model_id = getattr(args, 'openai_model_id', self.model_id)
-        console.log(f'{self.NAME}> instantiated with model={self.model_id} stream={self.stream}.')
+        self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
+        console.log(f'{self.NAME}> instantiated with model={repr(self.model_id)}, stream={self.stream}, T={args.temperature}, top_p={args.top_p}')
 
     def dump(self):
         fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
@@ -106,7 +107,8 @@ class OpenAIFrontend(AbstractFrontend):
         if self.debug:
             console.log('send:', self.session[-1])
         completion = self.client.chat.completions.create(
-            model=self.model_id, messages=self.session, stream=self.stream)
+            model=self.model_id, messages=self.session, stream=self.stream,
+            **self.kwargs)
         if self.stream:
             chunks = []
             for chunk in completion:
@@ -147,6 +149,11 @@ class ZMQFrontend(AbstractFrontend):
         console.log(f'{self.NAME}> started conversation {self.uuid}')
         self.debgpt_home = args.debgpt_home
         self.session = []
+        #
+        if hasattr(args, 'temperature'):
+            console.log('warning! --temperature not yet supported for this frontend')
+        if hasattr(args, 'top_p'):
+            console.log('warning! --top_p not yet supported for this frontend')
 
     def query(self, content: Union[List, Dict, str]) -> list:
         if isinstance(content, list):
