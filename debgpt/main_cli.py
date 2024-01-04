@@ -52,7 +52,7 @@ def parse_args():
     # openai frontend
     ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
                     help='default to streaming mode when openai frontend is used')  # FIXME: this argument does not work
-    ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
+    ag.add_argument('--openai_model_id', '-M', type=str, default=conf['openai_model_id'])
 
     # CLI behavior
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
