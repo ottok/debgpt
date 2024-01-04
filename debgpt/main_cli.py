@@ -107,7 +107,7 @@ def parse_args(task, argv):
                         help='which section of policy to look at?')
         ag.add_argument('action', type=str, choices=debian.dev_actions)
     else:
-        raise NotImplementedError(task)
+        raise NotImplementedError(f'{task} is not implemented. The supported tasks are {__list_of_tasks__}')
     ag = ag.parse_args(argv)
     if ag.frontend == 'zmq' and ag.stream == True:
         console.log('disabling streaming because it is not yet supported for ZMQ frontend')
@@ -118,10 +118,14 @@ def parse_args(task, argv):
 def main():
     # parse args
     argv = sys.argv
-    if len(argv) < 2:
-        console.print(
-            'Please specify the task. Possible tasks are:', __list_of_tasks__)
+    if len(argv) == 2 and argv[-1] in ('-h', '--help'):
+        console.print('Usage: debgpt <task> ...')
+        console.print(f'  Supported <task>s include {__list_of_tasks__}')
+        console.print('  Use `debgpt <task> -h` to expand the help for the subparser')
         exit()
+    if len(argv) < 2:
+        # assume task == `none` when nothing is given
+        argv.extend(['none', '-i'])
     ag = parse_args(argv[1], argv[2:])
     console.log(ag)
     if not os.path.exists(ag.debgpt_home):
