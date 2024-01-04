@@ -76,12 +76,13 @@ def parse_args():
     ps_backend.set_defaults(func=task_backend)
 
     # -- none (special mode)
+    # FIXME: deprecated.
     ps_none = subps.add_parser('none', help='degenerate into general chat without debian specific stuff')
     ps_none.set_defaults(func=lambda ag: None)
 
     # -- stdin
     ps_stdin = subps.add_parser('stdin', help='read stdin. special mode. no actions to be specified.')
-    ps_none.set_defaults(func=lambda ag: debian.stdin())
+    ps_stdin.set_defaults(func=lambda ag: debian.stdin())
 
     # -- mailing list
     ps_ml = subps.add_parser('ml', help='mailing list') 
