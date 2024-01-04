@@ -1,8 +1,14 @@
-# Setup
+# Setup / Install Instructions
 
-The default step requires a nvidia driver that supports at least CUDA 11.8
+If you plan to use the `openai` frontend, there is no hardware requirement and
+you can skip the following hardware requirement part.  But if you plan to use
+the `zmq` frontend with self-hosted LLM backend, specific hardware is
+necessary.
 
-# Hardware requirement (if you want to self-host LLM backend)
+## Hardware requirement (if you want to self-host LLM backend)
+
+The default step (for self-hosted LLM backend) requires a nvidia driver that
+supports at least CUDA 11.8
 
 
 * `Mistral7B` (default LLM) + `fp16`. 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 9k).
@@ -19,6 +25,9 @@ See also https://huggingface.co/blog/mixtral
 
 ### Conda / Mamba
 
+Note, if you only want to use the openai frontend, you don't need all the
+dependencies. The stripped dependency list is TODO.
+
 1. Install [miniconda distribution](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-installer-links.html).
 For instance, `bash Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -b -p ~/miniconda3`.
 1. `conda init <your-default-shell>` and source the config again.
@@ -32,6 +41,9 @@ If this step is skipped, replace the `mamba` into `conda` for all the following 
 4. `mamba activate pth212`. Then we are good.
 
 ### Venv + Pip
+
+Note, if you only want to use the openai frontend, you don't need all the
+dependencies. The stripped dependency list is TODO.
 
 1. `python3 -m venv ~/.debgpt/venv`
 2. `source ~/.debgpt/venv/bin/activate.fish` change to your default shell.
