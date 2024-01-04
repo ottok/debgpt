@@ -211,10 +211,10 @@ def main():
             [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
         prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
         try:
-            while text := prompt_session.prompt(f'{os.getlogin()} [{len(f.session)}]> '):
+            while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
                 if ag.stream:
                     console.print(
-                        f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
+                        f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
                     reply = f(text)
                 else:
                     with Status('LLM', spinner='line'):
