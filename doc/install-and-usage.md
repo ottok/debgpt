@@ -2,7 +2,7 @@
 
 The default step requires a nvidia driver that supports at least CUDA 11.8
 
-# Hardware requirement
+# Hardware requirement (if you want to self-host LLM backend)
 
 
 * `Mistral7B` (default LLM) + `fp16`. 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 9k).
