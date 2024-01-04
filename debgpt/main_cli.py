@@ -57,6 +57,7 @@ def parse_args():
     # CLI behavior
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+    ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt')
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
@@ -95,6 +96,7 @@ def parse_args():
     ps_bts = subps.add_parser('bts', help='BTS')
     ps_bts.add_argument('--id', '-x', type=str, required=True)
     ps_bts.add_argument('--raw', action='store_true', help='use raw html')
+    ps_bts.add_argument('action', type=str, default=debian.bts_actions)
     ps_bts.set_defaults(func=lambda ag: debian.bts(ag.id, ag.action, raw=ag.raw))
 
     # -- buildd
@@ -178,7 +180,8 @@ def main():
 
     # print the prompt and do the first query, if specified
     if msg is not None:
-        console.print(Panel(escape(msg), title='Initial Prompt'))
+        if not ag.hide_first_prompt:
+            console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
         if ag.stream:
