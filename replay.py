@@ -1,5 +1,6 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+import argparse
 import sys
 import rich
 console = rich.get_console()
@@ -23,9 +24,16 @@ def process_entry(entry):
     panel = Panel(escape(entry['content']), title=title, border_style=border_style)
     console.print(panel)
 
-if __name__ == '__main__':
-    with open(sys.argv[1]) as f:
+def main():
+    parser = argparse.ArgumentParser(description='Replay chat messages from a JSON file.')
+    parser.add_argument('input_file', metavar='FILE', help='JSON file containing the chat messages')
+    args = parser.parse_args()
+
+    with open(args.input_file) as f:
         J = json.load(f)
 
     for entry in J:
         process_entry(entry)
+
+if __name__ == '__main__':
+    main()
