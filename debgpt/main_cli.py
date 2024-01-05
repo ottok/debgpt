@@ -155,6 +155,10 @@ def parse_args():
     ps_man.add_argument('action', type=str, choices=debian.man_actions)
     ps_man.set_defaults(func=lambda ag: debian.man(ag.man, ag.action))
 
+    # -- tldr page
+    ag.add_argument('--tldr', type=str, default=[], action='append',
+                    help='add tldr page to the prompt.')
+
     # -- dev mode
     ps_dev = subps.add_parser('dev', aliases=['x'], help='code editing with context')
     ps_dev.add_argument('--file', '-f', type=str, required=True,
@@ -164,6 +168,9 @@ def parse_args():
     ps_dev.add_argument('action', type=str, choices=debian.dev_actions)
     ps_dev.set_defaults(func=lambda ag: debian.dev(ag.file, ag.action,
                         policy=ag.policy, debgpt_home=ag.debgpt_home))
+
+    # question templates
+    ag.add_argument('--ask', '-A', type=str, default=debian.QUESTIONS[':none'])
 
     # -- parse and sanitize
     ag = ag.parse_args()
@@ -186,11 +193,28 @@ def main():
     # in their subparser default function when then finished, such as backend
     msg = ag.func(ag)
     # XXX: on migration to new cli design
+    # FIXME: add these contents following the commandline argument order.
     if ag.file:
         msg = '' if msg is None else msg
         for file_path in ag.file:
             info = debian.file(file_path, 'blank')
             msg += '\n' + info
+    if ag.tldr:
+        msg = '' if msg is None else msg
+        for tldr_name in ag.tldr:
+            info = debian.tldr(tldr_name)
+            msg += '\n' + info
+    # --ask should be processed as the last one
+    if ag.ask:
+        # append customized question template to the prompt
+        if ag.ask.startswith(':'):
+            # is a question template from debian.QUESTIONS
+            question = debian.QUESTIONS[ag.ask]
+            msg += '\n' + question
+        else:
+            # is a user-specified question in the command line
+            question = ag.ask
+            msg += '\n' + question
 
     # in dryrun mode, we simply print the generated initial prompts
     # then the user can copy the prompt, and paste them into web-based

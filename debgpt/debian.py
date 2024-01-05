@@ -15,6 +15,15 @@ import sys
 
 
 ########################
+# Question templates
+########################
+
+QUESTIONS = {
+    ':none': '',
+    ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
+    }
+
+########################
 # Utility I/O functions
 ########################
 
@@ -224,7 +233,7 @@ def test_devref(action):
     print(devref('5.5', action))
 
 
-# == man ==
+# == man and tldr ==
 man_actions = ('free',)
 
 
@@ -238,6 +247,13 @@ def man(name: str, action: str):
             'Read it carefully. I will ask you questions later. For now please be quiet.')
     else:
         raise NotImplementedError(action)
+    return '\n'.join(lines)
+
+
+def tldr(name: str):
+    text = _load_cmdline(f'tldr {name}')
+    lines = [f'''The following is the tldr of the program {name}:''']
+    lines.extend(['```'] + text + ['```', ''])
     return '\n'.join(lines)
 
 
