@@ -43,6 +43,7 @@ those are not explored yet.
 4. `debgpt.llm` tune llm parameters like temperature.
 5. implement very simple CoT https://arxiv.org/pdf/2205.11916.pdf
 1. add perplexity API https://www.perplexity.ai
+1. https://github.com/openai/chatgpt-retrieval-plugin
 
 ## Infrastructure
 
