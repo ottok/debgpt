@@ -208,13 +208,9 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
 
 def main():
     # parse args and prepare debgpt_home
-    try:
-        ag = parse_args()
-        if ag.verbose:
-            console.log(ag)
-    except argparse.ArgumentError:
-        # TODO: triggers special mode. The illegal arguments are seen as the prompt.
-        exit(1)
+    ag = parse_args()
+    if ag.verbose:
+        console.log(ag)
 
     # initialize the frontend
     f = frontend.create_frontend(ag)
