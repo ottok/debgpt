@@ -11,6 +11,33 @@ of leveraging LLMs to aid Debian development, in any extent.
 1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
 1. [Future Ideas](doc/ideas.md)
 
+## Synopsis of `debgpt` CLI
+
+
+### Examples
+
+#### Git Wrapper `debgpt git ...`
+
+* automatically generate git commit message for staged changes, and commit them
+
+```
+debgpt git commit
+```
+
+#### Command line `debgpt --cmd ...`
+
+* summarize the upgradable pacakges
+
+```
+debgpt -HQ --cmd 'apt list --upgradable' -A 'Briefly summarize the upgradable packages. You can categorize these packages.' -F openai --openai_model_id 'gpt-3.5-turbo-16k'
+```
+
+* auto-generate git commit message for you
+
+```
+debgpt -HQ --cmd 'git diff --staged' -A 'Briefly describe the change as a git commit message.'
+```
+
 ## Proof-Of-Concept
 
 Prompt-engineering an existing Chatting LLM with debian-specific documents,
