@@ -21,9 +21,12 @@ class Config(object):
                      'top_p': 1.0,
                      }
         # the defaults will be overriden by config file
-        with open(config, 'rb') as f:
-            content = tomllib.load(f)
-            self.toml.update(content)
+        if not os.path.exists(home):
+            os.mkdir(home)
+        if os.path.exists(config):
+            with open(config, 'rb') as f:
+                content = tomllib.load(f)
+                self.toml.update(content)
         # the config file will be overriden by command line next
     def __getitem__(self, index):
         return self.toml.__getitem__(index)

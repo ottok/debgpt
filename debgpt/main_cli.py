@@ -172,8 +172,6 @@ def main():
     ag = parse_args()
     if not ag.hide_first_prompt:
         console.log(ag)
-    if not os.path.exists(ag.debgpt_home):
-        os.mkdir(ag.debgpt_home)
 
     # create task-specific prompts. note, some special tasks will exit()
     # in their subparser default function when then finished, such as backend
