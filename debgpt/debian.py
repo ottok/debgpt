@@ -21,6 +21,7 @@ import sys
 QUESTIONS = {
     ':none': '',
     ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
+    ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
     }
 
 ########################
