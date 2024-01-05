@@ -64,6 +64,7 @@ def parse_args():
     ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
     ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
+    ag.add_argument('--output', '-o', type=str, default=None, help='write the last LLM message to specified file') 
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
@@ -273,6 +274,12 @@ def main():
 
     # dump session to json
     f.dump()
+    if ag.output is not None:
+        if os.path.exists(ag.output):
+            console.print(f'[red]! destination {ag.output} exists. Will not overwrite this file.[/red]')
+        else:
+            with open(ag.output, 'wt') as fp:
+                fp.write(f.session[-1]['content'])
 
     # some notifications
     if any(x in sys.argv for x in ('vote',)):
