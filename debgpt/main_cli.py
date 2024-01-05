@@ -63,11 +63,17 @@ def task_git_commit(ag) -> None:
         tmp.write(commit_message)
     os.system(f'git commit -F {tmpfile}')
     os.remove(tmpfile)
-    console.print('DebGPT> If you are not satisfied with the above git commit message,')
-    console.print('        you may use the following command to retry:')
-    console.print('            $ git reset HEAD~1 --soft; debgpt git commit')
-    console.print('        Or if you want to manually edit the commit message with:')
-    console.print('            $ git commit --amend')
+    note_message = '''\
+If you are not satisfied with the above git commit message you may use the following command to retry:
+
+    $ git reset --soft HEAD~1 ; debgpt git commit
+
+Or if you want to manually edit the commit message with:
+
+    $ git commit --amend\
+'''
+    console.print(Panel(note_message, title='Notice', border_style='green'))
+
     exit(0)
 
 
