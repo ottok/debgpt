@@ -82,6 +82,7 @@ class OpenAIFrontend(AbstractFrontend):
     NAME = 'OpenAIFrontend'
     debug = False
     model_id = "gpt-3.5-turbo"
+    stream = True
     system_message = '''\
 You are an excellent free software developer. You write high-quality code.
 You aim to provide people with prefessional and accurate information.
@@ -106,8 +107,6 @@ Debian Free Software Guideline. You follow the Debian Policy.'''
             api_key = self.env['OPENAI_API_KEY']
         self.client = OpenAI(api_key=api_key)
         self.session.append({"role": "system", "content": self.system_message})
-        # streaming for fancy terminal effects
-        self.stream = getattr(args, 'stream', False)
         # e.g., gpt-3.5-turbo, gpt-4
         self.model_id = getattr(args, 'openai_model_id', self.model_id)
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
@@ -149,6 +148,7 @@ class ZMQFrontend(AbstractFrontend):
     '''
     NAME = 'ZMQFrontend'
     debug: bool = False
+    stream: bool = False
 
     def __init__(self, args):
         import zmq

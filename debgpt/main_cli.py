@@ -185,11 +185,36 @@ def parse_args():
     return ag
 
 
+def interactive_mode(f: frontend.AbstractFrontend, ag):
+        # create prompt_toolkit style
+        prompt_style = Style(
+            [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
+        prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
+        try:
+            while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
+                if f.stream:
+                    console.print(
+                        f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
+                    reply = f(text)
+                else:
+                    with Status('LLM', spinner='line'):
+                        reply = f(text)
+                    console.print(Panel(escape(reply), title='LLM Reply'))
+                # console.print('LLM>', reply)
+        except EOFError:
+            pass
+        except KeyboardInterrupt:
+            pass
+
 def main():
     # parse args and prepare debgpt_home
-    ag = parse_args()
-    if ag.verbose:
-        console.log(ag)
+    try:
+        ag = parse_args()
+        if ag.verbose:
+            console.log(ag)
+    except argparse.ArgumentError:
+        # TODO: triggers special mode. The illegal arguments are seen as the prompt.
+        exit(1)
 
     # initialize the frontend
     f = frontend.create_frontend(ag)
@@ -252,25 +277,7 @@ def main():
 
     # drop the user into interactive mode if specified (-i)
     if not ag.quit:
-        # create prompt_toolkit style
-        prompt_style = Style(
-            [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
-        prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
-        try:
-            while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
-                if ag.stream:
-                    console.print(
-                        f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
-                    reply = f(text)
-                else:
-                    with Status('LLM', spinner='line'):
-                        reply = f(text)
-                    console.print(Panel(escape(reply), title='LLM Reply'))
-                # console.print('LLM>', reply)
-        except EOFError:
-            pass
-        except KeyboardInterrupt:
-            pass
+        interactive_mode(f, ag)
 
     # dump session to json
     f.dump()
