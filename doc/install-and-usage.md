@@ -41,7 +41,7 @@ if you use fish: `~/miniconda3/bin/conda init fish; source ~/.config/fish/config
 `conda install -c conda-forge mamba` ; `mamba init <shell>` (e.g., `mamba init fish`); `source <shell-rc>`.
 We do this because the default conda is super slow and may sometimes fail to resolve dependencies.
 If this step is skipped, replace the `mamba` into `conda` for all the following commands.
-3. `mamba env create -f conda.yml`. To restore the conda environment.
+3. `mamba env create -f doc/conda.yml`. To restore the conda environment.
 4. `mamba activate pth212`. Then we are good.
 
 ### Venv + Pip
