@@ -110,6 +110,10 @@ def parse_args():
     ps_bts.add_argument('action', type=str, default=debian.bts_actions)
     ps_bts.set_defaults(func=lambda ag: debian.bts(ag.id, ag.action, raw=ag.raw))
 
+    # == cmd ==
+    ag.add_argument('--cmd', type=str, default=[], action='append',
+                    help='add the command line output to the prompt')
+
     # -- buildd
     ps_buildd = subps.add_parser('buildd', help='buildd')
     ps_buildd.add_argument('--package', '-p', type=str, required=True)
@@ -203,6 +207,11 @@ def main():
         msg = '' if msg is None else msg
         for tldr_name in ag.tldr:
             info = debian.tldr(tldr_name)
+            msg += '\n' + info
+    if ag.cmd:
+        msg = '' if msg is None else msg
+        for cmd_line in ag.cmd:
+            info = debian.command_line(cmd_line)
             msg += '\n' + info
     # --ask should be processed as the last one
     if ag.ask:

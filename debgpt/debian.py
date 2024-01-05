@@ -257,6 +257,14 @@ def tldr(name: str):
     return '\n'.join(lines)
 
 
+# == cmd ==
+def command_line(cmd: str):
+    text = _load_cmdline(cmd)
+    lines = [f'''The following is the output of command line `{cmd}`:''']
+    lines.extend(['```'] + text + ['```', ''])
+    return '\n'.join(lines)
+
+
 # == stdin ==
 # empty tuple. We don't know what the user wants. stdin is too flexible.
 stdin_actions = ()
