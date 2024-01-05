@@ -29,9 +29,6 @@ See also https://huggingface.co/blog/mixtral
 
 ### Conda / Mamba
 
-Note, if you only want to use the openai frontend, you don't need all the
-dependencies. The stripped dependency list is TODO.
-
 1. Install [miniconda distribution](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-installer-links.html).
 For instance, `bash Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -b -p ~/miniconda3`.
 1. `conda init <your-default-shell>` and source the config again.
@@ -41,7 +38,7 @@ if you use fish: `~/miniconda3/bin/conda init fish; source ~/.config/fish/config
 `conda install -c conda-forge mamba` ; `mamba init <shell>` (e.g., `mamba init fish`); `source <shell-rc>`.
 We do this because the default conda is super slow and may sometimes fail to resolve dependencies.
 If this step is skipped, replace the `mamba` into `conda` for all the following commands.
-3. `mamba env create -f doc/conda.yml`. To restore the conda environment.
+3. Use `mamba env create -f doc/conda.yml` to restore the conda environment. If you only wants to use openai frontend, you can use `doc/conda-minimal.yml` instead to reduce number of dependencies.
 4. `mamba activate pth212`. Then we are good.
 
 ### Venv + Pip
@@ -54,7 +51,7 @@ dependencies. The stripped dependency list is TODO.
 3. `pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` (from https://pytorch.org)
 4. `pip3 install transformers accelerate bitsandbytes bitsandbytes`
 5. `pip3 install beautifulsoup4 rich prompt_toolkit ipython`
-6. `pip3 install pyzmq pytest scipy`
+6. `pip3 install pyzmq pytest scipy openai`
 7. `sudo apt install libcudart11.0 libcusparse11` (this is for cuda 11)
 7. we are good now.
 
