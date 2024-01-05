@@ -257,7 +257,7 @@ def test_stdin():
 
 
 # == file ==
-file_actions = ('what', 'brief', 'licensecheck', 'free', 'none')
+file_actions = ('what', 'brief', 'licensecheck', 'free', 'none', 'blank')
 
 
 def file(path: str, action: str):
@@ -278,6 +278,9 @@ def file(path: str, action: str):
     elif action == 'free':
         lines.append(
             'Read this file carefully. Next I will ask you a few questions about it.')
+    elif action == 'blank':
+        # XXX: for new cli design
+        pass
     else:
         raise NotImplementedError(action)
     return '\n'.join(lines)

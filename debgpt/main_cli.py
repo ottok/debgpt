@@ -5,6 +5,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 
+from typing import *
 from prompt_toolkit.styles import Style
 from rich.markup import escape
 from rich.status import Status
@@ -116,13 +117,17 @@ def parse_args():
     ps_buildd.add_argument('action', type=str, choices=debian.buildd_actions)
     ps_buildd.set_defaults(func=lambda ag: debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw))
 
-    # -- file
+    # -- file (old)
     # e.g., license check (SPDX format), code improvement, code explain
     # TODO: support multiple files (nargs=+)
     ps_file = subps.add_parser('file', help='ask questions regarding a specific file')
     ps_file.add_argument('--file', '-f', type=str, required=True)
     ps_file.add_argument('action', type=str, choices=debian.file_actions)
     ps_file.set_defaults(func=lambda ag: debian.file(ag.file, ag.action))
+
+    # -- file --
+    ag.add_argument('--file', '-f', type=str, default=[], action='append',
+                    help='load specified file(s) in prompt')
 
     # -- vote
     ps_vote = subps.add_parser('vote', help='vote.debian.org')
@@ -173,10 +178,18 @@ def main():
     if not ag.hide_first_prompt:
         console.log(ag)
 
+    # initialize the frontend
+    f = frontend.create_frontend(ag)
+
     # create task-specific prompts. note, some special tasks will exit()
     # in their subparser default function when then finished, such as backend
     msg = ag.func(ag)
-    f = frontend.create_frontend(ag)
+    # XXX: on migration to new cli design
+    if ag.file:
+        msg = '' if msg is None else msg
+        for file_path in ag.file:
+            info = debian.file(file_path, 'blank')
+            msg += '\n' + info
 
     # in dryrun mode, we simply print the generated initial prompts
     # then the user can copy the prompt, and paste them into web-based
