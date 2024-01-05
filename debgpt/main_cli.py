@@ -63,6 +63,7 @@ def parse_args():
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
     ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
+    ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
@@ -175,7 +176,7 @@ def parse_args():
 def main():
     # parse args and prepare debgpt_home
     ag = parse_args()
-    if not ag.hide_first_prompt:
+    if ag.verbose:
         console.log(ag)
 
     # initialize the frontend

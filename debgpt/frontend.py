@@ -29,8 +29,21 @@ def _check(messages: List[Dict]):
 
 
 class AbstractFrontend():
+    '''
+    The frontend instance holds the whole chat session. The context is the whole
+    session for the next LLM query. Historical chats is also a part of the
+    context for following up questions. You may feel LLMs smart when they
+    get information from the historical chat in the same session.
+    '''
+
+    NAME = 'AbstractFrontend'
+
     def __init__(self, args):
+        self.uuid = uuid.uuid4()
         self.backend = args.backend
+        self.session = []
+        self.debgpt_home = args.debgpt_home
+        console.log(f'{self.NAME}> Starting conversation {self.uuid}')
 
     def query(self, messages):
         '''
@@ -56,7 +69,10 @@ class AbstractFrontend():
         return self.query(*args, **kwargs)
 
     def dump(self):
-        raise NotImplementedError
+        fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
+        with open(fpath, 'wt') as f:
+            json.dump(self.session, f, indent=2)
+        console.log(f'{self.NAME}> Conversation saved at {fpath}')
 
 
 class OpenAIFrontend(AbstractFrontend):
@@ -66,11 +82,17 @@ class OpenAIFrontend(AbstractFrontend):
     NAME = 'OpenAIFrontend'
     debug = False
     model_id = "gpt-3.5-turbo"
+    system_message = '''\
+You are an excellent free software developer. You write high-quality code.
+You aim to provide people with prefessional and accurate information.
+You cherrish software freedom. You obey the Debian Social Contract and the
+Debian Free Software Guideline. You follow the Debian Policy.'''
 
     def __init__(self, args):
         super().__init__(args)
         from openai import OpenAI
         if (api_key := os.getenv('OPENAI_API_KEY', None)) is None:
+            # TODO: do this in defaults.py instead
             config_path = os.path.join(args.debgpt_home, 'config.toml')
             if os.path.exists(config_path):
                 with open(config_path, 'rb') as f:
@@ -83,23 +105,14 @@ class OpenAIFrontend(AbstractFrontend):
                     f'the OPENAI_API_KEY is not found in environment variables, neither the config file {config_path}')
             api_key = self.env['OPENAI_API_KEY']
         self.client = OpenAI(api_key=api_key)
-        self.uuid = uuid.uuid4()
-        self.debgpt_home = args.debgpt_home
-        self.session = []
-        # self.session.append({"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."})
-        self.session.append({"role": "system", "content": "You are an excellent free software developer. You write high-quality code. You aim to provide people with prefessional and accurate information. You cherrish software freedom. You obey the Debian Social Contract and the Debian Free Software Guideline. You follow the Debian Policy."})
+        self.session.append({"role": "system", "content": self.system_message})
         # streaming for fancy terminal effects
         self.stream = getattr(args, 'stream', False)
         # e.g., gpt-3.5-turbo, gpt-4
         self.model_id = getattr(args, 'openai_model_id', self.model_id)
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
-        console.log(f'{self.NAME}> instantiated with model={repr(self.model_id)}, stream={self.stream}, temperature={args.temperature}, top_p={args.top_p}')
-
-    def dump(self):
-        fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
-        with open(fpath, 'wt') as f:
-            json.dump(self.session, f, indent=2)
-        console.log(f'{self.NAME}> LLM session saved at {fpath}')
+        console.log(f'{self.NAME}> model={repr(self.model_id)}, '
+                    + f'temperature={args.temperature}, top_p={args.top_p}.')
 
     def query(self, messages: Union[List, Dict, str]) -> list:
         # add the message into the session
@@ -132,9 +145,7 @@ class OpenAIFrontend(AbstractFrontend):
 
 class ZMQFrontend(AbstractFrontend):
     '''
-    The frontend instance holds the whole chat session. The context is the whole session for the next LLM query.
-    Historical chats is also a part of the context for following up questions.
-    You may feel LLMs smart when they get information from the historical chat in the same session.
+    ZMQ frontend communicates with a self-hosted ZMQ backend.
     '''
     NAME = 'ZMQFrontend'
     debug: bool = False
@@ -144,11 +155,7 @@ class ZMQFrontend(AbstractFrontend):
         super().__init__(args)
         self.socket = zmq.Context().socket(zmq.REQ)
         self.socket.connect(self.backend)
-        console.log(f'{self.NAME}> connected to {self.backend}')
-        self.uuid = uuid.uuid4()
-        console.log(f'{self.NAME}> started conversation {self.uuid}')
-        self.debgpt_home = args.debgpt_home
-        self.session = []
+        console.log(f'{self.NAME}> Connected to ZMQ backend {self.backend}.')
         #
         if hasattr(args, 'temperature'):
             console.log('warning! --temperature not yet supported for this frontend')
@@ -174,11 +181,6 @@ class ZMQFrontend(AbstractFrontend):
             console.log('recv:', self.session[-1])
         return self.session[-1]['content']
 
-    def dump(self):
-        fpath = os.path.join(self.debgpt_home, str(self.uuid) + '.json')
-        with open(fpath, 'wt') as f:
-            json.dump(self.session, f, indent=2)
-        console.log(f'ZMQFrontend> LLM session saved at {fpath}')
 
 
 def create_frontend(args):
