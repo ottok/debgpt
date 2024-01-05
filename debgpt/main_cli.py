@@ -55,8 +55,6 @@ def parse_args():
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
 
     # openai frontend
-    ag.add_argument('--stream', '-S', type=bool, default=conf['stream'],
-                    help='default to streaming mode when openai frontend is used')  # FIXME: this argument does not work
     ag.add_argument('--openai_model_id', '-M', type=str, default=conf['openai_model_id'])
 
     # CLI behavior
@@ -179,9 +177,6 @@ def parse_args():
 
     # -- parse and sanitize
     ag = ag.parse_args()
-    if ag.frontend == 'zmq' and ag.stream == True:
-        console.log('disabling streaming because it is not yet supported for ZMQ frontend')
-        ag.stream = False
     return ag
 
 
@@ -261,7 +256,7 @@ def main():
             console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
-        if ag.stream:
+        if f.stream:
             console.print(
                 f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
             reply = f(msg)
