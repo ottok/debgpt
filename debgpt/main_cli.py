@@ -22,6 +22,11 @@ import rich
 console = rich.get_console()
 
 
+def version() -> None:
+    from debgpt import __version__, __copyright__, __license__
+    console.print(f'DebGPT {__version__}; Copyright {__copyright__}; Released under {__license__} license.')
+
+
 def task_backend(ag) -> None:
     from . import backend
     b = backend.create_backend(ag)
@@ -104,6 +109,7 @@ def parse_args():
     ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
     ag.add_argument('--output', '-o', type=str, default=None, help='write the last LLM message to specified file') 
+    ag.add_argument('--version', action='store_true', help='show DebGPT software version and quit.')
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
@@ -254,6 +260,9 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
 def main():
     # parse args and prepare debgpt_home
     ag = parse_args()
+    if ag.version:
+        version()
+        exit()
     if ag.verbose:
         console.log(ag)
 
