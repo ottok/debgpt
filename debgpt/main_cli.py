@@ -91,16 +91,6 @@ def parse_args():
     # override the loaded configurations again with command line arguments
     ag = argparse.ArgumentParser()
 
-    # LLM inference arguments
-    ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'],
-        help='''Sampling temperature. Typically ranges within [0,1]. \
-Low values like 0.2 gives more focused (coherent) answer. \
-High values like 0.8 gives a more random (creative) answer. \
-Not suggested to combine this with with --top_p. \
-See https://platform.openai.com/docs/api-reference/chat/create \
-    ''')
-    ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
-
     # CLI Behavior / Frontend Arguments
     ag.add_argument('--quit', '-Q', action='store_true',
                     help='directly quit after receiving the first response from LLM, instead of staying in interation.')
@@ -119,6 +109,16 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'],
                     choices=('dryrun', 'zmq', 'openai'))
 
+    # LLM Inference Arguments
+    ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'],
+        help='''Sampling temperature. Typically ranges within [0,1]. \
+Low values like 0.2 gives more focused (coherent) answer. \
+High values like 0.8 gives a more random (creative) answer. \
+Not suggested to combine this with with --top_p. \
+See https://platform.openai.com/docs/api-reference/chat/create \
+    ''')
+    ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
+
     # Specific to OpenAI Frontend
     ag.add_argument('--openai_base_url', type=str, default=conf['openai_base_url'])
     ag.add_argument('--openai_api_key', type=str, default=conf['openai_api_key'])
@@ -128,14 +128,44 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.add_argument('--zmq_backend', type=str, default=conf['zmq_backend'],
                     help='the ZMQ frontend endpoint')
 
-    # The following are task-specific subparsers
-    subps = ag.add_subparsers(help='specific task handling')
-    ag.set_defaults(func=lambda ag: None)  # if no subparser specified
+    # Prompt Loaders (numbered list). You can specify them multiple times.
+    # for instance, `debgpt -H -f foo.py -f bar.py`.
+    # -- 1. Debian BTS
+    ag.add_argument('--bts', type=str, default=[], action='append',
+                    help='Retrieve BTS webpage to prompt. example: "src:pytorch", "1056388"')
+    ag.add_argument('--bts_raw', action='store_true', help='load raw HTML instead of plain text.')
+    # -- 2. Custom Command Line(s)
+    ag.add_argument('--cmd', type=str, default=[], action='append',
+                    help='add the command line output to the prompt')
+    # -- 3. Debian Buildd
+    ag.add_argument('--buildd', type=str, default=[], action='append',
+                    help='Retrieve buildd page for package to prompt.')
+    # -- 4. Arbitrary Plain Text File(s)
+    ag.add_argument('--file', '-f', type=str, default=[], action='append',
+                    help='load specified file(s) in prompt')
+    # -- 5. Debian Policy
+    ag.add_argument('--policy', type=str, default=[], action='append',
+                    help='load specified policy section(s). (e.g., "1", "4.6")')
+    # -- 6. Debian Developers References
+    ag.add_argument('--devref', type=str, default=[], action='append',
+                    help='load specified devref section(s).')
+    # -- 7. TLDR Manual Page
+    ag.add_argument('--tldr', type=str, default=[], action='append',
+                    help='add tldr page to the prompt.')
+    # -- 999. The Question Template at the End of Prompt
+    ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'],
+                    help="Question template to append at the end of the prompt. "
+                    + "Specify ':' for printing all available templates. "
+                    + "Or a customized string not starting with the colon.")
 
-    # task: ZMQ backend
-    ps_backend = subps.add_parser('backend', help='special mode: start backend server (self-hosted LLM inference)')
+    # Task Specific Subparsers
+    subps = ag.add_subparsers(help='specific task handling')
+    ag.set_defaults(func=lambda ag: None)  # if no subparser is specified
+
+    # Specific to ZMQ Backend (self-hosted LLM Inference)
+    ps_backend = subps.add_parser('backend', help='start backend server (self-hosted LLM inference)')
     ps_backend.add_argument('--port', '-p', type=int, default=11177,
-                            help='"11177" looks like "LLM"')
+                            help='port number "11177" looks like "LLM"')
     ps_backend.add_argument('--host', type=str, default='tcp://*')
     ps_backend.add_argument('--backend_impl', type=str,
                             default='zmq', choices=('zmq',))
@@ -145,23 +175,25 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_backend.add_argument('--precision', type=str, default='fp16')
     ps_backend.set_defaults(func=task_backend)
 
-    # task: git
+    # Task: git
     ps_git = subps.add_parser('git', help='git command wrapper')
     ps_git.set_defaults(func=task_git)
     git_subps = ps_git.add_subparsers(help='git commands')
-    # task: git commit
+    # Task: git commit
     ps_git_commit = git_subps.add_parser('commit',
             help='directly commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
 
-    # task: replay
+    # Task: replay
     ps_replay = subps.add_parser('replay', help='replay a conversation from a JSON file')
     ps_replay.add_argument('json_file_path', type=str, help='path to the JSON file')
     ps_replay.set_defaults(func=task_replay)
 
-    # -- stdin
-    ps_stdin = subps.add_parser('stdin', help='read stdin. special mode. no actions to be specified.')
+    # Task: stdin
+    ps_stdin = subps.add_parser('stdin', help='read stdin, print response and quit.')
     ps_stdin.set_defaults(func=lambda ag: debian.stdin())
+
+    # FIXME: update the following
 
     # -- mailing list
     ps_ml = subps.add_parser('ml', help='mailing list') 
@@ -169,20 +201,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_ml.add_argument('--raw', action='store_true', help='use raw html')
     ps_ml.add_argument('action', type=str, choices=debian.mailing_list_actions)
     ps_ml.set_defaults(func=lambda ag: debian.mailing_list(ag.url, ag.action, raw=ag.raw))
-
-    # --bts
-    ag.add_argument('--bts', type=str, default=[], action='append',
-                    help='Retrieve BTS webpage. example: "src:pytorch", "1056388"')
-    ag.add_argument('--bts_raw', action='store_true', help='load raw HTML instead of plain text.')
-
-
-    # == cmd ==
-    ag.add_argument('--cmd', type=str, default=[], action='append',
-                    help='add the command line output to the prompt')
-
-    # -- buildd
-    ag.add_argument('--buildd', type=str, default=[], action='append',
-                    help='Retrieve buildd page for package.')
 
     # -- file (old)
     # e.g., license check (SPDX format), code improvement, code explain
@@ -192,9 +210,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_file.add_argument('action', type=str, choices=debian.file_actions)
     ps_file.set_defaults(func=lambda ag: debian.file(ag.file, ag.action))
 
-    # -- file --
-    ag.add_argument('--file', '-f', type=str, default=[], action='append',
-                    help='load specified file(s) in prompt')
 
     # -- vote
     ps_vote = subps.add_parser('vote', help='vote.debian.org')
@@ -203,23 +218,11 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
 
-    # -- policy
-    ag.add_argument('--policy', type=str, default=[], action='append',
-                    help='load specified policy section(s). (e.g., "1", "4.6")')
-
-    # -- devref
-    ag.add_argument('--devref', type=str, default=[], action='append',
-                    help='load specified devref section(s).')
-
     # -- man page
     ps_man = subps.add_parser('man', help='manual page')
     ps_man.add_argument('--man', '-m', type=str, required=True)
     ps_man.add_argument('action', type=str, choices=debian.man_actions)
     ps_man.set_defaults(func=lambda ag: debian.man(ag.man, ag.action))
-
-    # -- tldr page
-    ag.add_argument('--tldr', type=str, default=[], action='append',
-                    help='add tldr page to the prompt.')
 
     # -- dev mode
     ps_dev = subps.add_parser('dev', aliases=['x'], help='code editing with context')
@@ -230,9 +233,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_dev.add_argument('action', type=str, choices=debian.dev_actions)
     ps_dev.set_defaults(func=lambda ag: debian.dev(ag.file, ag.action,
                         policy=ag.policy, debgpt_home=ag.debgpt_home))
-
-    # question templates
-    ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'])
 
     # -- parse and sanitize
     ag = ag.parse_args()
