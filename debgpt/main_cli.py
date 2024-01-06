@@ -240,25 +240,25 @@ See https://platform.openai.com/docs/api-reference/chat/create \
 
 
 def interactive_mode(f: frontend.AbstractFrontend, ag):
-        # create prompt_toolkit style
-        prompt_style = Style(
-            [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
-        prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
-        try:
-            while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
-                if f.stream:
-                    console.print(
-                        f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
+    # create prompt_toolkit style
+    prompt_style = Style(
+        [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
+    prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
+    try:
+        while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
+            if f.stream:
+                console.print(
+                    f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
+                reply = f(text)
+            else:
+                with Status('LLM', spinner='line'):
                     reply = f(text)
-                else:
-                    with Status('LLM', spinner='line'):
-                        reply = f(text)
-                    console.print(Panel(escape(reply), title='LLM Reply'))
-                # console.print('LLM>', reply)
-        except EOFError:
-            pass
-        except KeyboardInterrupt:
-            pass
+                console.print(Panel(escape(reply), title='LLM Reply'))
+            # console.print('LLM>', reply)
+    except EOFError:
+        pass
+    except KeyboardInterrupt:
+        pass
 
 def main():
     # parse args and prepare debgpt_home
