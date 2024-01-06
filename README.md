@@ -1,5 +1,7 @@
 # DebGPT -- Chatting LLM with Debian-Specific Knowledge
 
+> "AI" = "Artificial Idiot"
+
 Large language models (LLMs) are newly emerged tools, which are capable of
 handling tasks that traditional software could never achieve, such as writing
 code based on the specification provided by the user. In this tool, we
