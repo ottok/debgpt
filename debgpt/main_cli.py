@@ -99,23 +99,22 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ''')
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
 
-    # general frontend
-    ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
-    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
-
     # ZMQ frontend
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
 
     # openai frontend
-    ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
+    ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
 
-    # CLI behavior
+    # CLI Behavior / Frontend Arguments
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', '-M', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
     ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
     ag.add_argument('--output', '-o', type=str, default=None, help='write the last LLM message to specified file') 
     ag.add_argument('--version', action='store_true', help='show DebGPT software version and quit.')
+    ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
+    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
+
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')

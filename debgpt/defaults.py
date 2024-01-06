@@ -23,7 +23,7 @@ class Config(object):
                      'debgpt_home': HOME,
                      'frontend': 'zmq',
                      'stream': True,
-                     'openai_model_id': 'gpt-4',
+                     'openai_model': 'gpt-4',
                      'temperature': 0.5,
                      'top_p': 1.0,
                      }

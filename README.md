@@ -94,7 +94,7 @@ debgpt git commit
 * summarize the upgradable pacakges
 
 ```
-debgpt -HQ --cmd 'apt list --upgradable' -A 'Briefly summarize the upgradable packages. You can categorize these packages.' -F openai --openai_model_id 'gpt-3.5-turbo-16k'
+debgpt -HQ --cmd 'apt list --upgradable' -A 'Briefly summarize the upgradable packages. You can categorize these packages.' -F openai --openai_model 'gpt-3.5-turbo-16k'
 ```
 
 * auto-generate git commit message for you

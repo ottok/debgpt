@@ -81,7 +81,7 @@ class OpenAIFrontend(AbstractFrontend):
     '''
     NAME = 'OpenAIFrontend'
     debug = False
-    model_id = "gpt-3.5-turbo"
+    model = "gpt-3.5-turbo"
     stream = True
     system_message = '''\
 You are an excellent free software developer. You write high-quality code.
@@ -108,9 +108,9 @@ Debian Free Software Guideline. You follow the Debian Policy.'''
         self.client = OpenAI(api_key=api_key)
         self.session.append({"role": "system", "content": self.system_message})
         # e.g., gpt-3.5-turbo, gpt-4
-        self.model_id = getattr(args, 'openai_model_id', self.model_id)
+        self.model = getattr(args, 'openai_model', self.model)
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
-        console.log(f'{self.NAME}> model={repr(self.model_id)}, '
+        console.log(f'{self.NAME}> model={repr(self.model)}, '
                     + f'temperature={args.temperature}, top_p={args.top_p}.')
 
     def query(self, messages: Union[List, Dict, str]) -> list:
@@ -119,7 +119,7 @@ Debian Free Software Guideline. You follow the Debian Policy.'''
         if self.debug:
             console.log('send:', self.session[-1])
         completion = self.client.chat.completions.create(
-            model=self.model_id, messages=self.session, stream=self.stream,
+            model=self.model, messages=self.session, stream=self.stream,
             **self.kwargs)
         if self.stream:
             chunks = []
