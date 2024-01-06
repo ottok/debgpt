@@ -45,6 +45,9 @@ If you want to quit (`-Q`) after receiving the first response from LLM regarding
 debgpt -Q -A "who are you?"
 ```
 
+After each session, the chatting history will be saved in `~/.debgpt` as a
+json file in a unique name.  You can use `debgpt replay <file_name>` to replay the history.
+
 #### Ex2. BTS Query `--bts ...`
 
 Ask LLM to summarize the BTS page for `src:pytorch`. 
