@@ -173,30 +173,16 @@ def policy(section: str, *, debgpt_home: str):
     return '\n'.join(lines)
 
 
-# == devref ==
-devref_actions = ('free',)
-
-
-def devref(section: str, action: str, *,
-           debgpt_home: str = os.path.expanduser('~/.debgpt')):
-    if not os.path.exists(debgpt_home):
-        os.mkdir(debgpt_home)
+def devref(section: str, *, debgpt_home: str):
+    '''
+    similar to policy, the devref cache will be stored in debgpt_home
+    '''
     doc = debgpt_policy.DebianDevref(os.path.join(debgpt_home, 'devref.txt'))
     text = doc[section].split('\n')
     lines = [
         f'''The following is the section {section} of Debian Developer's Reference:''']
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'free':
-        lines.append(
-            'Please carefully read this document. I will ask questions later. For now please be quiet.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', devref_actions)
-def test_devref(action):
-    print(devref('5.5', action))
 
 
 # == man and tldr ==

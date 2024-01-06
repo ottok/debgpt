@@ -38,10 +38,6 @@ debgpt file -f pyproject.toml free
 debgpt vote -s 2023/vote_002 diff
 # explain the difference between those proposals
 
-# == devref ==
-debgpt devref -s 5.5 free
-# which distribution should I write in d/changelog when uploading to stable? Is it bookworm? stable? stable-updates? stable-proposed-update? bookworm-proposed-updates? stable-pu? bookworm-pu? I have already forgot it. Note, the current stable release is codenamed as "bookworm".
-
 # == man ==
 debgpt man --man debhelper-compat-upgrade-checklist free  # note, this requires 40GB of CUDA memory due to manual page being too long
 # what should I do to upgrade the compat from 13 to 14?

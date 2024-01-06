@@ -138,7 +138,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_git = subps.add_parser('git', help='special mode: git helper')
     ps_git.set_defaults(func=task_git)
     git_subps = ps_git.add_subparsers(help='git commands')
-
     #    -- git commit
     ps_git_commit = git_subps.add_parser('commit', help='commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
@@ -203,13 +202,11 @@ See https://platform.openai.com/docs/api-reference/chat/create \
 
     # -- policy
     ag.add_argument('--policy', type=str, default=[], action='append',
-                    help='load a specified policy section(s). (e.g., "1", "4.6")')
+                    help='load specified policy section(s). (e.g., "1", "4.6")')
 
     # -- devref
-    ps_devref = subps.add_parser('devref', help='devref document')
-    ps_devref.add_argument('--section', '-s', type=str, required=True)
-    ps_devref.add_argument('action', type=str, choices=debian.devref_actions)
-    ps_devref.set_defaults(func=lambda ag: debian.devref(ag.section, ag.action))
+    ag.add_argument('--devref', type=str, default=[], action='append',
+                    help='load specified devref section(s).')
 
     # -- man page
     ps_man = subps.add_parser('man', help='manual page')
@@ -303,6 +300,11 @@ def main():
         msg = '' if msg is None else msg
         for section in ag.policy:
             info = debian.policy(section, debgpt_home=ag.debgpt_home)
+            msg += '\n' + info
+    if ag.devref:
+        msg = '' if msg is None else msg
+        for section in ag.devref:
+            info = debian.devref(section, debgpt_home=ag.debgpt_home)
             msg += '\n' + info
     # --ask should be processed as the last one
     if ag.ask:

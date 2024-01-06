@@ -70,6 +70,7 @@ Load a section of debian policy document, such as section "4.6", and ask a quest
 
 ```
 debgpt -H --policy 7.2 -A "what is the difference between Depends: and Pre-Depends: ?"
+debgpt -H --devref 5.5 -A :summary
 ```
 
 #### Ex1. Git Wrapper `debgpt git ...`
