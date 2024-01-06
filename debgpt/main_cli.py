@@ -107,11 +107,11 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
 
     # openai frontend
-    ag.add_argument('--openai_model_id', '-M', type=str, default=conf['openai_model_id'])
+    ag.add_argument('--openai_model_id', type=str, default=conf['openai_model_id'])
 
     # CLI behavior
     ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
-    ag.add_argument('--multiline', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+    ag.add_argument('--multiline', '-M', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
     ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
     ag.add_argument('--output', '-o', type=str, default=None, help='write the last LLM message to specified file') 
