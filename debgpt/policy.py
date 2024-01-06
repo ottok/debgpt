@@ -3,7 +3,6 @@
 import sys
 import os
 import re
-import pytest
 import requests
 import rich
 console = rich.get_console()
@@ -13,7 +12,6 @@ class DebianPolicy(object):
     '''
     cache the plain text policy document.
     and query its sections / subsections.
-    see pytest for usage example.
     '''
     NAME = 'Debian Policy'
     URL = 'https://www.debian.org/doc/debian-policy/policy.txt'
@@ -55,21 +53,9 @@ class DebianPolicy(object):
         return '\n'.join(ret)
 
 
-@pytest.mark.parametrize('section', ('1', '4.6', '4.9.1'))
-def test_debianpolicy(section):
-    policy = DebianPolicy()
-    print(policy[section])
-
-
 class DebianDevref(DebianPolicy):
     NAME = "Debian Developer's Reference"
     URL = 'https://www.debian.org/doc/manuals/developers-reference/developers-reference.en.txt'
 
     def __init__(self, cache: str = 'devref.txt'):
         super().__init__(cache)
-
-
-@pytest.mark.parametrize('section', ('2', '2.1', '3.1.1'))
-def test_debiandevref(section):
-    devref = DebianDevref()
-    print(devref[section])
