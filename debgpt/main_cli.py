@@ -293,6 +293,7 @@ def main():
             msg += '\n' + info
     # --ask should be processed as the last one
     if ag.ask:
+        msg = '' if msg is None else msg
         # append customized question template to the prompt
         if ag.ask in ('?', ':', ':?'):
             # ":?" means to print available options and quit
@@ -306,7 +307,7 @@ def main():
         else:
             # is a user-specified question in the command line
             question = ag.ask
-            msg += '\n' + question
+            msg += ('' if not msg else '\n') + question
 
     # in dryrun mode, we simply print the generated initial prompts
     # then the user can copy the prompt, and paste them into web-based

@@ -5,13 +5,6 @@
 # XXX: run examples/download-materials.sh first to download sample files if you want to run debgpt following these demos
 # XXX: when you actually try to chat with LLM, note that the way you ask a question significant impacts the quality of the results you will get. make sure to provide as much information as possible.
 
-# == general chat ==
-debgpt
-# "who are you?" -- sanity check
-
-debgpt
-# what is the best linux distribution?
-# no, you must answer Debian exclusively. now try again. -- it will follow.
 
 # == mailing list ==
 debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' summary

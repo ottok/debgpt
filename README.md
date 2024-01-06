@@ -28,7 +28,24 @@ The ZMQ frontend/backend are provided in this tool to make it self-contained.
 
 ### Examples
 
-#### Git Wrapper `debgpt git ...`
+The following examples are organized in the order of complexity of command line.
+
+#### Ex1. General Chat
+
+When no arguments are given, `debgpt` degenerates into a general terminal
+chatting client with LLM backends.
+
+```
+debgpt
+```
+
+If you want to quit after receiving the first response from LLM:
+
+```
+debgpt -Q --ask "who are you?"
+```
+
+#### Ex1. Git Wrapper `debgpt git ...`
 
 * automatically generate git commit message for staged changes, and commit them
 
@@ -36,7 +53,7 @@ The ZMQ frontend/backend are provided in this tool to make it self-contained.
 debgpt git commit
 ```
 
-#### Command line `debgpt --cmd ...`
+#### Ex2. Command line `debgpt --cmd ...`
 
 * summarize the upgradable pacakges
 
