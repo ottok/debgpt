@@ -202,10 +202,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
 
     # -- policy
-    ps_policy = subps.add_parser('policy', help='policy document (plain text)')
-    ps_policy.add_argument('--section', '-s', type=str, required=True)
-    ps_policy.add_argument('action', type=str, choices=debian.policy_actions)
-    ps_policy.set_defaults(func=lambda ag: debian.policy(ag.section, ag.action))
+    ag.add_argument('--policy', type=str, default=[], action='append',
+                    help='load a specified policy section(s). (e.g., "1", "4.6")')
 
     # -- devref
     ps_devref = subps.add_parser('devref', help='devref document')
@@ -300,6 +298,11 @@ def main():
         msg = '' if msg is None else msg
         for bts_id in ag.bts:
             info = debian.bts(bts_id, raw=ag.bts_raw)
+            msg += '\n' + info
+    if ag.policy:
+        msg = '' if msg is None else msg
+        for section in ag.policy:
+            info = debian.policy(section, debgpt_home=ag.debgpt_home)
             msg += '\n' + info
     # --ask should be processed as the last one
     if ag.ask:

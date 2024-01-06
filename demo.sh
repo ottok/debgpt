@@ -38,13 +38,6 @@ debgpt file -f pyproject.toml free
 debgpt vote -s 2023/vote_002 diff
 # explain the difference between those proposals
 
-# == policy ==
-debgpt policy -s 4.6 polish
-# polish the language of policy section 4.6
-
-debgpt policy -s 7.2 free
-# what's the difference between Depends: and Pre-Depends:
-
 # == devref ==
 debgpt devref -s 5.5 free
 # which distribution should I write in d/changelog when uploading to stable? Is it bookworm? stable? stable-updates? stable-proposed-update? bookworm-proposed-updates? stable-pu? bookworm-pu? I have already forgot it. Note, the current stable release is codenamed as "bookworm".

@@ -161,31 +161,16 @@ def test_vote(action):
     print(vote('2023/vote_002', action))
 
 
-# == policy ==
-policy_actions = ('polish', 'free')
 
-
-def policy(section: str, action: str, *,
-           debgpt_home: str = os.path.expanduser('~/.debgpt')):
-    if not os.path.exists(debgpt_home):
-        os.mkdir(debgpt_home)
+def policy(section: str, *, debgpt_home: str):
+    '''
+    the policy cache in plain text format will be stored in debgpt_home
+    '''
     doc = debgpt_policy.DebianPolicy(os.path.join(debgpt_home, 'policy.txt'))
     text = doc[section].split('\n')
     lines = [f'''The following is the section {section} of Debian Policy:''']
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'polish':
-        lines.append('Please polish the language enclosed by the "```" marks. While polishing this document, the language must be precise. Additionally, any vague or ambiguous language is not acceptable. Furthermore, do not change the original meaning of the text while polishing. Now go ahead.')
-    elif action == 'free':
-        lines.append(
-            'Please carefully read this document. I will ask questions later. Be quiet now.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', policy_actions)
-def test_policy(action):
-    print(policy('4.6', action))
 
 
 # == devref ==

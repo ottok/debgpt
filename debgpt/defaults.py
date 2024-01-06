@@ -50,6 +50,8 @@ QUESTIONS = {
     ':brief': 'please briefly summarize the above information, with very short sentences.',
     ':summary': 'Please summarize the above information.',
     ':summary_table': 'Please summarize the above information. Make a table to organize it.',
+    ':polish': 'Please polish the language in the above texts, while not changing their original meaning.',
+    ':rephrase': 'Please rephrase the above texts, while not changing their original meaning.',
     ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
     }
 
