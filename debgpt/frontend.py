@@ -7,6 +7,7 @@ import json
 import rich
 import uuid
 import sys
+from . import defaults
 console = rich.get_console()
 try:
     import tomllib  # requires python >= 3.10
@@ -82,11 +83,7 @@ class OpenAIFrontend(AbstractFrontend):
     debug = False
     model = "gpt-3.5-turbo"
     stream = True
-    system_message = '''\
-You are an excellent free software developer. You write high-quality code.
-You aim to provide people with prefessional and accurate information.
-You cherrish software freedom. You obey the Debian Social Contract and the
-Debian Free Software Guideline. You follow the Debian Policy.'''
+    system_message = defaults.OPENAI_SYSTEM_MESSAGE
 
     def __init__(self, args):
         super().__init__(args)
