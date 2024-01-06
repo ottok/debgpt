@@ -71,6 +71,7 @@ those are not explored yet.
 5. implement very simple CoT https://arxiv.org/pdf/2205.11916.pdf
 1. add perplexity API https://www.perplexity.ai
 1. https://github.com/openai/chatgpt-retrieval-plugin
+2. support file read range for `-f`, using `re.match(r'.+:(\d*)-(\d*)', 'setup.py:1-10').groups()`
 
 ## Infrastructure
 
