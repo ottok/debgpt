@@ -82,7 +82,7 @@ Or if you want to manually edit the commit message with:
     exit(0)
 
 
-def parse_args():
+def parse_args(argv):
     '''
     argparse with subparsers
     '''
@@ -235,7 +235,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                         policy=ag.policy, debgpt_home=ag.debgpt_home))
 
     # -- parse and sanitize
-    ag = ag.parse_args()
+    ag = ag.parse_args(argv)
     return ag
 
 
@@ -260,9 +260,9 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     except KeyboardInterrupt:
         pass
 
-def main():
+def main(argv = sys.argv):
     # parse args and prepare debgpt_home
-    ag = parse_args()
+    ag = parse_args(argv[1:])
     if ag.version:
         version()
         exit()
