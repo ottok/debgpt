@@ -190,7 +190,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_replay.set_defaults(func=task_replay)
 
     # Task: stdin
-    ps_stdin = subps.add_parser('stdin', help='read stdin, print response and quit.')
+    ps_stdin = subps.add_parser('stdin', help='read stdin, print response. Should combine with -Q.')
     ps_stdin.set_defaults(func=lambda ag: debian.stdin())
 
     # FIXME: update the following
