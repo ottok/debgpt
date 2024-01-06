@@ -2,14 +2,24 @@
 
 Large language models (LLMs) are newly emerged tools, which are capable of
 handling tasks that traditional software could never achieve, such as writing
-code based on the specification provided by the user. However, Debian-specific
-knowledge is a kind of niche knowledge, which is not learnt well by commercial
-or open-access LLMs. In this project, we attempt to explore the possibility
-of leveraging LLMs to aid Debian development, in any extent.
+code based on the specification provided by the user. In this tool, we
+attempt to experiment and explore the possibility of leveraging LLMs to aid
+Debian development, in any extent.
 
-1. [Install and Usage Guide](doc/install-and-usage.md)
-1. [LLM Selection and Hardware Requirements](doc/llm-selection.md)
-1. [Future Ideas](doc/ideas.md)
+Essentially, the idea of this tool is to gather some pieces of
+Debian-specific knowledge, combine them together in a prompt, and then send
+them all to the LLM. This tool provides convenient functionality for
+automatically retrieving information from BTS, buildd, Debian Policy, system
+manual pages, tldr manuals, Debian Developer References, etc. It also provides
+convenient wrappers for external tools such as git, where debgpt can
+automatically generate the git commit message and commit the changes for you.
+
+This tool supports multiple frontends, including OpenAI and ZMQ.
+The ZMQ frontend/backend are provided in this tool to make it self-contained.
+
+1. [Install and Usage Guide (needs update)](doc/install-and-usage.md)
+1. [LLM Selection and Hardware Requirements (needs update)](doc/llm-selection.md)
+1. [Future Ideas (needs update)](doc/ideas.md)
 
 ## Synopsis of `debgpt` CLI
 

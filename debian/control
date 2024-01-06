@@ -1,0 +1,43 @@
+Source: debgpt
+Section: python
+Homepage: https://salsa.debian.org/deeplearning-team/debgpt
+Priority: optional
+Standards-Version: 4.6.2
+Vcs-Git: https://salsa.debian.org/deeplearning-team/debgpt.git
+Vcs-Browser: https://salsa.debian.org/deeplearning-team/debgpt
+Maintainer: Debian Deep Learning Team <debian-ai@lists.debian.org>
+Uploaders: Mo Zhou <lumin@debian.org>
+Build-Depends: debhelper-compat (= 13),
+ dh-python,
+ pybuild-plugin-pyproject,
+ python3-all,
+ python3-openai,
+ python3-rich,
+ python3-pytest,
+ python3-prompt-toolkit,
+ python3-requests,
+ python3-bs4,
+
+Package: debgpt
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends},
+Recommends: python3-torch | python3-torch-cuda | python3-torch-rocm,
+            python3-transformers,
+            python3-zmq,
+Description: Chatting LLM with Debian-Specific Knowledge
+ Large language models (LLMs) are newly emerged tools, which are capable of
+ handling tasks that traditional software could never achieve, such as writing
+ code based on the specification provided by the user. In this tool, we
+ attempt to experiment and explore the possibility of leveraging LLMs to aid
+ Debian development, in any extent.
+ .
+ Essentially, the idea of this tool is to gather some pieces of
+ Debian-specific knowledge, combine them together in a prompt, and then send
+ them all to the LLM. This tool provides convenient functionality for
+ automatically retrieving information from BTS, buildd, Debian Policy, system
+ manual pages, tldr manuals, Debian Developer References, etc. It also provides
+ convenient wrappers for external tools such as git, where debgpt can
+ automatically generate the git commit message and commit the changes for you.
+ .
+ This tool supports multiple frontends, including OpenAI and ZMQ.
+ The ZMQ frontend/backend are provided in this tool to make it self-contained.

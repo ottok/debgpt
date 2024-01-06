@@ -14,8 +14,15 @@ dynamic = ["version"]
 name = 'debgpt'
 description = "DebGPT -- Chatting LLM with Debian-Specific Knowledge"
 requires-python = ">= 3.9"
-# empty dependency is not a bug. it is fulfilled using external tools.
-dependencies = []
+dependencies = [
+    'rich',
+    'prompt_toolkit',
+    'pytest',
+    'openai',
+    'requests',
+    'bs4',
+    'tomli',
+]
 authors = [
   {name = "Mo Zhou", email = "lumin@debian.org"},
 ]
