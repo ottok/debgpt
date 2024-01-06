@@ -37,6 +37,8 @@ class Config(object):
         # the config file will be overriden by command line next
     def __getitem__(self, index):
         return self.toml.__getitem__(index)
+    def __getattr__(self, index):
+        return self.toml.__getitem__(index)
 
 ########################
 # Question templates
