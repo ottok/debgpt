@@ -142,11 +142,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_git_commit = git_subps.add_parser('commit', help='commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
 
-    # -- none (special mode)
-    # FIXME: deprecated.
-    ps_none = subps.add_parser('none', help='degenerate into general chat without debian specific stuff')
-    ps_none.set_defaults(func=lambda ag: None)
-
     # -- replay (special mode)
     ps_replay = subps.add_parser('replay', help='replay a conversation from a JSON file')
     ps_replay.add_argument('json_file_path', type=str, help='path to the JSON file')
