@@ -12,17 +12,8 @@ from . import policy as debgpt_policy
 import os
 import subprocess
 import sys
+from .defaults import QUESTIONS
 
-
-########################
-# Question templates
-########################
-
-QUESTIONS = {
-    ':none': '',
-    ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
-    ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
-    }
 
 ########################
 # Utility I/O functions

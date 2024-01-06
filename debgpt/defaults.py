@@ -5,6 +5,13 @@ try:
     import tomllib  # requires python >= 3.10
 except:
     import pip._vendor.tomli as tomllib  # for python < 3.10
+import rich
+
+
+########################
+# Configuration handling
+########################
+
 
 HOME = os.path.expanduser('~/.debgpt')
 CONFIG = os.path.join(HOME, 'config.toml')
@@ -30,3 +37,18 @@ class Config(object):
         # the config file will be overriden by command line next
     def __getitem__(self, index):
         return self.toml.__getitem__(index)
+
+########################
+# Question templates
+########################
+
+QUESTIONS = {
+    ':none': '',
+    ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
+    ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
+    }
+
+
+def print_question_templates():
+    console = rich.get_console()
+    console.print(QUESTIONS)

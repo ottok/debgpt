@@ -51,7 +51,7 @@ def task_git(ag) -> None:
 def task_git_commit(ag) -> None:
     f = ag.frontend_instance
     msg = debian.command_line('git diff --staged')
-    msg += '\n' + debian.QUESTIONS[':git-commit']
+    msg += '\n' + defaults.QUESTIONS[':git-commit']
     if f.stream:
         console.print(
             f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
@@ -229,7 +229,7 @@ def parse_args():
                         policy=ag.policy, debgpt_home=ag.debgpt_home))
 
     # question templates
-    ag.add_argument('--ask', '-A', type=str, default=debian.QUESTIONS[':none'])
+    ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'])
 
     # -- parse and sanitize
     ag = ag.parse_args()
@@ -294,9 +294,14 @@ def main():
     # --ask should be processed as the last one
     if ag.ask:
         # append customized question template to the prompt
+        if ag.ask in ('?', ':', ':?'):
+            # ":?" means to print available options and quit
+            console.print('Available question templates for argument -A/--ask:')
+            defaults.print_question_templates()
+            exit(0)
         if ag.ask.startswith(':'):
-            # is a question template from debian.QUESTIONS
-            question = debian.QUESTIONS[ag.ask]
+            # specifies a question template from defaults.QUESTIONS
+            question = defaults.QUESTIONS[ag.ask]
             msg += '\n' + question
         else:
             # is a user-specified question in the command line
