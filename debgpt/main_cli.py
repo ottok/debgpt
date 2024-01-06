@@ -86,7 +86,9 @@ def parse_args():
     '''
     argparse with subparsers
     '''
+    # if ~/.debgpt/config.toml exists, parse it to override the built-in defaults.
     conf = defaults.Config()
+    # override the loaded configurations again with command line arguments
     ag = argparse.ArgumentParser()
 
     # LLM inference arguments
@@ -102,18 +104,26 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     # ZMQ frontend
     ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
 
-    # openai frontend
-    ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
-
     # CLI Behavior / Frontend Arguments
-    ag.add_argument('--quit', '-Q', action='store_true', help='directly quit after receiving the first response from LLM, instead of staying in interation.')
-    ag.add_argument('--multiline', '-M', action='store_true', help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
-    ag.add_argument('--hide_first_prompt', '-H', action='store_true', help='hide the first (generated) prompt; do not print argparse results')
-    ag.add_argument('--verbose', '-v', action='store_true', help='verbose mode. helpful for debugging')
-    ag.add_argument('--output', '-o', type=str, default=None, help='write the last LLM message to specified file') 
-    ag.add_argument('--version', action='store_true', help='show DebGPT software version and quit.')
-    ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'])
-    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'], choices=('dryrun', 'zmq', 'openai'))
+    ag.add_argument('--quit', '-Q', action='store_true',
+                    help='directly quit after receiving the first response from LLM, instead of staying in interation.')
+    ag.add_argument('--multiline', '-M', action='store_true',
+                    help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+    ag.add_argument('--hide_first_prompt', '-H', action='store_true',
+                    help='hide the first (generated) prompt; do not print argparse results')
+    ag.add_argument('--verbose', '-v', action='store_true',
+                    help='verbose mode. helpful for debugging')
+    ag.add_argument('--output', '-o', type=str, default=None,
+                    help='write the last LLM message to specified file') 
+    ag.add_argument('--version', action='store_true',
+                    help='show DebGPT software version and quit.')
+    ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'],
+                    help='directory to store cache and sessions.')
+    ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'],
+                    choices=('dryrun', 'zmq', 'openai'))
+
+    # Specific to OpenAI Frontend
+    ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
 
 
     # The following are task-specific subparsers
