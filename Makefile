@@ -2,6 +2,7 @@ main: pytest
 
 man: debgpt.1
 
+.PHONY: debgpt.1
 debgpt.1:
 	pandoc -s README.md -t man > $@
 

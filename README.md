@@ -1,10 +1,31 @@
-# DebGPT -- Chatting LLM with Debian-Specific Knowledge
+% DebGPT(1) | Chatting LLM with Debian-Specific Knowledge
+% Copyright (C) 2024 Mo Zhou <lumin@debian.org>; MIT License.
+
+NAME
+====
+
+DebGPT - Chatting LLM with Debian-Specific Knowledge
 
 > "AI" = "Artificial Idiot"
 
+
+SYNOPSIS
+========
+
+`debgpt [-h] [--quit] [--multiline] [--hide_first] [--verbose] [--output OUTPUT] [--version] [--debgpt_home DEBGPT_HOME]
+      [--frontend {dryrun,zmq,openai}] [--temperature TEMPERATURE] [--top_p TOP_P] [--openai_base_url OPENAI_BASE_URL]
+      [--openai_api_key OPENAI_API_KEY] [--openai_model OPENAI_MODEL] [--zmq_backend ZMQ_BACKEND] [--bts BTS] [--bts_raw] [--cmd CMD]
+      [--buildd BUILDD] [--file FILE] [--policy POLICY] [--devref DEVREF] [--tldr TLDR] [--ask ASK]
+      [SUBCOMMAND] ...`
+
+DESCRIPTION
+===========
+
+*This tool is currently experimental.*
+
 Large language models (LLMs) are newly emerged tools, which are capable of
 handling tasks that traditional software could never achieve, such as writing
-code based on the specification provided by the user. In this tool, we
+code based on the specification provided by the user. With this tool, we
 attempt to experiment and explore the possibility of leveraging LLMs to aid
 Debian development, in any extent.
 
@@ -19,11 +40,64 @@ automatically generate the git commit message and commit the changes for you.
 This tool supports multiple frontends, including OpenAI and ZMQ.
 The ZMQ frontend/backend are provided in this tool to make it self-contained.
 
-1. [Install and Usage Guide (needs update)](doc/install-and-usage.md)
-1. [LLM Selection and Hardware Requirements (needs update)](doc/llm-selection.md)
-1. [Future Ideas (needs update)](doc/ideas.md)
+OPTIONS
+=======
 
-## Synopsis of `debgpt` CLI
+`-h, --help`
+: show this help message and exit
+
+`--cmd CMD`
+: add the command line output to the prompt
+
+
+```
+options:
+  --quit, -Q            directly quit after receiving the first response from LLM, instead of staying in interation.
+  --multiline, -M       enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.
+  --hide_first, -H      hide the first (generated) prompt; do not print argparse results
+  --verbose, -v         verbose mode. helpful for debugging
+  --output OUTPUT, -o OUTPUT
+                        write the last LLM message to specified file
+  --version             show DebGPT software version and quit.
+  --debgpt_home DEBGPT_HOME
+                        directory to store cache and sessions.
+  --frontend {dryrun,zmq,openai}, -F {dryrun,zmq,openai}
+  --temperature TEMPERATURE, -T TEMPERATURE
+                        Sampling temperature. Typically ranges within [0,1]. Low values like 0.2 gives more focused (coherent) answer. High values like
+                        0.8 gives a more random (creative) answer. Not suggested to combine this with with --top_p. See
+                        https://platform.openai.com/docs/api-reference/chat/create
+  --top_p TOP_P, -P TOP_P
+  --openai_base_url OPENAI_BASE_URL
+  --openai_api_key OPENAI_API_KEY
+  --openai_model OPENAI_MODEL
+  --zmq_backend ZMQ_BACKEND
+                        the ZMQ frontend endpoint
+  --bts BTS             Retrieve BTS webpage to prompt. example: "src:pytorch", "1056388"
+  --bts_raw             load raw HTML instead of plain text.
+  --buildd BUILDD       Retrieve buildd page for package to prompt.
+  --file FILE, -f FILE  load specified file(s) in prompt
+  --policy POLICY       load specified policy section(s). (e.g., "1", "4.6")
+  --devref DEVREF       load specified devref section(s).
+  --tldr TLDR           add tldr page to the prompt.
+  --ask ASK, -A ASK     Question template to append at the end of the prompt. Specify ':' for printing all available templates. Or a customized string not
+                        starting with the colon.
+
+```
+
+```
+positional arguments:
+  {backend,git,replay,stdin,ml,file,vote,man,dev,x}
+                        specific task handling
+    backend             start backend server (self-hosted LLM inference)
+    git                 git command wrapper
+    replay              replay a conversation from a JSON file
+    stdin               read stdin, print response and quit.
+    ml                  mailing list
+    file                ask questions regarding a specific file
+    vote                vote.debian.org
+    man                 manual page
+    dev (x)             code editing with context
+```
 
 
 ### Examples
