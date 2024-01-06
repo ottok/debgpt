@@ -24,7 +24,8 @@ console = rich.get_console()
 
 def version() -> None:
     from debgpt import __version__, __copyright__, __license__
-    console.print(f'DebGPT {__version__}; Copyright {__copyright__}; Released under {__license__} license.')
+    console.print(
+        f'DebGPT {__version__}; Copyright {__copyright__}; Released under {__license__} license.')
 
 
 def task_backend(ag) -> None:
@@ -36,6 +37,7 @@ def task_backend(ag) -> None:
         pass
     console.log('Server shut down.')
     exit(0)
+
 
 def task_replay(ag) -> None:
     from . import replay
@@ -101,7 +103,7 @@ def parse_args(argv):
     ag.add_argument('--verbose', '-v', action='store_true',
                     help='verbose mode. helpful for debugging')
     ag.add_argument('--output', '-o', type=str, default=None,
-                    help='write the last LLM message to specified file') 
+                    help='write the last LLM message to specified file')
     ag.add_argument('--version', action='store_true',
                     help='show DebGPT software version and quit.')
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'],
@@ -111,7 +113,7 @@ def parse_args(argv):
 
     # LLM Inference Arguments
     ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'],
-        help='''Sampling temperature. Typically ranges within [0,1]. \
+                    help='''Sampling temperature. Typically ranges within [0,1]. \
 Low values like 0.2 gives more focused (coherent) answer. \
 High values like 0.8 gives a more random (creative) answer. \
 Not suggested to combine this with with --top_p. \
@@ -120,8 +122,10 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
 
     # Specific to OpenAI Frontend
-    ag.add_argument('--openai_base_url', type=str, default=conf['openai_base_url'])
-    ag.add_argument('--openai_api_key', type=str, default=conf['openai_api_key'])
+    ag.add_argument('--openai_base_url', type=str,
+                    default=conf['openai_base_url'])
+    ag.add_argument('--openai_api_key', type=str,
+                    default=conf['openai_api_key'])
     ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
 
     # Specific to ZMQ Frontend
@@ -133,7 +137,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     # -- 1. Debian BTS
     ag.add_argument('--bts', type=str, default=[], action='append',
                     help='Retrieve BTS webpage to prompt. example: "src:pytorch", "1056388"')
-    ag.add_argument('--bts_raw', action='store_true', help='load raw HTML instead of plain text.')
+    ag.add_argument('--bts_raw', action='store_true',
+                    help='load raw HTML instead of plain text.')
     # -- 2. Custom Command Line(s)
     ag.add_argument('--cmd', type=str, default=[], action='append',
                     help='add the command line output to the prompt')
@@ -163,7 +168,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.set_defaults(func=lambda ag: None)  # if no subparser is specified
 
     # Specific to ZMQ Backend (self-hosted LLM Inference)
-    ps_backend = subps.add_parser('backend', help='start backend server (self-hosted LLM inference)')
+    ps_backend = subps.add_parser(
+        'backend', help='start backend server (self-hosted LLM inference)')
     ps_backend.add_argument('--port', '-p', type=int, default=11177,
                             help='port number "11177" looks like "LLM"')
     ps_backend.add_argument('--host', type=str, default='tcp://*')
@@ -181,40 +187,44 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     git_subps = ps_git.add_subparsers(help='git commands')
     # Task: git commit
     ps_git_commit = git_subps.add_parser('commit',
-            help='directly commit staged changes with auto-generated message')
+                                         help='directly commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
 
     # Task: replay
-    ps_replay = subps.add_parser('replay', help='replay a conversation from a JSON file')
-    ps_replay.add_argument('json_file_path', type=str, help='path to the JSON file')
+    ps_replay = subps.add_parser(
+        'replay', help='replay a conversation from a JSON file')
+    ps_replay.add_argument('json_file_path', type=str,
+                           help='path to the JSON file')
     ps_replay.set_defaults(func=task_replay)
 
     # Task: stdin
-    ps_stdin = subps.add_parser('stdin', help='read stdin, print response. Should combine with -Q.')
+    ps_stdin = subps.add_parser(
+        'stdin', help='read stdin, print response. Should combine with -Q.')
     ps_stdin.set_defaults(func=lambda ag: debian.stdin())
 
     # FIXME: update the following
 
     # -- mailing list
-    ps_ml = subps.add_parser('ml', help='mailing list') 
+    ps_ml = subps.add_parser('ml', help='mailing list')
     ps_ml.add_argument('--url', '-u', type=str, required=True)
     ps_ml.add_argument('--raw', action='store_true', help='use raw html')
     ps_ml.add_argument('action', type=str, choices=debian.mailing_list_actions)
-    ps_ml.set_defaults(func=lambda ag: debian.mailing_list(ag.url, ag.action, raw=ag.raw))
+    ps_ml.set_defaults(func=lambda ag: debian.mailing_list(
+        ag.url, ag.action, raw=ag.raw))
 
     # -- file (old)
     # e.g., license check (SPDX format), code improvement, code explain
     # TODO: support multiple files (nargs=+)
-    ps_file = subps.add_parser('file', help='ask questions regarding a specific file')
+    ps_file = subps.add_parser(
+        'file', help='ask questions regarding a specific file')
     ps_file.add_argument('--file', '-f', type=str, required=True)
     ps_file.add_argument('action', type=str, choices=debian.file_actions)
     ps_file.set_defaults(func=lambda ag: debian.file(ag.file, ag.action))
 
-
     # -- vote
     ps_vote = subps.add_parser('vote', help='vote.debian.org')
     ps_vote.add_argument('--suffix', '-s', type=str, required=True,
-                    help='for example, 2023/vote_002')
+                         help='for example, 2023/vote_002')
     ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
 
@@ -225,7 +235,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_man.set_defaults(func=lambda ag: debian.man(ag.man, ag.action))
 
     # -- dev mode
-    ps_dev = subps.add_parser('dev', aliases=['x'], help='code editing with context')
+    ps_dev = subps.add_parser(
+        'dev', aliases=['x'], help='code editing with context')
     ps_dev.add_argument('--file', '-f', type=str, required=True,
                         help='path to file you want to edit')
     ps_dev.add_argument('--policy', type=str, default=None,
@@ -260,7 +271,8 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     except KeyboardInterrupt:
         pass
 
-def main(argv = sys.argv[1:]):
+
+def main(argv=sys.argv[1:]):
     # parse args and prepare debgpt_home
     ag = parse_args(argv)
     if ag.version:
@@ -296,10 +308,12 @@ def main(argv = sys.argv[1:]):
             msg = _append_info(msg, debian.bts(bts_id, raw=ag.bts_raw))
     if ag.policy:
         for section in ag.policy:
-            msg = _append_info(msg, debian.policy(section, debgpt_home=ag.debgpt_home))
+            msg = _append_info(msg, debian.policy(
+                section, debgpt_home=ag.debgpt_home))
     if ag.devref:
         for section in ag.devref:
-            msg = _append_info(msg, debian.devref(section, debgpt_home=ag.debgpt_home))
+            msg = _append_info(msg, debian.devref(
+                section, debgpt_home=ag.debgpt_home))
     if ag.buildd:
         for p in ag.buildd:
             msg = _append_info(msg, debian.buildd(p))
@@ -309,7 +323,8 @@ def main(argv = sys.argv[1:]):
         # append customized question template to the prompt
         if ag.ask in ('?', ':', ':?'):
             # ":?" means to print available options and quit
-            console.print('Available question templates for argument -A/--ask:')
+            console.print(
+                'Available question templates for argument -A/--ask:')
             defaults.print_question_templates()
             exit(0)
         if ag.ask.startswith(':'):
@@ -353,7 +368,8 @@ def main(argv = sys.argv[1:]):
     f.dump()
     if ag.output is not None:
         if os.path.exists(ag.output):
-            console.print(f'[red]! destination {ag.output} exists. Will not overwrite this file.[/red]')
+            console.print(
+                f'[red]! destination {ag.output} exists. Will not overwrite this file.[/red]')
         else:
             with open(ag.output, 'wt') as fp:
                 fp.write(f.session[-1]['content'])

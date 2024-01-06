@@ -45,14 +45,17 @@ class Config(object):
             self.toml.openai_api_key = openai_api_key
         # all the above will be overriden by command line arguments
         pass
+
     def __getitem__(self, index):
         return self.toml.__getitem__(index)
+
     def __getattr__(self, index):
         return self.toml.__getitem__(index)
 
 ########################
 # Question templates
 ########################
+
 
 QUESTIONS = {
     ':none': '',
@@ -63,7 +66,7 @@ QUESTIONS = {
     ':polish': 'Please polish the language in the above texts, while not changing their original meaning.',
     ':rephrase': 'Please rephrase the above texts, while not changing their original meaning.',
     ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
-    }
+}
 
 
 def print_question_templates():
@@ -72,7 +75,7 @@ def print_question_templates():
 
 
 ########################
-# System Messages 
+# System Messages
 ########################
 
 OPENAI_SYSTEM_MESSAGE = '''\

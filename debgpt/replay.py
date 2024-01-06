@@ -1,12 +1,13 @@
 # Copyright (C) 2024 Mo Zhou <lumin@debian.org>
 # MIT/Expat License.
+from rich.markup import escape
+from rich.panel import Panel
+import json
 import argparse
 import sys
 import rich
 console = rich.get_console()
-import json
-from rich.panel import Panel
-from rich.markup import escape
+
 
 def process_entry(entry):
     if entry['role'] == 'user':
@@ -21,8 +22,10 @@ def process_entry(entry):
     else:
         raise ValueError(f'unknown role')
 
-    panel = Panel(escape(entry['content']), title=title, border_style=border_style)
+    panel = Panel(escape(entry['content']),
+                  title=title, border_style=border_style)
     console.print(panel)
+
 
 def replay(path):
     with open(path) as f:
@@ -33,8 +36,10 @@ def replay(path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Replay chat messages from a JSON file.')
-    parser.add_argument('input_file', metavar='FILE', help='JSON file containing the chat messages')
+    parser = argparse.ArgumentParser(
+        description='Replay chat messages from a JSON file.')
+    parser.add_argument('input_file', metavar='FILE',
+                        help='JSON file containing the chat messages')
     args = parser.parse_args()
     replay(args.input_file)
 

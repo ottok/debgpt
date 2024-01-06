@@ -75,15 +75,16 @@ class OpenAIFrontend(AbstractFrontend):
     '''
     https://platform.openai.com/docs/quickstart?context=python
     '''
-    NAME : str = 'OpenAIFrontend'
-    debug : bool = False
-    stream : bool = True
-    system_message : str = defaults.OPENAI_SYSTEM_MESSAGE
+    NAME: str = 'OpenAIFrontend'
+    debug: bool = False
+    stream: bool = True
+    system_message: str = defaults.OPENAI_SYSTEM_MESSAGE
 
     def __init__(self, args):
         super().__init__(args)
         from openai import OpenAI
-        self.client = OpenAI(api_key=args.openai_api_key, base_url=args.openai_base_url)
+        self.client = OpenAI(api_key=args.openai_api_key,
+                             base_url=args.openai_base_url)
         self.session.append({"role": "system", "content": self.system_message})
         self.model = args.openai_model
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
@@ -133,10 +134,12 @@ class ZMQFrontend(AbstractFrontend):
         self.zmq_backend = args.zmq_backend
         self.socket = zmq.Context().socket(zmq.REQ)
         self.socket.connect(self.zmq_backend)
-        console.log(f'{self.NAME}> Connected to ZMQ backend {self.zmq_backend}.')
+        console.log(
+            f'{self.NAME}> Connected to ZMQ backend {self.zmq_backend}.')
         #
         if hasattr(args, 'temperature'):
-            console.log('warning! --temperature not yet supported for this frontend')
+            console.log(
+                'warning! --temperature not yet supported for this frontend')
         if hasattr(args, 'top_p'):
             console.log('warning! --top_p not yet supported for this frontend')
 
@@ -158,7 +161,6 @@ class ZMQFrontend(AbstractFrontend):
         if self.debug:
             console.log('recv:', self.session[-1])
         return self.session[-1]['content']
-
 
 
 def create_frontend(args):

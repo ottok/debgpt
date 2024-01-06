@@ -102,7 +102,6 @@ def buildd(p: str, *, suite: str = 'sid', raw: bool = False):
     return '\n'.join(lines)
 
 
-
 def bts(identifier: str, *, raw: bool = False):
     url = f'https://bugs.debian.org/{identifier}'
     text = _load_html_raw(url) if raw else _load_html(url)
@@ -143,7 +142,6 @@ def vote(suffix: str, action: str):
 @pytest.mark.parametrize('action', vote_actions)
 def test_vote(action):
     print(vote('2023/vote_002', action))
-
 
 
 def policy(section: str, *, debgpt_home: str):
