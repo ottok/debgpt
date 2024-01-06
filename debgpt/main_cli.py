@@ -101,9 +101,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ''')
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
 
-    # ZMQ frontend
-    ag.add_argument('--backend', '-B', type=str, default=conf['backend'], help='the frontend endpoint')
-
     # CLI Behavior / Frontend Arguments
     ag.add_argument('--quit', '-Q', action='store_true',
                     help='directly quit after receiving the first response from LLM, instead of staying in interation.')
@@ -125,12 +122,15 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     # Specific to OpenAI Frontend
     ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
 
+    # Specific to ZMQ Frontend
+    ag.add_argument('--zmq_backend', type=str, default=conf['zmq_backend'],
+                    help='the ZMQ frontend endpoint')
 
     # The following are task-specific subparsers
     subps = ag.add_subparsers(help='task help')
     ag.set_defaults(func=lambda ag: None)  # if no subparser specified
 
-    # -- backend (special mode)
+    # -- ZMQ Backend (special mode)
     ps_backend = subps.add_parser('backend', help='special mode: start backend server (self-hosted LLM inference)')
     ps_backend.add_argument('--port', '-p', type=int, default=11177,
                             help='"11177" looks like "LLM"')
@@ -271,7 +271,7 @@ def main():
     ag.frontend_instance = f
 
     # create task-specific prompts. note, some special tasks will exit()
-    # in their subparser default function when then finished, such as backend
+    # in their subparser default function when then finished, such as backend.
     msg = ag.func(ag)
 
     # XXX: on migration to new cli design

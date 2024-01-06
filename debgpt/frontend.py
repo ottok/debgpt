@@ -40,7 +40,6 @@ class AbstractFrontend():
 
     def __init__(self, args):
         self.uuid = uuid.uuid4()
-        self.backend = args.backend
         self.session = []
         self.debgpt_home = args.debgpt_home
         console.log(f'{self.NAME}> Starting conversation {self.uuid}')
@@ -153,9 +152,10 @@ class ZMQFrontend(AbstractFrontend):
     def __init__(self, args):
         import zmq
         super().__init__(args)
+        self.zmq_backend = args.zmq_backend
         self.socket = zmq.Context().socket(zmq.REQ)
-        self.socket.connect(self.backend)
-        console.log(f'{self.NAME}> Connected to ZMQ backend {self.backend}.')
+        self.socket.connect(self.zmq_backend)
+        console.log(f'{self.NAME}> Connected to ZMQ backend {self.zmq_backend}.')
         #
         if hasattr(args, 'temperature'):
             console.log('warning! --temperature not yet supported for this frontend')
@@ -197,7 +197,7 @@ def create_frontend(args):
 
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
-    ag.add_argument('--backend', '-B', default='tcp://localhost:11177')
+    ag.add_argument('--zmq_backend', '-B', default='tcp://localhost:11177')
     ag.add_argument('--frontend', '-F', default='zmq',
                     choices=('zmq', 'openai'))
     ag.add_argument('--debgpt_home', default=os.path.expanduser('~/.debgpt'))

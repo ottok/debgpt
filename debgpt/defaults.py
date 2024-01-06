@@ -12,20 +12,26 @@ import rich
 # Configuration handling
 ########################
 
-
 HOME = os.path.expanduser('~/.debgpt')
 CONFIG = os.path.join(HOME, 'config.toml')
+
 
 class Config(object):
     def __init__(self, home: str = HOME, config: str = CONFIG):
         # default
-        self.toml = {'backend': 'tcp://localhost:11177',
-                     'debgpt_home': HOME,
-                     'frontend': 'zmq',
-                     'stream': True,
-                     'openai_model': 'gpt-4',
-                     'temperature': 0.5,
-                     'top_p': 1.0,
+        self.toml = {
+            # CLI/Frontend Bebavior
+            'frontend': 'openai',
+            'debgpt_home': HOME,
+            # LLM Inference Parameters
+            'temperature': 0.5,
+            'top_p': 1.0,
+            # OpenAI Frontend Specific
+            'openai_base_url': 'https://api.openai.com/v1',
+            'openai_model': 'gpt-3.5-turbo',
+            'openai_api_key': 'empty',
+            # ZMQ Frontend Specific
+            'zmq_backend': 'tcp://localhost:11177',
                      }
         # the defaults will be overriden by config file
         if not os.path.exists(home):
@@ -59,3 +65,10 @@ QUESTIONS = {
 def print_question_templates():
     console = rich.get_console()
     console.print(QUESTIONS)
+
+
+########################
+# System Messages 
+########################
+
+# TODO: move it from frontend.py to here
