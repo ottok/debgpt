@@ -18,7 +18,7 @@ CONFIG = os.path.join(HOME, 'config.toml')
 
 class Config(object):
     def __init__(self, home: str = HOME, config: str = CONFIG):
-        # default
+        # The built-in defaults will be overriden by config file
         self.toml = {
             # CLI/Frontend Bebavior
             'frontend': 'openai',
@@ -32,15 +32,19 @@ class Config(object):
             'openai_api_key': 'empty',
             # ZMQ Frontend Specific
             'zmq_backend': 'tcp://localhost:11177',
-                     }
-        # the defaults will be overriden by config file
+        }
+        # the built-in defaults will be overriden by config file
         if not os.path.exists(home):
             os.mkdir(home)
         if os.path.exists(config):
             with open(config, 'rb') as f:
                 content = tomllib.load(f)
                 self.toml.update(content)
-        # the config file will be overriden by command line next
+        # some arguments will be overrden by environment variables
+        if (openai_api_key := os.getenv('OPENAI_API_KEY', None)) is not None:
+            self.toml.openai_api_key = openai_api_key
+        # all the above will be overriden by command line arguments
+        pass
     def __getitem__(self, index):
         return self.toml.__getitem__(index)
     def __getattr__(self, index):

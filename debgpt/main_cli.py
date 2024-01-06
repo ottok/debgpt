@@ -120,6 +120,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                     choices=('dryrun', 'zmq', 'openai'))
 
     # Specific to OpenAI Frontend
+    ag.add_argument('--openai_base_url', type=str, default=conf['openai_base_url'])
+    ag.add_argument('--openai_api_key', type=str, default=conf['openai_api_key'])
     ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
 
     # Specific to ZMQ Frontend
@@ -127,10 +129,10 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                     help='the ZMQ frontend endpoint')
 
     # The following are task-specific subparsers
-    subps = ag.add_subparsers(help='task help')
+    subps = ag.add_subparsers(help='specific task handling')
     ag.set_defaults(func=lambda ag: None)  # if no subparser specified
 
-    # -- ZMQ Backend (special mode)
+    # task: ZMQ backend
     ps_backend = subps.add_parser('backend', help='special mode: start backend server (self-hosted LLM inference)')
     ps_backend.add_argument('--port', '-p', type=int, default=11177,
                             help='"11177" looks like "LLM"')
@@ -143,15 +145,16 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_backend.add_argument('--precision', type=str, default='fp16')
     ps_backend.set_defaults(func=task_backend)
 
-    # -- git (special mode)
-    ps_git = subps.add_parser('git', help='special mode: git helper')
+    # task: git
+    ps_git = subps.add_parser('git', help='git command wrapper')
     ps_git.set_defaults(func=task_git)
     git_subps = ps_git.add_subparsers(help='git commands')
-    #    -- git commit
-    ps_git_commit = git_subps.add_parser('commit', help='commit staged changes with auto-generated message')
+    # task: git commit
+    ps_git_commit = git_subps.add_parser('commit',
+            help='directly commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
 
-    # -- replay (special mode)
+    # task: replay
     ps_replay = subps.add_parser('replay', help='replay a conversation from a JSON file')
     ps_replay.add_argument('json_file_path', type=str, help='path to the JSON file')
     ps_replay.set_defaults(func=task_replay)

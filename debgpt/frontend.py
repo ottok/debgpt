@@ -9,10 +9,6 @@ import uuid
 import sys
 from . import defaults
 console = rich.get_console()
-try:
-    import tomllib  # requires python >= 3.10
-except:
-    import pip._vendor.tomli as tomllib  # for python < 3.10
 
 
 def _check(messages: List[Dict]):
@@ -79,32 +75,17 @@ class OpenAIFrontend(AbstractFrontend):
     '''
     https://platform.openai.com/docs/quickstart?context=python
     '''
-    NAME = 'OpenAIFrontend'
-    debug = False
-    model = "gpt-3.5-turbo"
-    stream = True
-    system_message = defaults.OPENAI_SYSTEM_MESSAGE
+    NAME : str = 'OpenAIFrontend'
+    debug : bool = False
+    stream : bool = True
+    system_message : str = defaults.OPENAI_SYSTEM_MESSAGE
 
     def __init__(self, args):
         super().__init__(args)
         from openai import OpenAI
-        if (api_key := os.getenv('OPENAI_API_KEY', None)) is None:
-            # TODO: do this in defaults.py instead
-            config_path = os.path.join(args.debgpt_home, 'config.toml')
-            if os.path.exists(config_path):
-                with open(config_path, 'rb') as f:
-                    self.env = tomllib.load(f)
-            else:
-                raise FileNotFoundError(
-                    f'Please put your OPENAI_API_KEY in environt variables or {config_path}')
-            if 'OPENAI_API_KEY' not in self.env:
-                raise KeyError(
-                    f'the OPENAI_API_KEY is not found in environment variables, neither the config file {config_path}')
-            api_key = self.env['OPENAI_API_KEY']
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=args.openai_api_key, base_url=args.openai_base_url)
         self.session.append({"role": "system", "content": self.system_message})
-        # e.g., gpt-3.5-turbo, gpt-4
-        self.model = getattr(args, 'openai_model', self.model)
+        self.model = args.openai_model
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
         console.log(f'{self.NAME}> model={repr(self.model)}, '
                     + f'temperature={args.temperature}, top_p={args.top_p}.')
