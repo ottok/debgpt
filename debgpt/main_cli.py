@@ -260,12 +260,12 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     except KeyboardInterrupt:
         pass
 
-def main(argv = sys.argv):
+def main(argv = sys.argv[1:]):
     # parse args and prepare debgpt_home
-    ag = parse_args(argv[1:])
+    ag = parse_args(argv)
     if ag.version:
         version()
-        exit()
+        exit(0)
     if ag.verbose:
         console.log(ag)
 
@@ -327,7 +327,7 @@ def main(argv = sys.argv):
     # Bard (google), Gemini (google), huggingchat (huggingface), etc.
     if ag.frontend == 'dryrun':
         console.print(msg)
-        exit()
+        exit(0)
 
     # print the prompt and do the first query, if specified
     if msg is not None:
