@@ -82,6 +82,7 @@ those are not explored yet.
 1. add perplexity API https://www.perplexity.ai
 1. https://github.com/openai/chatgpt-retrieval-plugin
 2. support file read range for `-f`, using `re.match(r'.+:(\d*)-(\d*)', 'setup.py:1-10').groups()`
+1. add man page for `debgpt`
 
 ## Infrastructure
 
