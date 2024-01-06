@@ -47,6 +47,9 @@ class Config(object):
 QUESTIONS = {
     ':none': '',
     ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
+    ':brief': 'please briefly summarize the above information, with very short sentences.',
+    ':summary': 'Please summarize the above information.',
+    ':summary_table': 'Please summarize the above information. Make a table to organize it.',
     ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
     }
 

@@ -13,16 +13,6 @@ debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' sum
 # 'try to reply to this email'
 # "How to increase the number of Debian project members?"
 
-# == bts ==
-debgpt bts --id src:pytorch summary
-# 'summarize the current bugs and print nicely'
-# 'filter out some data using natural language and re-summarize'
-
-debgpt bts --id 1056388 summary
-# 'summarize this bug"
-# 'why does the build fail?'
-# 'how should I fix this bug?'
-
 # == buildd ==
 debgpt buildd -p glibc status
 # summarize the build status in a nice format.

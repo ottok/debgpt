@@ -118,30 +118,19 @@ def test_buildd(action):
     print(buildd('pytorch', action))
 
 
-# == bts ==
-bts_actions = ('summary', 'free')
 
-
-def bts(identifier: str, action: str, *, raw: bool = False):
+def bts(identifier: str, *, raw: bool = False):
     url = f'https://bugs.debian.org/{identifier}'
     text = _load_html_raw(url) if raw else _load_html(url)
+
+    # filter out useless information from the webpage
+    if identifier.startswith('src:') and not raw:
+        # the lines from 'Options' to the end are useless
+        text = text[: text.index('Options')]
+
     lines = ["The following is a webpage from Debian's bug tracking system:"]
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'summary':
-        lines.append(
-            'Could you please summarize the webpage? If possible, you can organize the information in a pretty table with ANSI tabular characters.')
-    elif action == 'free':
-        lines.append(
-            'Read this webpage carefully. Next I will ask you a few questions about it.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', bts_actions)
-def test_bts(action):
-    print(bts('src:pytorch', action))
-    print(bts('1056388', action))
 
 
 # == vote ==

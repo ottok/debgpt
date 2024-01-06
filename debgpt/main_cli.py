@@ -165,11 +165,10 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_ml.set_defaults(func=lambda ag: debian.mailing_list(ag.url, ag.action, raw=ag.raw))
 
     # --bts
-    ps_bts = subps.add_parser('bts', help='BTS')
-    ps_bts.add_argument('--id', '-x', type=str, required=True)
-    ps_bts.add_argument('--raw', action='store_true', help='use raw html')
-    ps_bts.add_argument('action', type=str, default=debian.bts_actions)
-    ps_bts.set_defaults(func=lambda ag: debian.bts(ag.id, ag.action, raw=ag.raw))
+    ag.add_argument('--bts', type=str, default=[], action='append',
+                    help='Retrieve BTS webpage. example: "src:pytorch", "1056388"')
+    ag.add_argument('--bts_raw', action='store_true', help='load raw HTML instead of plain text.')
+
 
     # == cmd ==
     ag.add_argument('--cmd', type=str, default=[], action='append',
@@ -296,6 +295,11 @@ def main():
         msg = '' if msg is None else msg
         for cmd_line in ag.cmd:
             info = debian.command_line(cmd_line)
+            msg += '\n' + info
+    if ag.bts:
+        msg = '' if msg is None else msg
+        for bts_id in ag.bts:
+            info = debian.bts(bts_id, raw=ag.bts_raw)
             msg += '\n' + info
     # --ask should be processed as the last one
     if ag.ask:
