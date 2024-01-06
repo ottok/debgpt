@@ -15,3 +15,8 @@ def test_devref(section, tmp_path):
     print(debian.devref(section, debgpt_home=tmp_path))
 
 
+@pytest.mark.parametrize('p', ('pytorch',))
+def test_buildd(p):
+    print(debian.buildd(p))
+
+

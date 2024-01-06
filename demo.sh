@@ -13,10 +13,6 @@ debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' sum
 # 'try to reply to this email'
 # "How to increase the number of Debian project members?"
 
-# == buildd ==
-debgpt buildd -p glibc status
-# summarize the build status in a nice format.
-
 # == file specific ==
 debgpt file -f debgpt/llm.py what
 # 'what is the code doing?"

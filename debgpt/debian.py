@@ -93,29 +93,13 @@ def test_mailing_list(action):
     print(mailing_list(url, action))
 
 
-# == buildd ==
-buildd_actions = ('status', 'free')
-
-
-def buildd(p: str, action: str, *, suite: str = 'sid', raw: bool = False):
+def buildd(p: str, *, suite: str = 'sid', raw: bool = False):
     url = f'https://buildd.debian.org/status/package.php?p={p}&suite={suite}'
     text = _load_html_raw(url) if raw else _load_html(url)
     lines = [
-        f'The following is the webpage about the build status of package {p}:']
+        f'The following is the build status of package {p}:']
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'status':
-        lines.append('Briefly describe the build status of this package. Organize the information in a pretty table if possible (you can use unicode tabular characters). If it failed on some architectures, briefly list them and explain the reasons.')
-    elif action == 'free':
-        lines.append(
-            'Read this webpage carefully. I will ask you a few questions next.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', buildd_actions)
-def test_buildd(action):
-    print(buildd('pytorch', action))
 
 
 

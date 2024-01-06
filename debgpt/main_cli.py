@@ -169,12 +169,8 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                     help='add the command line output to the prompt')
 
     # -- buildd
-    ps_buildd = subps.add_parser('buildd', help='buildd')
-    ps_buildd.add_argument('--package', '-p', type=str, required=True)
-    ps_buildd.add_argument('--suite', '-s', type=str, default='sid')
-    ps_buildd.add_argument('--raw', action='store_true', help='use raw html')
-    ps_buildd.add_argument('action', type=str, choices=debian.buildd_actions)
-    ps_buildd.set_defaults(func=lambda ag: debian.buildd(ag.package, ag.action, suite=ag.suite, raw=ag.raw))
+    ag.add_argument('--buildd', type=str, default=[], action='append',
+                    help='Retrieve buildd page for package.')
 
     # -- file (old)
     # e.g., license check (SPDX format), code improvement, code explain
@@ -271,36 +267,30 @@ def main():
 
     # XXX: on migration to new cli design
     # FIXME: add these contents following the commandline argument order.
+    def _append_info(msg: str, info: str) -> str:
+        msg = '' if msg is None else msg
+        return msg + '\n' + info
     if ag.file:
-        msg = '' if msg is None else msg
         for file_path in ag.file:
-            info = debian.file(file_path, 'blank')
-            msg += '\n' + info
+            msg = _append_info(msg, debian.file(file_path, 'blank'))
     if ag.tldr:
-        msg = '' if msg is None else msg
         for tldr_name in ag.tldr:
-            info = debian.tldr(tldr_name)
-            msg += '\n' + info
+            msg = _append_info(msg, debian.tldr(tldr_name))
     if ag.cmd:
-        msg = '' if msg is None else msg
         for cmd_line in ag.cmd:
-            info = debian.command_line(cmd_line)
-            msg += '\n' + info
+            msg = _append_info(msg, debian.command_line(cmd_line))
     if ag.bts:
-        msg = '' if msg is None else msg
         for bts_id in ag.bts:
-            info = debian.bts(bts_id, raw=ag.bts_raw)
-            msg += '\n' + info
+            msg = _append_info(msg, debian.bts(bts_id, raw=ag.bts_raw))
     if ag.policy:
-        msg = '' if msg is None else msg
         for section in ag.policy:
-            info = debian.policy(section, debgpt_home=ag.debgpt_home)
-            msg += '\n' + info
+            msg = _append_info(msg, debian.policy(section, debgpt_home=ag.debgpt_home))
     if ag.devref:
-        msg = '' if msg is None else msg
         for section in ag.devref:
-            info = debian.devref(section, debgpt_home=ag.debgpt_home)
-            msg += '\n' + info
+            msg = _append_info(msg, debian.devref(section, debgpt_home=ag.debgpt_home))
+    if ag.buildd:
+        for p in ag.buildd:
+            msg = _append_info(msg, debian.buildd(p))
     # --ask should be processed as the last one
     if ag.ask:
         msg = '' if msg is None else msg

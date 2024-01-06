@@ -28,7 +28,7 @@ The ZMQ frontend/backend are provided in this tool to make it self-contained.
 
 ### Examples
 
-The following examples are organized in the order of complexity of command line.
+The following examples are roughly organized in the order of complexity of command line.
 
 #### Ex1. General Chat
 
@@ -48,7 +48,7 @@ debgpt -Q -A "who are you?"
 After each session, the chatting history will be saved in `~/.debgpt` as a
 json file in a unique name.  You can use `debgpt replay <file_name>` to replay the history.
 
-#### Ex2. BTS Query `--bts ...`
+#### Ex2. BTS Query
 
 Ask LLM to summarize the BTS page for `src:pytorch`. 
 
@@ -71,6 +71,14 @@ Load a section of debian policy document, such as section "4.6", and ask a quest
 ```
 debgpt -H --policy 7.2 -A "what is the difference between Depends: and Pre-Depends: ?"
 debgpt -H --devref 5.5 -A :summary
+```
+
+#### Ex4. Buildd Query
+
+Lookup the build status for package `glibc` and summarize as a table.
+
+```
+debgpt -HQ --buildd glibc -A :summary_table
 ```
 
 #### Ex1. Git Wrapper `debgpt git ...`
