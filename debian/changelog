@@ -1,5 +1,5 @@
 debgpt (0.4.0+git~exp1) UNRELEASED; urgency=medium
 
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release. (Closes: #1060113)
 
  -- Mo Zhou <lumin@debian.org>  Fri, 05 Jan 2024 19:08:34 -0500
