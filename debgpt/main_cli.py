@@ -96,7 +96,7 @@ def parse_args():
                     help='directly quit after receiving the first response from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', '-M', action='store_true',
                     help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
-    ag.add_argument('--hide_first_prompt', '-H', action='store_true',
+    ag.add_argument('--hide_first', '-H', action='store_true',
                     help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true',
                     help='verbose mode. helpful for debugging')
@@ -331,7 +331,7 @@ def main():
 
     # print the prompt and do the first query, if specified
     if msg is not None:
-        if not ag.hide_first_prompt:
+        if not ag.hide_first:
             console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
