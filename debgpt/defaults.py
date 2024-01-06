@@ -24,7 +24,7 @@ class Config(object):
                      'frontend': 'zmq',
                      'stream': True,
                      'openai_model_id': 'gpt-4',
-                     'temperature': 0.9,
+                     'temperature': 0.5,
                      'top_p': 1.0,
                      }
         # the defaults will be overriden by config file

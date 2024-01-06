@@ -90,7 +90,13 @@ def parse_args():
     ag = argparse.ArgumentParser()
 
     # LLM inference arguments
-    ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'])
+    ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'],
+        help='''Sampling temperature. Typically ranges within [0,1]. \
+Low values like 0.2 gives more focused (coherent) answer. \
+High values like 0.8 gives a more random (creative) answer. \
+Not suggested to combine this with with --top_p. \
+See https://platform.openai.com/docs/api-reference/chat/create \
+    ''')
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
 
     # general frontend
