@@ -231,7 +231,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
 
     # Task: stdin
     ps_stdin = subps.add_parser(
-        'stdin', help='read stdin, print response. Should combine with -Q.')
+        'stdin', help='read stdin as the first prompt. Should combine with -Q.')
     ps_stdin.set_defaults(func=lambda ag: debian.stdin())
 
     # Task: fortune
@@ -248,23 +248,14 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_ml.set_defaults(func=lambda ag: debian.mailing_list(
         ag.url, ag.action, raw=ag.raw))
 
-    # -- file (old) FIXME: outdated
-    # e.g., license check (SPDX format), code improvement, code explain
-    # TODO: support multiple files (nargs=+)
-    ps_file = subps.add_parser(
-        'file', help='ask questions regarding a specific file')
-    ps_file.add_argument('--file', '-f', type=str, required=True)
-    ps_file.add_argument('action', type=str, choices=debian.file_actions)
-    ps_file.set_defaults(func=lambda ag: debian.file(ag.file, ag.action))
-
-    # -- vote
+    # -- vote FIXME: deprecated
     ps_vote = subps.add_parser('vote', help='vote.debian.org')
     ps_vote.add_argument('--suffix', '-s', type=str, required=True,
                          help='for example, 2023/vote_002')
     ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
 
-    # -- dev mode
+    # -- dev mode FIXME: deprecated
     ps_dev = subps.add_parser(
         'dev', aliases=['x'], help='code editing with context')
     ps_dev.add_argument('--file', '-f', type=str, required=True,

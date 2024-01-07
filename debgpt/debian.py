@@ -193,41 +193,6 @@ def stdin():
     return '\n'.join(text)
 
 
-# == file ==
-file_actions = ('what', 'brief', 'licensecheck', 'free', 'none', 'blank')
-
-
-def file(path: str, action: str):
-    text = _load_file(path)
-    if action == 'none':
-        return '\n'.join(text)
-    lines = [f'''The following is a file named {path}:''']
-    lines.extend(['```'] + text + ['```', ''])
-    if action == 'what':
-        lines.append(
-            '''What is the purpose of this file? Please explain in detail.''')
-    elif action == 'brief':
-        lines.append(
-            '''Briefly explain the purpose of this file. Your answer must not exceed the twitter number of character limit.''')
-    elif action == 'licensecheck':
-        lines.append(
-            'What is the copyright and license of this file? Use SPDX format.')
-    elif action == 'free':
-        lines.append(
-            'Read this file carefully. Next I will ask you a few questions about it.')
-    elif action == 'blank':
-        # XXX: for new cli design
-        pass
-    else:
-        raise NotImplementedError(action)
-    return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', file_actions)
-def test_file(action):
-    print(file('debgpt/__init__.py', action))
-
-
 # === dev (abbr: x) ===
 dev_actions = ('free',)
 
