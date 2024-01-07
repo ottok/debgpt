@@ -1,8 +1,6 @@
 % DebGPT(1) | Chatting LLM with Debian-Specific Knowledge
 % Copyright (C) 2024 Mo Zhou <lumin@debian.org>; MIT License.
 
-# !!! README is under reconstruction !!!
-
 NAME
 ====
 
@@ -51,10 +49,51 @@ OPTIONS
 `--cmd CMD`
 : add the command line output to the prompt
 
+TODO: finish CLI redesign first. Then add all cmd options here.
+
+FRONTENDS
+=========
+
+The tool currently have three frontend implementations: `dryrun`, `openai`, and `zmq`.
+They are specified through the `-F | --frontend` argument.
+
+* `openai` Frontend. This frontend connects with a OpenAI API-compatible
+  server. For instance, by specifying `--openai_base_url`, you can switch to
+  a different service provider than the default OpenAI API server.
+
+* `zmq` Frontend. This ZMQ frontend connects with the built-in ZMQ backend.
+  The ZMQ backend is provided for self-hosted LLM inference server. This
+  implementation is very light weight, and not compatible with the OpenAI API.
+  To use this frontend, you may need to set up a corresponding ZMQ backend.
+
+* `dryrun` Frontend. It is a fake frontend that does nothing in fact.
+  Instead, we will simply print the generated initial prompt to the screen,
+  so the user can can copy it, and paste into web-based LLMs, including but
+  not limited to ChatGPT (OpenAI), Claude (Anthropic), Bard (google),
+  Gemini (google), HuggingChat (HuggingFace), Perplexity AI, etc.
+  This frontend does not need to connect with any backend.
 
 
+BACKENDS
+========
 
-### Examples
+This tool provides one backend implementation: `zmq`.
+
+* `zmq` Backend. This is only needed when you choose the ZMQ front end for
+  self-hosted LLM inference server. TODO: provide commands.  merge doc/.
+  
+
+CONFIGURATION
+=============
+
+By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
+Please check [`etc/config.toml`](etc/config.toml) for example.
+This configuration file should not be installed system-wide because users
+may need to fill in secrets like paied API keys.
+
+
+EXAMPLES
+========
 
 The following examples are roughly organized in the order of complexity of command line.
 
@@ -109,36 +148,65 @@ Lookup the build status for package `glibc` and summarize as a table.
 debgpt -HQ --buildd glibc -A :summary_table
 ```
 
-#### Ex1. Git Wrapper `debgpt git ...`
+#### Ex5. Composition of Various Information Sources
 
-* automatically generate git commit message for staged changes, and commit them
+We can add code file and Debian Policy simultaneously. The combination
+is actually very flexible, and you can put anything in the prompt.
+In the following example, we put the `debian/control` file from the
+PyTorch package, as well as the Debian Policy section 7.4, and asks the LLM
+to explain some details:
 
 ```
-debgpt git commit
+debgpt -H -f pytorch/debian/control --policy 7.4 -A "Explain what Conflicts+Replaces means in pytorch/debian/control based on the provided policy document"
 ```
 
-#### Ex2. External Command line `debgpt --cmd ...`
+Similarly, we can also let LLM read the Policy section 4.9.1, and ask it to
+write some code:
 
-* summarize the upgradable pacakges
+```
+debgpt -H -f pytorch/debian/rules --policy 4.9.1 -A "Implemenet the support for the 'nocheck' tag based on the example provided in the policy document."
+```
+
+#### Ex6. External Command line `debgpt --cmd ...`
+
+Being able to pipe the inputs and outputs among different programs is one of
+the reasons why I love the UNIX philosophy.
+
+For example, we can let debgpt read the command line outputs of `apt`, and
+summarize the upgradable pacakges for us:
 
 ```
 debgpt -HQ --cmd 'apt list --upgradable' -A 'Briefly summarize the upgradable packages. You can categorize these packages.' -F openai --openai_model 'gpt-3.5-turbo-16k'
 ```
 
-* auto-generate git commit message for you
+And we can also ask LLM to automatically generate a git commit message for you
+based on the currently staged changes:
 
 ```
 debgpt -HQ --cmd 'git diff --staged' -A 'Briefly describe the change as a git commit message.'
 ```
 
+This looks interesting, right? In the next example, we have something even
+more convenient!
+
+#### Ex7. Git Wrapper
+
+Let LLM automatically generate the git commit message, and call git to commit it:
+
+```
+debgpt git commit
+```
+
+#### Ex999. You Name It
+
+The usage of LLM is limited by our imaginations. I am glad to hear from you if
+you have more good ideas on how we can make LLMs useful for Debian Development.
+
 ## Proof-Of-Concept
 
 Prompt-engineering an existing Chatting LLM with debian-specific documents,
 like debian-policy, debian developer references, and some man pages.
-Some examples are in [`demo.sh`](demo.sh).
 
-The usage of LLM is limited by our imaginations. Please provide more
-ideas on how we can use it.
 
 Some imagined use cases, not yet implemented:
 
@@ -166,6 +234,8 @@ those are not explored yet.
 1. https://github.com/openai/chatgpt-retrieval-plugin
 2. support file read range for `-f`, using `re.match(r'.+:(\d*)-(\d*)', 'setup.py:1-10').groups()`
 1. add man page for `debgpt`
+1. implement `debgpt fortune`.
+1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 
 ## Infrastructure
 

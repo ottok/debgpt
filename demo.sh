@@ -38,12 +38,3 @@ debgpt vote -s 2023/vote_002 diff
 debgpt man --man debhelper-compat-upgrade-checklist free  # note, this requires 40GB of CUDA memory due to manual page being too long
 # what should I do to upgrade the compat from 13 to 14?
 
-# == dev ==
-debgpt x -f examples/pytorch/debian/control free
-# let llm add armhf and delete kfreebsd-amd64 from architecture list
-
-debgpt x -f examples/pytorch/debian/control --policy 7.4 free
-# let llm read policy section 7.4 and modify control file to add libtorch-rocm-2.1 to Conflicts+Repalces.
-
-debgpt x -f examples/pytorch/debian/rules --policy 4.9.1 free
-# let llm help me implement the "nocheck" support in d/rules.
