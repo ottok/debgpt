@@ -268,6 +268,31 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     return ag
 
 
+def parse_args_order(argv) -> List[str]:
+    '''
+    parse the order of selected arguments
+    '''
+    order : List[str] = []
+    def _match_ls(probe: str, long: str, short: str, dest: List[str]):
+        if any(probe == x for x in (long, short)) \
+                or any(probe.startswith(x+'=') for x in (long, short)):
+            dest.append(long.lstrip('--'))
+    def _match_l(probe: str, long: str, dest: List[str]):
+        if probe == long or probe.startswith(long+'='):
+            dest.append(long.lstrip('--'))
+    for item in argv:
+        _match_l(item, '--bts', order)
+        _match_l(item, '--cmd', order)
+        _match_l(item, '--buildd', order)
+        _match_ls(item, '--file', '-f', order)
+        _match_l(item, '--policy', order)
+        _match_l(item, '--devref', order)
+        _match_l(item, '--tldr', order)
+        _match_l(item, '--man', order)
+        _match_l(item, '--html', order)
+    return order
+
+
 def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
     prompt_style = Style(
@@ -299,6 +324,11 @@ def main(argv=sys.argv[1:]):
     if ag.verbose:
         console.log(ag)
 
+    # parse argument order
+    ag_order = parse_args_order(argv)
+    if ag.verbose:
+        console.log('Argument Order:', ag_order)
+
     # initialize the frontend
     f = frontend.create_frontend(ag)
     ag.frontend_instance = f
@@ -308,7 +338,7 @@ def main(argv=sys.argv[1:]):
     msg = ag.func(ag)
 
     # XXX: on migration to new cli design
-    # FIXME: add these contents following the commandline argument order.
+    # FIXME: add these contents following the commandline argument order. use ag_order
     def _append_info(msg: str, info: str) -> str:
         msg = '' if msg is None else msg
         return msg + '\n' + info
