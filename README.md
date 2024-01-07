@@ -253,12 +253,12 @@ HOW-TO-EXTEND-CLI
 
 1. implement your new text loading function in `debgpt/debian.py`.  The function
 should return a string containing all the texts we will send to the llm.
+
 2. add the corresponding cli argument subparser to `debgpt/main_cli.py`.
 
 3. add the new prompt generation code (for variable `msg`) in `main()` of `debgpt/main_cli.py`.
 
-4. if in doubt, ask debgpt as `debgpt file -f <file-in-question> what -i`.
-
+4. if in doubt, ask debgpt as `debgpt -f <file-in-question> -A :explain`.
 
 
 WHATS-NEXT
