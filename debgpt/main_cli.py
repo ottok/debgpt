@@ -344,7 +344,7 @@ def main(argv=sys.argv[1:]):
         return msg + '\n' + info
     if ag.file:
         for file_path in ag.file:
-            msg = _append_info(msg, debian.file(file_path, 'blank'))
+            msg = _append_info(msg, debian.file(file_path))
     if ag.tldr:
         for tldr_name in ag.tldr:
             msg = _append_info(msg, debian.tldr(tldr_name))

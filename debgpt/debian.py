@@ -168,3 +168,10 @@ def command_line(cmd: str):
 def stdin():
     text = _load_stdin()
     return '\n'.join(text)
+
+
+def file(path: str):
+    text = _load_file(path)
+    lines = [f'''The following is a file named {path}:''']
+    lines.extend(['```'] + text + ['```', ''])
+    return '\n'.join(lines)
