@@ -83,6 +83,14 @@ This tool provides one backend implementation: `zmq`.
 * `zmq` Backend. This is only needed when you choose the ZMQ front end for
   self-hosted LLM inference server. TODO: provide commands.  merge doc/.
   
+PROMPT-ENGINEERING
+==================
+
+When you chat with LLM, note that the way you ask a question significant
+impacts the quality of the results you will get. make sure to provide as much
+information as possible. The following are some references on this topic:
+
+1. OpenAI's Guide https://platform.openai.com/docs/guides/prompt-engineering
 
 EXAMPLES
 ========
