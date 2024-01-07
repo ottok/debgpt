@@ -47,7 +47,7 @@ def test_buildd(p):
 @pytest.mark.parametrize('url', (
     'https://lists.debian.org/debian-project/2023/12/msg00029.html',
     ))
-def test_mailing_list(url):
-    print(html(url, raw=False))
+def test_html(url):
+    print(debian.html(url, raw=False))
 
 
