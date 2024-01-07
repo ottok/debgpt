@@ -43,3 +43,11 @@ def test_devref(section, tmp_path):
 @pytest.mark.parametrize('p', ('pytorch',))
 def test_buildd(p):
     print(debian.buildd(p))
+
+@pytest.mark.parametrize('url', (
+    'https://lists.debian.org/debian-project/2023/12/msg00029.html',
+    ))
+def test_mailing_list(url):
+    print(html(url, raw=False))
+
+

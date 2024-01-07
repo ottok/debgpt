@@ -209,6 +209,9 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     # -- 8. Man Page
     ag.add_argument('--man', type=str, default=[], action='append',
                     help='add man page to the prompt. Note the context length!')
+    # -- 9. Arbitrary HTML document
+    ag.add_argument('--html', type=str, default=[], action='append',
+                    help='load HTML document from given URL(s)')
     # -- 999. The Question Template at the End of Prompt
     ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'],
                     help="Question template to append at the end of the prompt. "
@@ -259,14 +262,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_fortune.add_argument('ask', type=str, nargs='?', default=':fun',
                             help='specify what type of fortune you want')
     ps_fortune.set_defaults(func=task_fortune)
-
-    # -- mailing list FIXME: outdated
-    ps_ml = subps.add_parser('ml', help='mailing list')
-    ps_ml.add_argument('--url', '-u', type=str, required=True)
-    ps_ml.add_argument('--raw', action='store_true', help='use raw html')
-    ps_ml.add_argument('action', type=str, choices=debian.mailing_list_actions)
-    ps_ml.set_defaults(func=lambda ag: debian.mailing_list(
-        ag.url, ag.action, raw=ag.raw))
 
     # -- vote FIXME: deprecated
     ps_vote = subps.add_parser('vote', help='vote.debian.org')
@@ -350,6 +345,9 @@ def main(argv=sys.argv[1:]):
     if ag.buildd:
         for p in ag.buildd:
             msg = _append_info(msg, debian.buildd(p))
+    if ag.html:
+        for url in ag.html:
+            msg = _append_info(msg, debian.html(url, raw=False))
     # --ask should be processed as the last one
     if ag.ask:
         msg = '' if msg is None else msg

@@ -89,30 +89,14 @@ def _load_stdin() -> List[str]:
     return lines
 
 
-# == mailing list ==
-mailing_list_actions = ('summary', 'reply', 'free')
-
-
-def mailing_list(url: str, action: str, *, raw: bool = False):
+def html(url: str, *, raw: bool = False):
+    '''
+    Load a website in plain/raw text format
+    '''
     text = _load_html_raw(url) if raw else _load_html(url)
-    lines = ['The following is an email from a mailing list thread:']
+    lines = [f'Here is the contents of {url}:']
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'summary':
-        lines.append('Could you please summarize this email for me?')
-    elif action == 'reply':
-        lines.append('Could you please try to reply this email?')
-    elif action == 'free':
-        lines.append(
-            'Read this email carefully. Next I will ask you a few questions about it.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', mailing_list_actions)
-def test_mailing_list(action):
-    url = 'https://lists.debian.org/debian-project/2023/12/msg00029.html'
-    print(mailing_list(url, action))
 
 
 def buildd(p: str, *, suite: str = 'sid', raw: bool = False):
