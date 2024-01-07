@@ -1,6 +1,18 @@
 Changelog
 =========
 
+v0.4.91 -- 2024-01-07
+---------------------
+
+Major bug fix:
+
+* 87fb088 bring batch the accidentally deleted function
+
+Minor updates:
+
+* 3cc2d26 Add function to parse the order of selected arguments in the command line interface. (wip)
+* 3a3eca4 make: add make install starget
+
 v0.4.90 -- 2024-01-07
 ---------------------
 
