@@ -218,7 +218,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_git.set_defaults(func=task_git)
     git_subps = ps_git.add_subparsers(help='git commands')
     # Task: git commit
-    ps_git_commit = git_subps.add_parser('commit',
+    ps_git_commit = git_subps.add_parser('commit', aliases=['co'],
                                          help='directly commit staged changes with auto-generated message')
     ps_git_commit.set_defaults(func=task_git_commit)
 
@@ -254,17 +254,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                          help='for example, 2023/vote_002')
     ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
-
-    # -- dev mode FIXME: deprecated
-    ps_dev = subps.add_parser(
-        'dev', aliases=['x'], help='code editing with context')
-    ps_dev.add_argument('--file', '-f', type=str, required=True,
-                        help='path to file you want to edit')
-    ps_dev.add_argument('--policy', type=str, default=None,
-                        help='which section of policy to look at?')
-    ps_dev.add_argument('action', type=str, choices=debian.dev_actions)
-    ps_dev.set_defaults(func=lambda ag: debian.dev(ag.file, ag.action,
-                        policy=ag.policy, debgpt_home=ag.debgpt_home))
 
     # -- parse and sanitize
     ag = ag.parse_args(argv)
