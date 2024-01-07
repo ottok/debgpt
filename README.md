@@ -250,14 +250,17 @@ debgpt -H -f debgpt/llm.py -A :licensecheck
 Make the maling list long story short:
 
 ```
-debgpt --html 'https://lists.debian.org/debian-project/2023/12/msg00029.html' -A :summary
+debgpt -H --html 'https://lists.debian.org/debian-project/2023/12/msg00029.html' -A :summary
 ```
 
 Explain the differences among voting options:
 
 ```
-debgpt --html 'https://www.debian.org/vote/2022/vote_003' -A :diff
+debgpt -H --html 'https://www.debian.org/vote/2022/vote_003' -A :diff --openai_model gpt-3.5-turbo-16k
 ```
+
+In this example, we had to switch to a model supporting a long context (the
+HTML page has roughly 5k tokens).
 
 #### Ex99. You Name It
 

@@ -263,13 +263,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                             help='specify what type of fortune you want')
     ps_fortune.set_defaults(func=task_fortune)
 
-    # -- vote FIXME: deprecated
-    ps_vote = subps.add_parser('vote', help='vote.debian.org')
-    ps_vote.add_argument('--suffix', '-s', type=str, required=True,
-                         help='for example, 2023/vote_002')
-    ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
-    ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
-
     # -- parse and sanitize
     ag = ag.parse_args(argv)
     return ag
@@ -404,13 +397,6 @@ def main(argv=sys.argv[1:]):
         else:
             with open(ag.output, 'wt') as fp:
                 fp.write(f.session[-1]['content'])
-
-    # some notifications
-    if any(x in sys.argv for x in ('vote',)):
-        # sensitive category
-        console.print(Panel('''[bold white on red]LLM may hallucinate and generate incorrect contents. Please further judge the correctness of the information, and do not let LLM mislead your decision on sensitive tasks, such as debian voting.[/bold white on red]''', title='!!! Warning !!!'))
-    else:
-        pass
 
 
 if __name__ == '__main__':

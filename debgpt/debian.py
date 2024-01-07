@@ -122,34 +122,6 @@ def bts(identifier: str, *, raw: bool = False):
     return '\n'.join(lines)
 
 
-# == vote ==
-vote_actions = ('summary', 'diff', 'free')
-
-
-def vote(suffix: str, action: str):
-    url = f'https://www.debian.org/vote/{suffix}'
-    text = _load_html(url)
-    lines = ['The following is a webpage about a General Resolution.']
-    lines.extend(['```'] + text + ['```', ''])
-    if action == 'summary':
-        lines.append(
-            'Please summarize these proposals. You can use tabular format if it can better represent the information.')
-    elif action == 'diff':
-        lines.append(
-            'Please explain the differences among those proposals. You can use tabular format if it can better represent the information.')
-    elif action == 'free':
-        lines.append(
-            'Read this webpage carefully, and I will ask you questions later. Be quiet for now.')
-    else:
-        raise NotImplementedError(action)
-    return '\n'.join(lines)
-
-
-@pytest.mark.parametrize('action', vote_actions)
-def test_vote(action):
-    print(vote('2023/vote_002', action))
-
-
 def policy(section: str, *, debgpt_home: str):
     '''
     the policy cache in plain text format will be stored in debgpt_home
