@@ -319,6 +319,42 @@ should return a string containing all the texts we will send to the llm.
 3. add the new prompt generation code (for variable `msg`) in `main()` of `debgpt/main_cli.py`.
 4. if in doubt, ask debgpt as `debgpt -f <file-in-question> -A :explain`.
 
+SETUP-AND-INSTALL
+=================
+
+FIXME: add optional (backend) dependencies in `pyproject.toml`
+
+This tool can be installed from source via the command "`pip3 install .`".
+By default, it will only pull the dependencies needed to run the OpenAI
+and the ZMQ frontends. The dependencies of the ZMQ backend (i.e., self-hosted
+LLM inference) needs to be satisfied manually for now, using tools like
+venv, conda, mamba, etc.
+
+conda
+
+For instance, `bash Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -b -p ~/miniconda3`.
+1. `conda init <your-default-shell>` and source the config again.
+For instance, if you use bash: `~/miniconda3/bin/conda init bash; source ~/.bashrc`;
+if you use fish: `~/miniconda3/bin/conda init fish; source ~/.config/fish/config.fish`
+2. (Optional) install mamba from conda-forge to replace conda.
+`conda install -c conda-forge mamba` ; `mamba init <shell>` (e.g., `mamba init fish`); `source <shell-rc>`.
+We do this because the default conda is super slow and may sometimes fail to resolve dependencies.
+If this step is skipped, replace the `mamba` into `conda` for all the following commands.
+3. Use `mamba env create -f doc/conda.yml` to restore the conda environment. If you only wants to use openai frontend, you can use `doc/conda-minimal.yml` instead to reduce number of dependencies.
+4. `mamba activate pth212`. Then we are good.
+
+venv
+
+1. `python3 -m venv ~/.debgpt/venv`
+2. `source ~/.debgpt/venv/bin/activate.fish` change to your default shell.
+3. `pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` (from https://pytorch.org)
+4. `pip3 install transformers accelerate bitsandbytes bitsandbytes`
+5. `pip3 install beautifulsoup4 rich prompt_toolkit ipython`
+6. `pip3 install pyzmq pytest scipy openai`
+7. `sudo apt install libcudart11.0 libcusparse11` (this is for cuda 11)
+7. we are good now.
+
+
 
 WHATS-NEXT
 ==========

@@ -27,40 +27,6 @@ Note, Multi-GPU inference is supported.
 If you have multiple GPUs, this memory requirement for each GPU is roughly divided by your number of GPUs.
 See also https://huggingface.co/blog/mixtral
 
-### Conda / Mamba
-
-1. Install [miniconda distribution](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-installer-links.html).
-For instance, `bash Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -b -p ~/miniconda3`.
-1. `conda init <your-default-shell>` and source the config again.
-For instance, if you use bash: `~/miniconda3/bin/conda init bash; source ~/.bashrc`;
-if you use fish: `~/miniconda3/bin/conda init fish; source ~/.config/fish/config.fish`
-2. (Optional) install mamba from conda-forge to replace conda.
-`conda install -c conda-forge mamba` ; `mamba init <shell>` (e.g., `mamba init fish`); `source <shell-rc>`.
-We do this because the default conda is super slow and may sometimes fail to resolve dependencies.
-If this step is skipped, replace the `mamba` into `conda` for all the following commands.
-3. Use `mamba env create -f doc/conda.yml` to restore the conda environment. If you only wants to use openai frontend, you can use `doc/conda-minimal.yml` instead to reduce number of dependencies.
-4. `mamba activate pth212`. Then we are good.
-
-### Venv + Pip
-
-Note, if you only want to use the openai frontend, you don't need all the
-dependencies. The stripped dependency list is TODO.
-
-1. `python3 -m venv ~/.debgpt/venv`
-2. `source ~/.debgpt/venv/bin/activate.fish` change to your default shell.
-3. `pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` (from https://pytorch.org)
-4. `pip3 install transformers accelerate bitsandbytes bitsandbytes`
-5. `pip3 install beautifulsoup4 rich prompt_toolkit ipython`
-6. `pip3 install pyzmq pytest scipy openai`
-7. `sudo apt install libcudart11.0 libcusparse11` (this is for cuda 11)
-7. we are good now.
-
-
-# Install (optional)
-
-Just `pip3 install .` for `pyproject.toml`-based project.
-If this step is skipped, just replace `debgpt` into `python3 -m debgpt.main_cli` in every command that starts with `debgpt`.
-
 # Usage of `debgpt` (main user interface)
 
 ```shell
@@ -118,7 +84,7 @@ If you want to run the Mixtral8x7B model (much larger) instead of the default Mi
 
 ```
 # check the above hardware requirement first.
-debgpt backend --llm Mixtral8x7B --max_new_tokens=1024 --device cuda --precision fp16
+debgpt backend --llm Mixtral8x7B --max_new_tokens=1024 --device cuda --precision 4bit
 ```
 
 ## `frontend.py` collection of frontends, like ZMQ and OpenAI (debugging)
