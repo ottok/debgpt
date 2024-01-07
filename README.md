@@ -274,14 +274,21 @@ https://salsa.debian.org/deeplearning-team/debgpt/-/issues
 BACKENDS
 ========
 
+## Available Backend Implementations
+
 This tool provides one backend implementation: `zmq`.
 
 * `zmq` Backend. This is only needed when you choose the ZMQ front end for
   self-hosted LLM inference server.
   
-If you would like to self-host the LLM inference backend, powerful hardware
-is required. The concrete hardware requirement depends on the LLM you would
-like to use. A variety of open-access LLMs can be found here
+If you plan to use the `openai` or `dryrun` frontends, there is no specific
+hardware requirement. If you would like to self-host the LLM inference backend
+(ZMQ backend), powerful hardware is required.
+
+## LLM Selections
+
+The concrete hardware requirement depends on the
+LLM you would like to use. A variety of open-access LLMs can be found here
 > `https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard`
 Generally, when trying to do prompt engineering only, the "instruction-tuned"
 LLMs and "RL-tuned" (RL is reinforcement learning) LLMs are recommended.
@@ -296,17 +303,67 @@ revisit the pretrained LLMs when we plan to start collecting data and fine-tune
 The following is a list of supported LLMs for self-hosting (this list will
 be updated when there are new state-of-the-art open-access LLMs available):
 
-* `Mistral-7B-Instruct-v0.2` (default)
-: This model requires roughly 15GB of disks space to download.  Requires 16+GB
-CUDA memory (VRAM) for inference in `fp16` precision (default).  If you deal
-with very long context (such as 8k) with this model, you may need a 48GB GPU to
-avoid CUDA out of memory (OOM).  Similarly, the `float32` precision will double
-the requirement, and the `8bit` will half the requirement. The `4bit` precision
-requires a quater compared to `fp16`.
+* Mistral7B (`Mistral-7B-Instruct-v0.2`) (default)
+: This model requires roughly 15GB of disks space to download.
 
-* `Mixtral-8x7B-Instruct-v0.1`
+* Mixtral8x7B (`Mixtral-8x7B-Instruct-v0.1`)
 : This model is larger yet more powerful than the default LLM. In exchange, it
-poses even higher hardware requirements.
+poses even higher hardware requirements. It takes roughly 60~100GB disk space
+(I forgot this number. Will check later).
+
+Different LLMs will pose different hardware requirements. Please see the
+"Hardware Requirements" subsection below.
+
+## Hardware Requirements
+
+By default, we recommend doing LLM inference in `fp16` precision. If the VRAM
+(such as CUDA memory) is limited, you may also switch to even lower preicisions
+such as `8bit` and `4bit`. For pure CPU inference, we only support `fp32`
+precision now.
+
+Note, Multi-GPU inference is supported by the underlying transformers library.
+If you have multiple GPUs, this memory requirement is roughly divided by your number of GPUs.
+
+Hardware requirement for the `Mistral7B` LLM:
+
+* `Mistral7B` + `fp16` (cuda). 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 8k). Example: Nvidia RTX A5000, Nvidia RTX 4090.
+* `Mistral7B` + `8bit` (cuda). at least 12+GB. 24+GB preferred (so you can run all demo).
+* `Mistral7B` + `4bit` (cuda). at least 6+GB. 12+GB preferred (so you can run all demo). Example: Nvidia RTX 4070 (mobile) 8GB.
+* `Mistral7B` + `fp32` (cpu). This requires 64+GB of RAM, but CPU is at least 100~400 times slower than GPU on this. Not recommended.
+
+Hardware requirement for the `Mixtral8x7B` LLM:
+
+* `Mixtral8x7B` + `fp16` (cuda). 90+GB VRAM.
+* `Mixtral8x7B` + `8bit` (cuda). 45+GB VRAM.
+* `Mixtral8x7B` + `4bit` (cuda). 23+GB. But in order to make it work with long context such as 8k tokens, you still need 2x 48GB GPUs in 4bit precision.
+* See https://huggingface.co/blog/mixtral for more about this model.
+
+## Usage of the ZMQ Backend
+
+If you want to run the default LLM with different precisions:
+
+```
+debgpt backend --max_new_tokens=1024 --device cuda --precision fp16
+debgpt backend --max_new_tokens=1024 --device cuda --precision bf16
+debgpt backend --max_new_tokens=1024 --device cuda --precision 8bit
+debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit
+```
+
+The only supported precision on CPU is fp32 (for now).
+If you want to fall back to CPU computation (very slow):
+
+```
+debgpt backend --max_new_tokens=1024 --device cpu --precision fp32
+```
+
+If you want to run a different LLM, such as `Mixtral8x7B`  than the default `Mistral7B`:
+
+```
+debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit --llm Mixtral8x7B 
+```
+
+The argument `--max_new_tokens` does not matter much and you can adjust it (it
+is the maximum length of each llm reply). You can adjust it as wish.
 
 
 HOW-TO-EXTEND-CLI
