@@ -187,6 +187,10 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ag.add_argument('--tldr', type=str, default=[], action='append',
                     help='add tldr page to the prompt.')
     # -- 8. Man Page
+    # XXX: if you did not specify -H, and find the printed first prompt very
+    #      weird, it might be an upstream bug of rich
+    #      https://github.com/Textualize/rich/issues/3249
+    #      But, even if the printed content is incorrect, it is correct internally.
     ag.add_argument('--man', type=str, default=[], action='append',
                     help='add man page to the prompt. Note the context length!')
     # -- 999. The Question Template at the End of Prompt
