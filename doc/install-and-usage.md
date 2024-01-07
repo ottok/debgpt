@@ -27,32 +27,7 @@ Note, Multi-GPU inference is supported.
 If you have multiple GPUs, this memory requirement for each GPU is roughly divided by your number of GPUs.
 See also https://huggingface.co/blog/mixtral
 
-# Usage of `debgpt` (main user interface)
-
-```shell
-debgpt                  # you need to do "pip3 install ." first.
-debgpt -F openai        # use the openai frontend
-debgpt -h               # print supported taskss, and the the arguments shared across all tasks
-debgpt <task> -h        # print the help of a task
-```
-
-check `demo.sh` at the root directory for a list of samples.
-The configuration file is located at `~/.debgpt/config.toml`.
-Check `/etc/config.toml` for example.
-
-
 # Usage (developers)
-
-The (debugging) tag means the corresponding usage is for debugging purpose.
-The (backend) tag means the corresponding usage is for self-hosted LLM inference. You only need a backend if the ZMQ frontend is used.
-
-## `llm.py` LLM inference (debugging)
-
-Directly calling this module is to chat with an LLM locally.
-
-```
-python3 -m debgpt.llm
-```
 
 ## `backend.py` exposes llm inference through ZMQ (backend
 
@@ -85,12 +60,4 @@ If you want to run the Mixtral8x7B model (much larger) instead of the default Mi
 ```
 # check the above hardware requirement first.
 debgpt backend --llm Mixtral8x7B --max_new_tokens=1024 --device cuda --precision 4bit
-```
-
-## `frontend.py` collection of frontends, like ZMQ and OpenAI (debugging)
-
-The main user interface will wrap the frontend.
-
-```shell
-$ python3 -m debgpt.frontend
 ```
