@@ -80,14 +80,16 @@ Please refer their corresponding user agreements before adopting one of them.
 Be aware of such risks, and refrain from sending confidential information such
 like paied API keys to LLM.
 
-BACKENDS
-========
 
-This tool provides one backend implementation: `zmq`.
+CONFIGURATION
+=============
 
-* `zmq` Backend. This is only needed when you choose the ZMQ front end for
-  self-hosted LLM inference server. TODO: provide commands.  merge doc/.
-  
+By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
+Please check [`etc/config.toml`](etc/config.toml) for example.
+This configuration file should not be installed system-wide because users
+may need to fill in secrets like paied API keys.
+
+
 PROMPT-ENGINEERING
 ==================
 
@@ -268,9 +270,15 @@ The usage of LLM is limited by our imaginations. I am glad to hear from you if
 you have more good ideas on how we can make LLMs useful for Debian Development:
 https://salsa.debian.org/deeplearning-team/debgpt/-/issues
 
-LLM-SELECTION-AND-HARDWARE
-==========================
 
+BACKENDS
+========
+
+This tool provides one backend implementation: `zmq`.
+
+* `zmq` Backend. This is only needed when you choose the ZMQ front end for
+  self-hosted LLM inference server.
+  
 If you would like to self-host the LLM inference backend, powerful hardware
 is required. The concrete hardware requirement depends on the LLM you would
 like to use. A variety of open-access LLMs can be found here
@@ -299,15 +307,6 @@ requires a quater compared to `fp16`.
 * `Mixtral-8x7B-Instruct-v0.1`
 : This model is larger yet more powerful than the default LLM. In exchange, it
 poses even higher hardware requirements.
-
-
-CONFIGURATION
-=============
-
-By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
-Please check [`etc/config.toml`](etc/config.toml) for example.
-This configuration file should not be installed system-wide because users
-may need to fill in secrets like paied API keys.
 
 
 HOW-TO-EXTEND-CLI
