@@ -24,7 +24,6 @@ SOFTWARE.
 from typing import *
 import re
 import requests
-import pytest
 from . import policy as debgpt_policy
 import os
 import subprocess

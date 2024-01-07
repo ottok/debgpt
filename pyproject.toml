@@ -17,7 +17,6 @@ requires-python = ">= 3.9"
 dependencies = [
     'rich',
     'prompt_toolkit',
-    'pytest',
     'openai',
     'requests',
     'bs4',
