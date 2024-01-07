@@ -60,12 +60,15 @@ class Config(object):
 QUESTIONS = {
     ':none': '',
     ':free': 'Read the above information carefully, and I will ask you questions later. Be quiet for now.',
+    ':what': 'What is the purpose of the above material?',
+    ':explain': 'Please explain the above information.',
     ':brief': 'please briefly summarize the above information, with very short sentences.',
     ':summary': 'Please summarize the above information.',
     ':summary_table': 'Please summarize the above information. Make a table to organize it.',
     ':polish': 'Please polish the language in the above texts, while not changing their original meaning.',
     ':rephrase': 'Please rephrase the above texts, while not changing their original meaning.',
     ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
+    ':licensecheck': 'What is the license of this file? Just tell me the SPDX identifier, and answer in the shortest format.',
 }
 
 

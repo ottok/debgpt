@@ -13,23 +13,6 @@ debgpt ml -u 'https://lists.debian.org/debian-project/2023/12/msg00029.html' sum
 # 'try to reply to this email'
 # "How to increase the number of Debian project members?"
 
-# == file specific ==
-debgpt file -f debgpt/llm.py what
-# 'what is the code doing?"
-# 'where does this script save LLM chatting record?"
-# 'explain the new python feature :="
-# 'rewrite the exception handling code for me' -- result is actually good.
-
-debgpt file -f debgpt/llm.py licensecheck
-# 'what's the SPDX identifier for the license of this file?'
-# "what's the difference between the GPL-2.0 and GPL-3.0?"
-
-debgpt file -f debgpt/main_cli.py what
-# help me rewrite the argparse subparsers.
-
-debgpt file -f pyproject.toml free
-# convert pyproject.toml into setup.py
-
 # == vote ==
 debgpt vote -s 2023/vote_002 diff
 # explain the difference between those proposals

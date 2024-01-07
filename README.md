@@ -220,6 +220,26 @@ type of fortune you want:
 debgpt fortune 'tell me something very funny about linux'
 ```
 
+#### Ex8. File-Specific Questions
+
+Let LLM explain the code `debgpt/llm.py`:
+
+```
+debgpt -H -f debgpt/llm.py -A :explain
+```
+
+Let LLM explain the purpose of the contents in a file:
+
+```
+debgpt -H -f pyproject.toml -A :what
+```
+
+Mimicing `licensecheck`:
+
+```
+debgpt -H -f debgpt/llm.py -A :licensecheck
+```
+
 #### Ex999. You Name It
 
 The usage of LLM is limited by our imaginations. I am glad to hear from you if
