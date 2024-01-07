@@ -1,4 +1,4 @@
-debgpt (0.4.0+git~exp1) UNRELEASED; urgency=medium
+debgpt (0.4.90) UNRELEASED; urgency=medium
 
   * Initial release. (Closes: #1060113)
 

@@ -1,6 +1,36 @@
 Changelog
 =========
 
+v0.4.90 -- 2024-01-07
+---------------------
+
+Development release with massive breaking and major changes.
+
+Breaking changes:
+
+* Redesign CLI. It is more flexible and easier to use now. Please refer the
+examples in README or the manpage. It is too long to describe here.
+
+Major changes:
+
+* Merge all doc in README.md and rewrite a portion of them.
+* Make README.md compatible to manpage through pandoc.
+* Overall all documentations and reorganize them.
+* Support more text loaders for CLI.
+* Rewrite argument subparsers for the CLI.
+
+Minor changes:
+
+* Merged all examples from demo.sh to README.md
+* Remove conda environment YAML files. No longer necessary.
+* Split pytest code to dedicated tests directory.
+* Strip pytest from dependencies.
+* Miscellaneous code organization.
+* Removed replay examples in examples/ directory.
+* Add debianization fiiles.
+
+This release note is not written by LLM.
+
 v0.4.0 -- 2024-01-04
 --------------------
 
@@ -70,3 +100,4 @@ v0.1 -- 2024-01-02
 -------------------
 
 This is the Initial release.
+
