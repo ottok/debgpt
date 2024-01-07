@@ -4,5 +4,8 @@ export PYBUILD_NAME=debgpt
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 
+execute_after_dh_auto_build:
+	$(MAKE) debgpt.1
+
 override_dh_auto_test:
 	true

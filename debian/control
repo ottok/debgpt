@@ -17,6 +17,7 @@ Build-Depends: debhelper-compat (= 13),
  python3-prompt-toolkit,
  python3-requests,
  python3-bs4,
+ pandoc,
 
 Package: debgpt
 Architecture: all
