@@ -74,6 +74,11 @@ They are specified through the `-F | --frontend` argument.
   Gemini (google), HuggingChat (HuggingFace), Perplexity AI, etc.
   This frontend does not need to connect with any backend.
 
+**DISCLAIMER:** Unless you connect to a self-hosted LLM Inference backend, we
+are uncertain how the third-party API servers will handle the data you created.
+Please refer their corresponding user agreements before adopting one of them.
+Be aware of such risks, and refrain from sending confidential information such
+like paied API keys to LLM.
 
 BACKENDS
 ========
