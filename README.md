@@ -197,6 +197,22 @@ Let LLM automatically generate the git commit message, and call git to commit it
 debgpt git commit
 ```
 
+#### Ex7. Fortune
+
+Let LLM tell you a fortune:
+
+```
+debgpt fortune :joke
+debgpt fortune :math
+```
+
+Use `debgpt fortune :` to lookup available tags. Or you can just specify the
+type of fortune you want:
+
+```
+debgpt fortune 'tell me something very funny about linux'
+```
+
 #### Ex999. You Name It
 
 The usage of LLM is limited by our imaginations. I am glad to hear from you if

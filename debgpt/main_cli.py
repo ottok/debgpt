@@ -84,6 +84,35 @@ Or if you want to manually edit the commit message with:
     exit(0)
 
 
+def task_fortune(ag):
+    '''
+    fortune mode
+    '''
+    # create prompt
+    if ag.ask.startswith(':'):
+        try:
+            # use a template from defaults.FORTUNE_QUESTIONS
+            msg = defaults.FORTUNE_QUESTIONS[ag.ask]
+        except KeyError:
+            console.print('Available question templates for argument -A/--ask:')
+            defaults.print_fortune_question_templates()
+            exit(1)
+    else:
+        msg = ag.ask
+    # let frontend work
+    f = ag.frontend_instance
+    if f.stream:
+        console.print(
+            f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
+        reply = f(msg)
+    else:
+        with Status('LLM', spinner='line'):
+            reply = f(msg)
+        console.print(Panel(escape(reply), title='LLM Reply'))
+    # exit
+    exit(0)
+
+
 def parse_args(argv):
     '''
     argparse with subparsers
@@ -201,6 +230,12 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_stdin = subps.add_parser(
         'stdin', help='read stdin, print response. Should combine with -Q.')
     ps_stdin.set_defaults(func=lambda ag: debian.stdin())
+
+    # Task: fortune
+    ps_fortune = subps.add_parser('fortune', help='tell some random stuff')
+    ps_fortune.add_argument('ask', type=str, nargs='?', default=':fun',
+                            help='specify what type of fortune you want')
+    ps_fortune.set_defaults(func=task_fortune)
 
     # FIXME: update the following
 

@@ -74,6 +74,24 @@ def print_question_templates():
     console.print(QUESTIONS)
 
 
+FORTUNE_QUESTIONS = {
+    ':any': 'Tell me anything in your mind.',
+    ':random': 'Greet with me, and tell me anything in your mind. Note, NSFW content is forbidden.',
+    ':fun': 'Greet with me, and tell me something that is funny.',
+    ':math': 'Greet with me, and tell me something interesting about mathematics.',
+    ':joke': 'Greet with me, and tell me a joke.',
+    ':computer': 'Greet with me, and tell me something about computers.',
+    ':art': 'Greet with me, and tell me something about art.',
+    ':cook': 'Greet with me, and tell me something about cooking.',
+    ':phi': 'Greet with me, and tell me something about philosophy.',
+    ':poem': 'Greet with me, and write a beautiful poem for me.',
+}
+
+def print_fortune_question_templates():
+    console = rich.get_console()
+    console.print(FORTUNE_QUESTIONS)
+
+
 ########################
 # System Messages
 ########################
