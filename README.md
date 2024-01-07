@@ -40,6 +40,7 @@ automatically generate the git commit message and commit the changes for you.
 This tool supports multiple frontends, including OpenAI and ZMQ.
 The ZMQ frontend/backend are provided in this tool to make it self-contained.
 
+
 OPTIONS
 =======
 
@@ -82,15 +83,6 @@ This tool provides one backend implementation: `zmq`.
 * `zmq` Backend. This is only needed when you choose the ZMQ front end for
   self-hosted LLM inference server. TODO: provide commands.  merge doc/.
   
-
-CONFIGURATION
-=============
-
-By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
-Please check [`etc/config.toml`](etc/config.toml) for example.
-This configuration file should not be installed system-wide because users
-may need to fill in secrets like paied API keys.
-
 
 EXAMPLES
 ========
@@ -174,7 +166,7 @@ write some code:
 debgpt -H -f pytorch/debian/rules --policy 4.9.1 -A "Implemenet the support for the 'nocheck' tag based on the example provided in the policy document."
 ```
 
-#### Ex6. External Command line `debgpt --cmd ...`
+#### Ex6. External Command line
 
 Being able to pipe the inputs and outputs among different programs is one of
 the reasons why I love the UNIX philosophy.
@@ -243,32 +235,36 @@ debgpt -H -f debgpt/llm.py -A :licensecheck
 #### Ex999. You Name It
 
 The usage of LLM is limited by our imaginations. I am glad to hear from you if
-you have more good ideas on how we can make LLMs useful for Debian Development.
-
-## Proof-Of-Concept
-
-Prompt-engineering an existing Chatting LLM with debian-specific documents,
-like debian-policy, debian developer references, and some man pages.
+you have more good ideas on how we can make LLMs useful for Debian Development:
+https://salsa.debian.org/deeplearning-team/debgpt/-/issues
 
 
-Some imagined use cases, not yet implemented:
+CONFIGURATION
+=============
 
-1. Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do some more complicated things
-1. Extend Lintian with LLM for complicated checks?
-1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length.
+By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
+Please check [`etc/config.toml`](etc/config.toml) for example.
+This configuration file should not be installed system-wide because users
+may need to fill in secrets like paied API keys.
 
-## How to extend the CLI
 
-1. implement your new prompt generator in `debgpt/debian.py`.  The function
-should return a string containing all the texts we will send to the llm.  Some
-other return types like `List` or `Dict` (for advanced usage such as in-context
-learning) are possible (see `debgpt/frontend.py :: ZMQFrontend.query`, but
-those are not explored yet.
+HOW-TO-EXTEND-CLI
+=================
+
+1. implement your new text loading function in `debgpt/debian.py`.  The function
+should return a string containing all the texts we will send to the llm.
 2. add the corresponding cli argument subparser to `debgpt/main_cli.py`.
+
 3. add the new prompt generation code (for variable `msg`) in `main()` of `debgpt/main_cli.py`.
+
 4. if in doubt, ask debgpt as `debgpt file -f <file-in-question> what -i`.
 
-## TODO List
+
+
+WHATS-NEXT
+==========
+
+The following is the current **TODO List**:
 
 1. `debgpt.backend` error handling ... illegal input format, overlength, CUDA OOM, etc.
 4. `debgpt.llm` tune llm parameters like temperature.
@@ -276,11 +272,30 @@ those are not explored yet.
 1. add perplexity API https://www.perplexity.ai
 1. https://github.com/openai/chatgpt-retrieval-plugin
 2. support file read range for `-f`, using `re.match(r'.+:(\d*)-(\d*)', 'setup.py:1-10').groups()`
-1. add man page for `debgpt`
-1. implement `debgpt fortune`.
 1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 
-## Infrastructure
+Some ideas that might be a little bit far away:
+
+1. Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do some more complicated things
+
+1. Extend Lintian with LLM for complicated checks?
+
+1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length. Maybe LLMs are not yet smart enough to do this.
+
+1. Apart from the `str` type, the frontend supports other return types like `List`
+or `Dict` (for advanced usage such as in-context learning) are possible (see
+`debgpt/frontend.py :: ZMQFrontend.query`, but those are not explored yet.
+
+1. The current implementation stays at prompt-engineering an existing Chatting
+LLM with debian-specific documents, like debian-policy, debian developer references,
+and some man pages. In the future, we may want to explore how we can use
+larger datasets like Salsa dump, Debian mailing list dump, etc. LoRA
+or RAG or any new methods are to be investegated with the datasets.
+Also see follow-ups at https://lists.debian.org/debian-project/2023/12/msg00028.html
+
+1. Should we really train or fine-tune a model? How do we organize the data for RLHF or instruction tuning?
+
+Some ideas about Debian's infrastructure:
 
 I don't know how many DDs will be interested in this if it works well.  Based
 on the number of DD users, as well as LLM's actual usefulness, we might work
@@ -297,9 +312,8 @@ API.
 
 I have not talked with the leader about any of these yet.
 
-## License
 
-```
-Copyright (C) 2024 Mo Zhou <lumin@debian.org>
-MIT/Expat
-```
+LICENSE
+=======
+
+Copyright (C) 2024 Mo Zhou <lumin@debian.org>; MIT/Expat License
