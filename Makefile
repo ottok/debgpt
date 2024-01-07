@@ -11,3 +11,6 @@ autopep8:
 
 pytest:
 	pytest -v
+
+install:
+	pip3 install .
