@@ -34,7 +34,3 @@ debgpt file -f pyproject.toml free
 debgpt vote -s 2023/vote_002 diff
 # explain the difference between those proposals
 
-# == man ==
-debgpt man --man debhelper-compat-upgrade-checklist free  # note, this requires 40GB of CUDA memory due to manual page being too long
-# what should I do to upgrade the compat from 13 to 14?
-

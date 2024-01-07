@@ -115,13 +115,19 @@ debgpt -Q -A "who are you?"
 After each session, the chatting history will be saved in `~/.debgpt` as a
 json file in a unique name.  You can use `debgpt replay <file_name>` to replay the history.
 
-#### Ex2. BTS Query
+#### Ex2. BTS / Buildd Query
 
 Ask LLM to summarize the BTS page for `src:pytorch`. 
 
 ```
 debgpt -HQ --bts src:pytorch -A :summary_table
 debgpt -HQ --bts 1056388 -A :summary
+```
+
+Lookup the build status for package `glibc` and summarize as a table.
+
+```
+debgpt -HQ --buildd glibc -A :summary_table
 ```
 
 When the argument to `-A/--ask` is a tag starting with a colon sign `:`, such
@@ -140,12 +146,13 @@ debgpt -H --policy 7.2 -A "what is the difference between Depends: and Pre-Depen
 debgpt -H --devref 5.5 -A :summary
 ```
 
-#### Ex4. Buildd Query
+#### Ex4. Man and TLDR Manuals
 
-Lookup the build status for package `glibc` and summarize as a table.
+Load the debhelper manpage and ask it to extract a part of it.
 
 ```
-debgpt -HQ --buildd glibc -A :summary_table
+debgpt -HQ --man debhelper-compat-upgrade-checklist -A "what's the change between compat 13 and compat 14?"
+debgpt -HQ --tldr curl --cmd 'curl -h' -A "download https://localhost/bigfile.iso to /tmp/workspace, in silent mode"
 ```
 
 #### Ex5. Composition of Various Information Sources

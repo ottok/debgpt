@@ -186,6 +186,9 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     # -- 7. TLDR Manual Page
     ag.add_argument('--tldr', type=str, default=[], action='append',
                     help='add tldr page to the prompt.')
+    # -- 8. Man Page
+    ag.add_argument('--man', type=str, default=[], action='append',
+                    help='add man page to the prompt. Note the context length!')
     # -- 999. The Question Template at the End of Prompt
     ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'],
                     help="Question template to append at the end of the prompt. "
@@ -237,9 +240,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                             help='specify what type of fortune you want')
     ps_fortune.set_defaults(func=task_fortune)
 
-    # FIXME: update the following
-
-    # -- mailing list
+    # -- mailing list FIXME: outdated
     ps_ml = subps.add_parser('ml', help='mailing list')
     ps_ml.add_argument('--url', '-u', type=str, required=True)
     ps_ml.add_argument('--raw', action='store_true', help='use raw html')
@@ -247,7 +248,7 @@ See https://platform.openai.com/docs/api-reference/chat/create \
     ps_ml.set_defaults(func=lambda ag: debian.mailing_list(
         ag.url, ag.action, raw=ag.raw))
 
-    # -- file (old)
+    # -- file (old) FIXME: outdated
     # e.g., license check (SPDX format), code improvement, code explain
     # TODO: support multiple files (nargs=+)
     ps_file = subps.add_parser(
@@ -262,12 +263,6 @@ See https://platform.openai.com/docs/api-reference/chat/create \
                          help='for example, 2023/vote_002')
     ps_vote.add_argument('action', type=str, choices=debian.vote_actions)
     ps_vote.set_defaults(func=lambda ag: debian.vote(ag.suffix, ag.action))
-
-    # -- man page
-    ps_man = subps.add_parser('man', help='manual page')
-    ps_man.add_argument('--man', '-m', type=str, required=True)
-    ps_man.add_argument('action', type=str, choices=debian.man_actions)
-    ps_man.set_defaults(func=lambda ag: debian.man(ag.man, ag.action))
 
     # -- dev mode
     ps_dev = subps.add_parser(
@@ -335,6 +330,9 @@ def main(argv=sys.argv[1:]):
     if ag.tldr:
         for tldr_name in ag.tldr:
             msg = _append_info(msg, debian.tldr(tldr_name))
+    if ag.man:
+        for man_name in ag.man:
+            msg = _append_info(msg, debian.man(man_name))
     if ag.cmd:
         for cmd_line in ag.cmd:
             msg = _append_info(msg, debian.command_line(cmd_line))

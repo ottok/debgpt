@@ -167,20 +167,10 @@ def devref(section: str, *, debgpt_home: str):
     return '\n'.join(lines)
 
 
-# == man and tldr ==
-man_actions = ('free',)
-
-
-def man(name: str, action: str):
+def man(name: str):
     text = _load_cmdline(f'man {name}')
-    lines = [
-        f'''The following is the contents of the manual page for {name}, as enclosed by "```" marks.''']
+    lines = [f'''The following is the manual page of {name}:''']
     lines.extend(['```'] + text + ['```', ''])
-    if action == 'free':
-        lines.append(
-            'Read it carefully. I will ask you questions later. For now please be quiet.')
-    else:
-        raise NotImplementedError(action)
     return '\n'.join(lines)
 
 
@@ -191,7 +181,6 @@ def tldr(name: str):
     return '\n'.join(lines)
 
 
-# == cmd ==
 def command_line(cmd: str):
     text = _load_cmdline(cmd)
     lines = [f'''The following is the output of command line `{cmd}`:''']
@@ -199,19 +188,9 @@ def command_line(cmd: str):
     return '\n'.join(lines)
 
 
-# == stdin ==
-# empty tuple. We don't know what the user wants. stdin is too flexible.
-stdin_actions = ()
-
-
 def stdin():
     text = _load_stdin()
     return '\n'.join(text)
-
-
-def test_stdin():
-    # I dont know how to test this but the two lines of code does not seem to have bug.
-    pass
 
 
 # == file ==
