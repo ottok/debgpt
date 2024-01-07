@@ -268,6 +268,38 @@ The usage of LLM is limited by our imaginations. I am glad to hear from you if
 you have more good ideas on how we can make LLMs useful for Debian Development:
 https://salsa.debian.org/deeplearning-team/debgpt/-/issues
 
+LLM-SELECTION-AND-HARDWARE
+==========================
+
+If you would like to self-host the LLM inference backend, powerful hardware
+is required. The concrete hardware requirement depends on the LLM you would
+like to use. A variety of open-access LLMs can be found here
+> `https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard`
+Generally, when trying to do prompt engineering only, the "instruction-tuned"
+LLMs and "RL-tuned" (RL is reinforcement learning) LLMs are recommended.
+
+The pretrained (raw) LLMs are not quite useful in this case, as they have not
+yet gone through instruction tuning, nor reinforcement learning tuning
+procedure.  These pretrained LLMs will more likely generate garbage and not
+follow your instructions, or simply repeat your instruction.  We will only
+revisit the pretrained LLMs when we plan to start collecting data and fine-tune
+(e.g., LoRA) a model in the far future.
+
+The following is a list of supported LLMs for self-hosting (this list will
+be updated when there are new state-of-the-art open-access LLMs available):
+
+* `Mistral-7B-Instruct-v0.2` (default)
+: This model requires roughly 15GB of disks space to download.  Requires 16+GB
+CUDA memory (VRAM) for inference in `fp16` precision (default).  If you deal
+with very long context (such as 8k) with this model, you may need a 48GB GPU to
+avoid CUDA out of memory (OOM).  Similarly, the `float32` precision will double
+the requirement, and the `8bit` will half the requirement. The `4bit` precision
+requires a quater compared to `fp16`.
+
+* `Mixtral-8x7B-Instruct-v0.1`
+: This model is larger yet more powerful than the default LLM. In exchange, it
+poses even higher hardware requirements.
+
 
 CONFIGURATION
 =============
@@ -316,6 +348,9 @@ larger datasets like Salsa dump, Debian mailing list dump, etc. LoRA
 or RAG or any new methods are to be investegated with the datasets.
 Also see follow-ups at https://lists.debian.org/debian-project/2023/12/msg00028.html
 1. Should we really train or fine-tune a model? How do we organize the data for RLHF or instruction tuning?
+1. There are other possible backends like https://github.com/ggerganov/llama.cpp
+which allows inference on CPUs (even laptops). 
+transformers itself also supports 8bit and 4bit inference with bitsandbytes.
 
 LICENSE
 =======
