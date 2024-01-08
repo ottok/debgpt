@@ -406,6 +406,7 @@ The following is the current **TODO List**:
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
 1. generate the config file, so I don't have to write the same documentation string multiple times https://stackoverflow.com/questions/39909927/how-to-print-just-the-content-of-the-help-string-of-a-specific-argument-of-argpa
+1. escape commands like `/reset` and `/save` , and `/run` (run the shell/python/etc code block) in interactive mode
 
 Some ideas that might be a little bit far away:
 
