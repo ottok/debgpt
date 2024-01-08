@@ -88,6 +88,12 @@ def _load_stdin() -> List[str]:
     return lines
 
 
+#####################################
+# Text Loaders fron Various Sources
+#####################################
+
+
+
 def html(url: str, *, raw: bool = False):
     '''
     Load a website in plain/raw text format
