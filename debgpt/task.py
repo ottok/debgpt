@@ -98,3 +98,4 @@ def task_fortune(ag):
     frontend.query_once(f, msg)
     # exit
     exit(0)
+

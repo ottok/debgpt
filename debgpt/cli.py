@@ -43,6 +43,7 @@ import tempfile
 import rich
 from collections import defaultdict
 console = rich.get_console()
+import textwrap
 
 
 def version() -> None:
@@ -51,9 +52,17 @@ def version() -> None:
         f'DebGPT {__version__}; Copyright {__copyright__}; Released under {__license__} license.')
 
 
+def generate_config_file(ag) -> None:
+    '''
+    special task: generate config template, print and quit
+    '''
+    console.print(ag.config_template)
+    exit(0)
+
+
 def parse_args(argv):
     '''
-    argparse with subparsers
+    argparse with subparsers. Generate a config.toml template as byproduct.
     '''
     # if ~/.debgpt/config.toml exists, parse it to override the built-in defaults.
     conf = defaults.Config()
@@ -61,10 +70,17 @@ def parse_args(argv):
     ag = argparse.ArgumentParser()
 
     # CLI Behavior / Frontend Arguments
+    config_template = '''\
+##############################
+# Command Line Interface
+##############################
+\n'''
     ag.add_argument('--quit', '-Q', action='store_true',
-                    help='directly quit after receiving the first response from LLM, instead of staying in interation.')
+                    help='directly quit after receiving the first response \
+from LLM, instead of staying in interation.')
     ag.add_argument('--multiline', '-M', action='store_true',
-                    help='enable multi-line input for prompt_toolkit. use Meta+Enter to accept the input instead.')
+                    help='enable multi-line input for prompt_toolkit. \
+use Meta+Enter to accept the input instead.')
     ag.add_argument('--hide_first', '-H', action='store_true',
                     help='hide the first (generated) prompt; do not print argparse results')
     ag.add_argument('--verbose', '-v', action='store_true',
@@ -76,9 +92,21 @@ def parse_args(argv):
     ag.add_argument('--debgpt_home', type=str, default=conf['debgpt_home'],
                     help='directory to store cache and sessions.')
     ag.add_argument('--frontend', '-F', type=str, default=conf['frontend'],
-                    choices=('dryrun', 'zmq', 'openai'))
+                    choices=('dryrun', 'zmq', 'openai'),
+                    help=f"default frontend is {conf['frontend']}. Available \
+choices are: (zmq, openai, dryrun). The 'dryrun' is a fake frontend that will \
+do nothing other than printing the generated prompt. So that you can copy \
+it to web-based LLMs in that case.")
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--frontend'].help))
+    config_template += f'''\nfrontend = {repr(conf.frontend)}\n'''
 
     # LLM Inference Arguments
+    config_template += '''\n
+###########################
+# LLM Inference Arguments
+###########################
+\n'''
     ag.add_argument('--temperature', '-T', type=float, default=conf['temperature'],
                     help='''Sampling temperature. Typically ranges within [0,1]. \
 Low values like 0.2 gives more focused (coherent) answer. \
@@ -86,18 +114,57 @@ High values like 0.8 gives a more random (creative) answer. \
 Not suggested to combine this with with --top_p. \
 See https://platform.openai.com/docs/api-reference/chat/create \
     ''')
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--temperature'].help))
+    config_template += f'''\ntemperature = {repr(conf.temperature)}\n'''
+
     ag.add_argument('--top_p', '-P', type=float, default=conf['top_p'])
+    # TODO: add this in config template
 
     # Specific to OpenAI Frontend
+    config_template += '''\n
+##############################
+# Specific to OpenAI Frontend
+##############################
+\n'''
     ag.add_argument('--openai_base_url', type=str,
-                    default=conf['openai_base_url'])
+                    default=conf['openai_base_url'],
+                    help='OpenAI API is a widely adopted standard. You can \
+switch to other compatible service providers, or a self-hosted compatible \
+server.')
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--openai_base_url'].help))
+    config_template += f'''\nopenai_base_url = {repr(conf.openai_base_url)}\n'''
+    config_template += '\n'
+
     ag.add_argument('--openai_api_key', type=str,
-                    default=conf['openai_api_key'])
-    ag.add_argument('--openai_model', type=str, default=conf['openai_model'])
+                    default=conf['openai_api_key'],
+                    help='API key is necessary to access services including \
+OpenAI API server. https://platform.openai.com/api-keys')
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--openai_api_key'].help))
+    config_template += f'''\nopenai_api_key = {repr(conf.openai_api_key)}\n'''
+    config_template += '\n'
+
+    ag.add_argument('--openai_model', type=str, default=conf['openai_model'],
+                    help='For instance, gpt-3.5-turbo (4k context), \
+gpt-3.5-turbo-16k (16k context), gpt-4, gpt-4-32k (32k context). \
+Their prices vary. See https://platform.openai.com/docs/models .')
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--openai_model'].help))
+    config_template += f'''\nopenai_model = {repr(conf.openai_model)}\n'''
 
     # Specific to ZMQ Frontend
+    config_template += '''\n
+##############################
+# Specific to ZMQ Frontend
+##############################
+\n'''
     ag.add_argument('--zmq_backend', type=str, default=conf['zmq_backend'],
-                    help='the ZMQ frontend endpoint')
+                    help='the ZMQ backend URL that the frontend will connect to')
+    config_template += '\n'.join('# ' + x for x in textwrap.wrap(
+        ag._option_string_actions['--zmq_backend'].help))
+    config_template += f'''\nzmq_backend = {repr(conf.zmq_backend)}\n'''
 
     # Prompt Loaders (numbered list). You can specify them multiple times.
     # for instance, `debgpt -H -f foo.py -f bar.py`.
@@ -183,8 +250,14 @@ give you the same thing across multiple runs.')
                             help='specify what type of fortune you want')
     ps_fortune.set_defaults(func=task_fortune)
 
+    # Task: genconfig
+    ps_genconfig = subps.add_parser('genconfig', aliases=['genconf', 'config.toml'],
+                                    help='generate config.toml file template')
+    ps_genconfig.set_defaults(func=generate_config_file)
+
     # -- parse and sanitize
     ag = ag.parse_args(argv)
+    ag.config_template = config_template
     return ag
 
 
@@ -304,14 +377,14 @@ def main(argv=sys.argv[1:]):
     if ag.verbose:
         console.log('Argument Order:', ag_order)
 
-    # initialize the frontend
-    f = frontend.create_frontend(ag)
-    ag.frontend_instance = f
-
     # create task-specific prompts. note, some special tasks will exit()
     # in their subparser default function when then finished, such as backend,
     # version, etc. They will exit.
     msg = ag.func(ag)
+
+    # initialize the frontend
+    f = frontend.create_frontend(ag)
+    ag.frontend_instance = f
 
     # gather all specified information in the initial prompt,
     # such as --file, --man, --policy, --ask
