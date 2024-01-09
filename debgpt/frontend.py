@@ -109,7 +109,8 @@ class OpenAIFrontend(AbstractFrontend):
         self.session.append({"role": "system", "content": self.system_message})
         self.model = args.openai_model
         self.kwargs = {'temperature': args.temperature, 'top_p': args.top_p}
-        console.log(f'{self.NAME}> model={repr(self.model)}, '
+        if args.verbose:
+            console.log(f'{self.NAME}> model={repr(self.model)}, '
                     + f'temperature={args.temperature}, top_p={args.top_p}.')
 
     def query(self, messages: Union[List, Dict, str]) -> list:
