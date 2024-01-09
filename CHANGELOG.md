@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v0.4.93 -- 2024-01-09
+---------------------
+
+New Features:
+
+* 46798b3 Add pynew function to retrieve information from Python's What's New website.
+* f611ec1 cli: Add support for loading CPython What's New website. (--pynew)
+
+Minor changes:
+
+* 0f50221 clear all pyflakes in this repo
+* 3d35c1a readme: add -T for fortune examples where randomness is needed
+
 v0.4.92 -- 2024-01-08
 ---------------------
 

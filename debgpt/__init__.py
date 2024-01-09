@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
-__version__ = '0.4.92'
+__version__ = '0.4.93'
 __copyright__ = '2024, Mo Zhou <lumin@debian.org>'
 __license__ = 'MIT'
 # do not load all components.
