@@ -403,6 +403,7 @@ The following is the current **TODO List**:
 1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
+1. organize argparse with argument groups
 
 Some ideas that might be a little bit far away:
 
