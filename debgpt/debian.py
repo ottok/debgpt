@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
-from typing import *
+from typing import List, Union
 import re
 import requests
 from . import policy as debgpt_policy
@@ -29,7 +29,6 @@ from bs4 import BeautifulSoup
 import os
 import subprocess
 import sys
-from .defaults import QUESTIONS
 import rich
 console = rich.get_console()
 
