@@ -28,8 +28,8 @@ from debgpt.cli import main
 
 @pytest.mark.parametrize('cmd', (
     '-F dryrun',
-    '-F dryrun -Hf Makefile ',
-    '-F dryrun -Qf Makefile ',
+    '-F dryrun -Hf Makefile',
+    '-F dryrun -Qf Makefile',
     '-F dryrun --tldr man',
     '-F dryrun --man man',
     '-F drurun --version',

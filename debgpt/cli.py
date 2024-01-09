@@ -76,14 +76,7 @@ def task_git_commit(ag) -> None:
     f = ag.frontend_instance
     msg = debian.command_line('git diff --staged')
     msg += '\n' + defaults.QUESTIONS[':git-commit']
-    if f.stream:
-        console.print(
-            f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
-        reply = f(msg)
-    else:
-        with Status('LLM', spinner='line'):
-            reply = f(msg)
-        console.print(Panel(escape(reply), title='LLM Reply'))
+    frontend_query_once(f, msg, ag)
     tmpfile = tempfile.mktemp()
     commit_message = f.session[-1]['content']
     debgpt_cmd = ' '.join([os.path.basename(sys.argv[0]), *sys.argv[1:]])
@@ -123,14 +116,7 @@ def task_fortune(ag):
         msg = ag.ask
     # let frontend work
     f = ag.frontend_instance
-    if f.stream:
-        console.print(
-            f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
-        reply = f(msg)
-    else:
-        with Status('LLM', spinner='line'):
-            reply = f(msg)
-        console.print(Panel(escape(reply), title='LLM Reply'))
+    frontend_query_once(f, msg, ag)
     # exit
     exit(0)
 
@@ -358,22 +344,30 @@ def gather_information_ordered(msg: Optional[str], ag, ag_order) -> Optional[str
     return msg
 
 
+def frontend_query_once(f: frontend.AbstractFrontend, text: str, ag) -> None:
+    '''
+    we have prepared text -- let frontend send it to LLM, and this function
+    will print the LLM reply
+    '''
+    if f.stream:
+        lprmpt = f'[bold green]LLM[{1+len(f.session)}]>[/bold green] '
+        console.print(lprompt, end='')
+        reply = f(text)
+    else:
+        with Status('LLM', spinner='line'):
+            reply = f(text)
+        console.print(Panel(escape(reply), title='LLM Reply'))
+    # console.print('LLM>', reply)
+
+
 def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
-    prompt_style = Style(
-        [('prompt', 'bold fg:ansibrightcyan'), ('', 'bold ansiwhite')])
+    prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'),
+                          ('', 'bold ansiwhite')])
     prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
     try:
         while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
-            if f.stream:
-                console.print(
-                    f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
-                reply = f(text)
-            else:
-                with Status('LLM', spinner='line'):
-                    reply = f(text)
-                console.print(Panel(escape(reply), title='LLM Reply'))
-            # console.print('LLM>', reply)
+            frontend_query_once(f, text, ag)
     except EOFError:
         pass
     except KeyboardInterrupt:
@@ -421,15 +415,7 @@ def main(argv=sys.argv[1:]):
             console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
-        if f.stream:
-            console.print(
-                f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
-            reply = f(msg)
-        else:
-            with Status('LLM', spinner='line'):
-                reply = f(msg)
-            console.print(Panel(escape(reply), title='LLM Reply'))
-        # console.print('LLM>', reply)
+        frontend_query_once(f, msg, ag)
 
     # drop the user into interactive mode if specified (-i)
     if not ag.quit:
