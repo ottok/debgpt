@@ -197,13 +197,13 @@ def create_frontend(args):
     return frontend
 
 
-def query_once(f: frontend.AbstractFrontend, text: str) -> None:
+def query_once(f: AbstractFrontend, text: str) -> None:
     '''
     we have prepared text -- let frontend send it to LLM, and this function
     will print the LLM reply
     '''
     if f.stream:
-        lprmpt = f'[bold green]LLM[{1+len(f.session)}]>[/bold green] '
+        lprompt = f'[bold green]LLM[{1+len(f.session)}]>[/bold green] '
         console.print(lprompt, end='')
         reply = f(text)
     else:
