@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 from rich.status import Status
-from typing import *
+from typing import List, Dict
 import argparse
 import zmq
 from . import llm

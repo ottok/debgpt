@@ -12,5 +12,8 @@ autopep8:
 pytest:
 	PYTHONPATH=. pytest -v
 
+pyflakes:
+	pyflakes .
+
 install:
 	pip3 install .
