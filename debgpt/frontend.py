@@ -62,11 +62,18 @@ class AbstractFrontend():
         self.debgpt_home = args.debgpt_home
         console.log(f'{self.NAME}> Starting conversation {self.uuid}')
 
+    def reset(self):
+        '''
+        clear the context. No need to change UUID I think.
+        '''
+        self.session = []
+
     def query(self, messages):
         '''
         the messages format can be found in _check(...) function above.
         '''
         raise NotImplementedError
+
 
     def update_session(self, messages: Union[List, Dict, str]) -> None:
         if isinstance(messages, list):

@@ -122,6 +122,10 @@ debgpt -Q -A "who are you?"
 After each session, the chatting history will be saved in `~/.debgpt` as a
 json file in a unique name.  You can use `debgpt replay <file_name>` to replay the history.
 
+During the interactive session, you can use `/save path.txt` to save the last
+LLM response to the specified file. You can also use `/reset` to clear the
+context.
+
 #### Ex2. BTS / Buildd Query
 
 Ask LLM to summarize the BTS page for `src:pytorch`. 
@@ -399,7 +403,6 @@ The following is the current **TODO List**:
 1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
-1. escape commands like `/reset` and `/save` , and `/run` (run the shell/python/etc code block) in interactive mode
 
 Some ideas that might be a little bit far away:
 

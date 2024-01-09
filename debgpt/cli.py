@@ -31,6 +31,7 @@ from rich.markup import escape
 from rich.status import Status
 from rich.panel import Panel
 from prompt_toolkit import prompt, PromptSession
+from prompt_toolkit.completion import WordCompleter
 import argparse
 import re
 import os
@@ -39,6 +40,7 @@ from . import frontend
 from . import debian
 from . import defaults
 from .task import *
+import shlex
 import rich
 from collections import defaultdict
 console = rich.get_console()
@@ -356,10 +358,40 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
     prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'),
                           ('', 'bold ansiwhite')])
-    prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
+    # Define the keywords to be completed
+    keywords = ['/save', '/reset']
+
+    # Create a WordCompleter with the keywords
+    completer = WordCompleter(keywords)
+
+    # start prompt session
+    prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline,
+                                   completer=completer)
+
+    # loop
     try:
         while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
-            frontend.query_once(f, text)
+            # parse escaped interaction commands
+            if text.startswith('/'):
+                cmd = shlex.split(text)
+                if cmd[0] == '/save':
+                    # save the last LLM reply to a file
+                    if len(cmd) != 2:
+                        console.print('syntax error: /save <path>')
+                        continue
+                    path = cmd[-1]
+                    with open(path, 'wt') as fp:
+                        fp.write(f.session[-1]['content'])
+                    console.log(f'The last LLM response is saved at {path}')
+                elif cmd[0] == '/reset':
+                    if len(cmd) != 1:
+                        console.print('syntax error: /reset')
+                        continue
+                    f.reset()
+                else:
+                    console.print(f'unknown command: {cmd[0]}')
+            else:
+                frontend.query_once(f, text)
     except EOFError:
         pass
     except KeyboardInterrupt:
