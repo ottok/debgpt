@@ -85,7 +85,7 @@ CONFIGURATION
 =============
 
 By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
-Please check [`etc/config.toml`](etc/config.toml) for example.
+Use `debgpt genconfig` or `debgpt config.toml` to generate a config template.
 This configuration file should not be installed system-wide because users
 may need to fill in secrets like paied API keys.
 
@@ -405,7 +405,6 @@ The following is the current **TODO List**:
 1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
-1. generate the config file, so I don't have to write the same documentation string multiple times https://stackoverflow.com/questions/39909927/how-to-print-just-the-content-of-the-help-string-of-a-specific-argument-of-argpa
 1. escape commands like `/reset` and `/save` , and `/run` (run the shell/python/etc code block) in interactive mode
 
 Some ideas that might be a little bit far away:
