@@ -32,6 +32,7 @@ from rich.status import Status
 from rich.panel import Panel
 from prompt_toolkit import prompt, PromptSession
 import argparse
+import re
 import os
 import sys
 from . import frontend
@@ -271,11 +272,15 @@ See https://platform.openai.com/docs/api-reference/chat/create \
 def parse_args_order(argv) -> List[str]:
     '''
     parse the order of selected arguments
+
+    For example, we need to match
+    -f, --file, -Hf (-[^-]*f), into --file
     '''
     order : List[str] = []
     def _match_ls(probe: str, long: str, short: str, dest: List[str]):
         if any(probe == x for x in (long, short)) \
-                or any(probe.startswith(x+'=') for x in (long, short)):
+                or any(probe.startswith(x+'=') for x in (long, short)) \
+                or re.match(r'-[^-]*'+short[-1], probe):
             dest.append(long.lstrip('--'))
     def _match_l(probe: str, long: str, dest: List[str]):
         if probe == long or probe.startswith(long+'='):
