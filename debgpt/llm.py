@@ -21,22 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
-from rich.status import Status
 import json
 import os
-import re
 from prompt_toolkit import prompt
 from prompt_toolkit.styles import Style
 from transformers import pipeline, Conversation
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import transformers
 from transformers import TextStreamer
-import numpy as np
 import torch as th
-from typing import *
+from typing import Union, List, Dict
 import argparse
 import rich
-from rich.panel import Panel
 console = rich.get_console()
 
 
@@ -158,7 +154,6 @@ class Mistral7B(AbstractLLM):
         try:
             while text := prompt(f'Prompt[{len(chat.messages)}]> ', style=prompt_style):
                 chat.add_message({'role': 'user', 'content': text})
-                # with Status(f'{self.NAME}', spinner='line'):
                 if True:
                     if self.is_pipeline:
                         templated = self.tok.apply_chat_template(chat.messages, tokenize=False,
@@ -174,7 +169,6 @@ class Mistral7B(AbstractLLM):
                             {'role': 'assistant', 'content': generated})
                     else:
                         chat = pipe(chat, **self.kwargs)
-                # console.print(Panel(chat[-1]['content'], title=f'[bold blue]LLM ({self.NAME})[/bold blue]', border_style='blue'), markup=False)
         except EOFError:
             pass
         except KeyboardInterrupt:
