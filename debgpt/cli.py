@@ -377,14 +377,14 @@ def main(argv=sys.argv[1:]):
     if ag.verbose:
         console.log('Argument Order:', ag_order)
 
+    # initialize the frontend
+    f = frontend.create_frontend(ag)
+    ag.frontend_instance = f
+
     # create task-specific prompts. note, some special tasks will exit()
     # in their subparser default function when then finished, such as backend,
     # version, etc. They will exit.
     msg = ag.func(ag)
-
-    # initialize the frontend
-    f = frontend.create_frontend(ag)
-    ag.frontend_instance = f
 
     # gather all specified information in the initial prompt,
     # such as --file, --man, --policy, --ask
