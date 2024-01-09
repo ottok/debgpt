@@ -27,6 +27,7 @@ import sys
 from . import frontend
 from . import debian
 from . import defaults
+from rich.panel import Panel
 import tempfile
 console = rich.get_console()
 
