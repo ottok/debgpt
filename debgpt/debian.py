@@ -208,10 +208,13 @@ def pynew(version_section: str):
     # extract information from webpage
     if section is None or not section:
         # if not specified section: print available ones and exit()
-        console.print('Available sections:', sections)
+        console.print("Available Sections in Python What's New:", sections)
         sys.exit(0)
     else:
         # if specified section: find that section
         part = soup.find_all('section', attrs={'id': section})[0]
         text = part.get_text().strip()
-        return text
+    # enclose in markdown block
+    lines = [f'''The following is the {section} section of Python {version}'s What's New document:''']
+    lines.extend(['```', text, '```', ''])
+    return '\n'.join(lines)
