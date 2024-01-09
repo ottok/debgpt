@@ -1,3 +1,9 @@
+debgpt (0.4.92) unstable; urgency=medium
+
+  * Release v0.4.92.
+
+ -- Mo Zhou <lumin@debian.org>  Mon, 08 Jan 2024 23:39:14 -0500
+
 debgpt (0.4.90) unstable; urgency=medium
 
   * Initial release. (Closes: #1060113)
