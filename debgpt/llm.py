@@ -65,8 +65,6 @@ class Mistral7B(AbstractLLM):
     https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
     https://huggingface.co/docs/transformers/main/chat_templating
     https://huggingface.co/blog/mixtral
-
-    TODO: also support 4bit and 8bit for CPU inference. Not everybody has expensive GPUs.
     '''
     NAME = 'Mistral7B'
     model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
