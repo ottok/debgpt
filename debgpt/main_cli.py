@@ -40,6 +40,7 @@ from . import debian
 from . import defaults
 import tempfile
 import rich
+from collections import defaultdict
 console = rich.get_console()
 
 
@@ -124,7 +125,7 @@ def task_fortune(ag):
     f = ag.frontend_instance
     if f.stream:
         console.print(
-            f'[bold green]LLM [{1+len(f.session)}]>[/bold green] ', end='')
+            f'[bold green]LLM[{1+len(f.session)}]>[/bold green] ', end='')
         reply = f(msg)
     else:
         with Status('LLM', spinner='line'):
@@ -298,6 +299,68 @@ def parse_args_order(argv) -> List[str]:
     return order
 
 
+def gather_information_ordered(msg: Optional[str], ag, ag_order) -> Optional[str]:
+    '''
+    based on the argparse results, as well as the argument order, collect
+    the specified information into the first prompt. If none specified,
+    return None.
+    '''
+    # FIXME: implement ordering
+    def _append_info(msg: str, info: str) -> str:
+        msg = '' if msg is None else msg
+        return msg + '\n' + info
+    if ag.file:
+        for file_path in ag.file:
+            msg = _append_info(msg, debian.file(file_path))
+    if ag.tldr:
+        for tldr_name in ag.tldr:
+            msg = _append_info(msg, debian.tldr(tldr_name))
+    if ag.man:
+        for man_name in ag.man:
+            msg = _append_info(msg, debian.man(man_name))
+    if ag.cmd:
+        for cmd_line in ag.cmd:
+            msg = _append_info(msg, debian.command_line(cmd_line))
+    if ag.bts:
+        for bts_id in ag.bts:
+            msg = _append_info(msg, debian.bts(bts_id, raw=ag.bts_raw))
+    if ag.policy:
+        for section in ag.policy:
+            msg = _append_info(msg, debian.policy(
+                section, debgpt_home=ag.debgpt_home))
+    if ag.devref:
+        for section in ag.devref:
+            msg = _append_info(msg, debian.devref(
+                section, debgpt_home=ag.debgpt_home))
+    if ag.buildd:
+        for p in ag.buildd:
+            msg = _append_info(msg, debian.buildd(p))
+    if ag.html:
+        for url in ag.html:
+            msg = _append_info(msg, debian.html(url, raw=False))
+
+    # --ask should be processed as the last one
+    if ag.ask:
+        msg = '' if msg is None else msg
+        # append customized question template to the prompt
+        if ag.ask in ('?', ':', ':?'):
+            # ":?" means to print available options and quit
+            console.print(
+                'Available question templates for argument -A/--ask:')
+            defaults.print_question_templates()
+            exit(0)
+        if ag.ask.startswith(':'):
+            # specifies a question template from defaults.QUESTIONS
+            question = defaults.QUESTIONS[ag.ask]
+            msg += '\n' + question
+        else:
+            # is a user-specified question in the command line
+            question = ag.ask
+            msg += ('' if not msg else '\n') + question
+
+    return msg
+
+
 def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
     prompt_style = Style(
@@ -339,61 +402,13 @@ def main(argv=sys.argv[1:]):
     ag.frontend_instance = f
 
     # create task-specific prompts. note, some special tasks will exit()
-    # in their subparser default function when then finished, such as backend.
+    # in their subparser default function when then finished, such as backend,
+    # version, etc. They will exit.
     msg = ag.func(ag)
 
-    # XXX: on migration to new cli design
-    # FIXME: add these contents following the commandline argument order. use ag_order
-    def _append_info(msg: str, info: str) -> str:
-        msg = '' if msg is None else msg
-        return msg + '\n' + info
-    if ag.file:
-        for file_path in ag.file:
-            msg = _append_info(msg, debian.file(file_path))
-    if ag.tldr:
-        for tldr_name in ag.tldr:
-            msg = _append_info(msg, debian.tldr(tldr_name))
-    if ag.man:
-        for man_name in ag.man:
-            msg = _append_info(msg, debian.man(man_name))
-    if ag.cmd:
-        for cmd_line in ag.cmd:
-            msg = _append_info(msg, debian.command_line(cmd_line))
-    if ag.bts:
-        for bts_id in ag.bts:
-            msg = _append_info(msg, debian.bts(bts_id, raw=ag.bts_raw))
-    if ag.policy:
-        for section in ag.policy:
-            msg = _append_info(msg, debian.policy(
-                section, debgpt_home=ag.debgpt_home))
-    if ag.devref:
-        for section in ag.devref:
-            msg = _append_info(msg, debian.devref(
-                section, debgpt_home=ag.debgpt_home))
-    if ag.buildd:
-        for p in ag.buildd:
-            msg = _append_info(msg, debian.buildd(p))
-    if ag.html:
-        for url in ag.html:
-            msg = _append_info(msg, debian.html(url, raw=False))
-    # --ask should be processed as the last one
-    if ag.ask:
-        msg = '' if msg is None else msg
-        # append customized question template to the prompt
-        if ag.ask in ('?', ':', ':?'):
-            # ":?" means to print available options and quit
-            console.print(
-                'Available question templates for argument -A/--ask:')
-            defaults.print_question_templates()
-            exit(0)
-        if ag.ask.startswith(':'):
-            # specifies a question template from defaults.QUESTIONS
-            question = defaults.QUESTIONS[ag.ask]
-            msg += '\n' + question
-        else:
-            # is a user-specified question in the command line
-            question = ag.ask
-            msg += ('' if not msg else '\n') + question
+    # gather all specified information in the initial prompt,
+    # such as --file, --man, --policy, --ask
+    msg = gather_information_ordered(msg, ag, ag_order)
 
     # in dryrun mode, we simply print the generated initial prompts
     # then the user can copy the prompt, and paste them into web-based
