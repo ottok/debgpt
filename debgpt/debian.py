@@ -25,10 +25,13 @@ from typing import *
 import re
 import requests
 from . import policy as debgpt_policy
+from bs4 import BeautifulSoup
 import os
 import subprocess
 import sys
 from .defaults import QUESTIONS
+import rich
+console = rich.get_console()
 
 __doc__ = '''
 This file is in charge of organizaing (debian specific) functions for loading
@@ -45,7 +48,6 @@ def _load_html(url: str) -> List[str]:
     '''
     read HTML from url, convert it into plain text, then list of lines
     '''
-    from bs4 import BeautifulSoup
     r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     text = soup.get_text().strip()
@@ -181,3 +183,35 @@ def file(path: str):
     lines = [f'''The following is a file named {path}:''']
     lines.extend(['```'] + text + ['```', ''])
     return '\n'.join(lines)
+
+
+def pynew(version_section: str):
+    '''
+    What's New websites of cpython
+    https://docs.python.org/3/whatsnew/3.12.html#summary-release-highlights
+
+    version: e.g. 3.12
+    section: e.g. summary
+    '''
+    # parse inputs
+    if ':' in version_section:
+        # normally return the specified section
+        version, section = version_section.split(':')
+    else:
+        # print all available sections and exit()
+        version, section = version_section, None
+    # retrieve webpage
+    url = f'https://docs.python.org/3/whatsnew/{version}.html'
+    doc = requests.get(url).text
+    soup = BeautifulSoup(doc, features='html.parser')
+    sections = [x.attrs['id'] for x in soup.find_all('section')]
+    # extract information from webpage
+    if section is None or not section:
+        # if not specified section: print available ones and exit()
+        console.print('Available sections:', sections)
+        sys.exit(0)
+    else:
+        # if specified section: find that section
+        part = soup.find_all('section', attrs={'id': section})[0]
+        text = part.get_text().strip()
+        return text
