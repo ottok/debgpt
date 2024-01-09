@@ -1,6 +1,22 @@
 Changelog
 =========
 
+v0.4.92 -- 2024-01-08
+---------------------
+
+Major changes:
+
+* Use `debgpt genconfig` to auto-generate the config.toml template.
+The original manually written one at `etc/config.toml` was deprecated.
+
+* Implemented ordered argparse. The complicated argument order such
+as `-f file1.txt --man man -f file2` will be correctly reflected in
+the generated prompt.
+
+Minor changes:
+
+* Reorganize code and do the chore. Make CLI less verbose. More pytests.
+
 v0.4.91 -- 2024-01-07
 ---------------------
 
