@@ -23,7 +23,7 @@ SOFTWARE.
 '''
 from typing import *
 import pytest
-from debgpt.main_cli import main
+from debgpt.cli import main
 
 
 @pytest.mark.parametrize('cmd', (
@@ -35,6 +35,6 @@ from debgpt.main_cli import main
     '-F drurun --version',
     '-F dryrun --cmd "man man"',
 ))
-def test_main_cli_system_exit(cmd: str):
+def test_cli_system_exit(cmd: str):
     with pytest.raises(SystemExit):
         main(cmd.split())
