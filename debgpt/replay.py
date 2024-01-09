@@ -25,7 +25,6 @@ from rich.markup import escape
 from rich.panel import Panel
 import json
 import argparse
-import sys
 import rich
 console = rich.get_console()
 
@@ -41,7 +40,7 @@ def process_entry(entry):
         title = 'System Message'
         border_style = 'red'
     else:
-        raise ValueError(f'unknown role')
+        raise ValueError(f'unknown role in {entry}')
 
     panel = Panel(escape(entry['content']),
                   title=title, border_style=border_style)
