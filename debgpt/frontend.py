@@ -197,6 +197,22 @@ def create_frontend(args):
     return frontend
 
 
+def query_once(f: frontend.AbstractFrontend, text: str) -> None:
+    '''
+    we have prepared text -- let frontend send it to LLM, and this function
+    will print the LLM reply
+    '''
+    if f.stream:
+        lprmpt = f'[bold green]LLM[{1+len(f.session)}]>[/bold green] '
+        console.print(lprompt, end='')
+        reply = f(text)
+    else:
+        with Status('LLM', spinner='line'):
+            reply = f(text)
+        console.print(Panel(escape(reply), title='LLM Reply'))
+    # console.print('LLM>', reply)
+
+
 if __name__ == '__main__':
     ag = argparse.ArgumentParser()
     ag.add_argument('--zmq_backend', '-B', default='tcp://localhost:11177')

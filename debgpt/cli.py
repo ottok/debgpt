@@ -76,7 +76,7 @@ def task_git_commit(ag) -> None:
     f = ag.frontend_instance
     msg = debian.command_line('git diff --staged')
     msg += '\n' + defaults.QUESTIONS[':git-commit']
-    frontend_query_once(f, msg, ag)
+    frontend.query_once(f, msg)
     tmpfile = tempfile.mktemp()
     commit_message = f.session[-1]['content']
     debgpt_cmd = ' '.join([os.path.basename(sys.argv[0]), *sys.argv[1:]])
@@ -116,7 +116,7 @@ def task_fortune(ag):
         msg = ag.ask
     # let frontend work
     f = ag.frontend_instance
-    frontend_query_once(f, msg, ag)
+    frontend.query_once(f, msg)
     # exit
     exit(0)
 
@@ -344,22 +344,6 @@ def gather_information_ordered(msg: Optional[str], ag, ag_order) -> Optional[str
     return msg
 
 
-def frontend_query_once(f: frontend.AbstractFrontend, text: str, ag) -> None:
-    '''
-    we have prepared text -- let frontend send it to LLM, and this function
-    will print the LLM reply
-    '''
-    if f.stream:
-        lprmpt = f'[bold green]LLM[{1+len(f.session)}]>[/bold green] '
-        console.print(lprompt, end='')
-        reply = f(text)
-    else:
-        with Status('LLM', spinner='line'):
-            reply = f(text)
-        console.print(Panel(escape(reply), title='LLM Reply'))
-    # console.print('LLM>', reply)
-
-
 def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
     prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'),
@@ -367,7 +351,7 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline)
     try:
         while text := prompt_session.prompt(f'{os.getlogin()}[{len(f.session)}]> '):
-            frontend_query_once(f, text, ag)
+            frontend.query_once(f, text)
     except EOFError:
         pass
     except KeyboardInterrupt:
@@ -415,7 +399,7 @@ def main(argv=sys.argv[1:]):
             console.print(Panel(escape(msg), title='Initial Prompt'))
 
         # query the backend
-        frontend_query_once(f, msg, ag)
+        frontend.query_once(f, msg)
 
     # drop the user into interactive mode if specified (-i)
     if not ag.quit:
