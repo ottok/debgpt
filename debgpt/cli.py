@@ -25,12 +25,11 @@ SOFTWARE.
 import warnings
 warnings.filterwarnings("ignore")
 
-from typing import *
+from typing import List, Optional
 from prompt_toolkit.styles import Style
 from rich.markup import escape
-from rich.status import Status
 from rich.panel import Panel
-from prompt_toolkit import prompt, PromptSession
+from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
 import argparse
 import re
@@ -39,10 +38,9 @@ import sys
 from . import frontend
 from . import debian
 from . import defaults
-from .task import *
+from .task import task_backend, task_git, task_git_commit, task_replay, task_fortune
 import shlex
 import rich
-from collections import defaultdict
 console = rich.get_console()
 import textwrap
 

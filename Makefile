@@ -13,7 +13,7 @@ pytest:
 	PYTHONPATH=. pytest -v
 
 pyflakes:
-	pyflakes .
+	find . -type f -name '*.py' -exec pyflakes '{}' \;
 
 install:
 	pip3 install .
