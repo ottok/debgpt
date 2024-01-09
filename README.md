@@ -216,16 +216,19 @@ debgpt git commit
 Let LLM tell you a fortune:
 
 ```
-debgpt fortune :joke
-debgpt fortune :math
+debgpt -T 1.0 fortune :joke
+debgpt -T 1.0 fortune :math
 ```
 
 Use `debgpt fortune :` to lookup available tags. Or you can just specify the
 type of fortune you want:
 
 ```
-debgpt fortune 'tell me something very funny about linux'
+debgpt -T 1.0 fortune 'tell me something very funny about linux'
 ```
+
+We need to raise the temperature (`-T`) to `1.0` because otherwise it leads
+to less randomness, and LLM will tend to say the same thing everytime.
 
 #### Ex8. File-Specific Questions
 
