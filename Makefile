@@ -10,7 +10,7 @@ autopep8:
 	find debgpt -type f -name '*.py' -exec autopep8 -i '{}' \;
 
 pytest:
-	pytest -v
+	PYTHONPATH=. pytest -v
 
 install:
 	pip3 install .
