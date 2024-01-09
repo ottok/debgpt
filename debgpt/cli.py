@@ -274,6 +274,10 @@ def parse_args_order(argv) -> List[str]:
     '''
     parse the order of selected arguments
 
+    We want `debgpt -f file1.txt -f file2.txt` generate different results
+    than    `debgpt -f file2.txt -f file1.txt`. But the standard argparse
+    will not reserve the order.
+
     For example, we need to match
     -f, --file, -Hf (-[^-]*f), into --file
     '''
@@ -305,39 +309,32 @@ def gather_information_ordered(msg: Optional[str], ag, ag_order) -> Optional[str
     the specified information into the first prompt. If none specified,
     return None.
     '''
-    # FIXME: implement ordering
     def _append_info(msg: str, info: str) -> str:
         msg = '' if msg is None else msg
         return msg + '\n' + info
-    if ag.file:
-        for file_path in ag.file:
-            msg = _append_info(msg, debian.file(file_path))
-    if ag.tldr:
-        for tldr_name in ag.tldr:
-            msg = _append_info(msg, debian.tldr(tldr_name))
-    if ag.man:
-        for man_name in ag.man:
-            msg = _append_info(msg, debian.man(man_name))
-    if ag.cmd:
-        for cmd_line in ag.cmd:
+
+    # following the argument order, dispatch to debian.* functions with
+    # different function signatures
+    for key in ag_order:
+        if key in ('file', 'tldr', 'man', 'buildd'):
+            spec = getattr(ag, key).pop(0)
+            func = getattr(debian, key)
+            msg = _append_info(msg, func(spec))
+        elif key == 'cmd':
+            cmd_line = ag.cmd.pop(0)
             msg = _append_info(msg, debian.command_line(cmd_line))
-    if ag.bts:
-        for bts_id in ag.bts:
+        elif key == 'bts':
+            bts_id = ag.bts.pop(0)
             msg = _append_info(msg, debian.bts(bts_id, raw=ag.bts_raw))
-    if ag.policy:
-        for section in ag.policy:
-            msg = _append_info(msg, debian.policy(
-                section, debgpt_home=ag.debgpt_home))
-    if ag.devref:
-        for section in ag.devref:
-            msg = _append_info(msg, debian.devref(
-                section, debgpt_home=ag.debgpt_home))
-    if ag.buildd:
-        for p in ag.buildd:
-            msg = _append_info(msg, debian.buildd(p))
-    if ag.html:
-        for url in ag.html:
+        elif key == 'html':
+            url = ag.html.pop(0)
             msg = _append_info(msg, debian.html(url, raw=False))
+        elif key in ('policy', 'devref'):
+            spec = getattr(ag, key).pop(0)
+            func = getattr(debian, key)
+            msg = _append_info(msg, func(spec, debgpt_home=ag.debgpt_home))
+        else:
+            raise NotImplementedError(key)
 
     # --ask should be processed as the last one
     if ag.ask:
