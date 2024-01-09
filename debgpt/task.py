@@ -22,9 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 import rich
+import os
+import sys
 from . import frontend
 from . import debian
 from . import defaults
+import tempfile
 console = rich.get_console()
 
 

@@ -39,7 +39,6 @@ from . import frontend
 from . import debian
 from . import defaults
 from .task import *
-import tempfile
 import rich
 from collections import defaultdict
 console = rich.get_console()
