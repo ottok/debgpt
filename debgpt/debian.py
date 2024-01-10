@@ -51,7 +51,29 @@ def _load_html(url: str) -> List[str]:
     soup = BeautifulSoup(r.text, features="html.parser")
     text = soup.get_text().strip()
     text = re.sub('\n\n+\n', '\n\n', text)
+    text = [x.rstrip() for x in text.split('\n')]
+    return text
+
+
+def _load_bts(identifier: str) -> List[str]:
+    url = f'https://bugs.debian.org/{identifier}'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, features="html.parser")
+
+    if not identifier.startswith('src:'):
+        # delete useless system messages
+        _ = [x.clear() for x in soup.find_all('p', attrs={'class': 'msgreceived'})]
+        _ = [x.clear() for x in soup.find_all('div', attrs={'class': 'infmessage'})]
+
+    text = soup.get_text().strip()
+    text = re.sub('\n\n+\n', '\n\n', text)
     text = [x.strip() for x in text.split('\n')]
+
+    # filter out useless information from the webpage
+    if identifier.startswith('src:') and not raw:
+        # the lines from 'Options' to the end are useless
+        text = text[: text.index('Options')]
+
     return text
 
 
@@ -115,14 +137,7 @@ def buildd(p: str, *, suite: str = 'sid', raw: bool = False):
 
 
 def bts(identifier: str, *, raw: bool = False):
-    url = f'https://bugs.debian.org/{identifier}'
-    text = _load_html_raw(url) if raw else _load_html(url)
-
-    # filter out useless information from the webpage
-    if identifier.startswith('src:') and not raw:
-        # the lines from 'Options' to the end are useless
-        text = text[: text.index('Options')]
-
+    text = _load_bts(identifier)
     lines = ["The following is a webpage from Debian's bug tracking system:"]
     lines.extend(['```'] + text + ['```', ''])
     return '\n'.join(lines)
