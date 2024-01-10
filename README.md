@@ -389,10 +389,10 @@ pytorch, pyzmq, scipy, accelerate, bitsandbytes, tokenizers, transformers.
 
 The additional dependencies needed to run the tests are: pytest.
 
-WHATS-NEXT
-==========
+TODO
+====
 
-The following is the current **TODO List**:
+The following is the current **TODO List**.Some ideas might be a little bit far away.
 
 1. `debgpt.backend` error handling ... illegal input format, overlength, CUDA OOM, etc.
 4. `debgpt.llm` tune llm parameters like temperature.
@@ -404,21 +404,16 @@ The following is the current **TODO List**:
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
 1. organize argparse with argument groups
-
-Some ideas that might be a little bit far away:
-
+1. How can LLM help CPython transition? failing tests, API changes, etc.
+1. What else can we do about the Debian patching workflow? adding patch description?
+1. Uscan? Upstream information?
+1. find upstream bug that matches debian bug (bug triage)
+1. connect with debian codesearch API https://codesearch.debian.net/faq
 1. Let LLM imitate [Janitor](https://wiki.debian.org/Janitor), and possibly do some more complicated things
 1. Extend Lintian with LLM for complicated checks?
 1. Let LLM do mentoring (lists.debian.org/debian-mentors) e.g., reviewing a .dsc package. This is very difficult given limited context length. Maybe LLMs are not yet smart enough to do this.
-1. Apart from the `str` type, the frontend supports other return types like `List`
-or `Dict` (for advanced usage such as in-context learning) are possible (see
-`debgpt/frontend.py :: ZMQFrontend.query`, but those are not explored yet.
-1. The current implementation stays at prompt-engineering an existing Chatting
-LLM with debian-specific documents, like debian-policy, debian developer references,
-and some man pages. In the future, we may want to explore how we can use
-larger datasets like Salsa dump, Debian mailing list dump, etc. LoRA
-or RAG or any new methods are to be investegated with the datasets.
-Also see follow-ups at https://lists.debian.org/debian-project/2023/12/msg00028.html
+1. Apart from the `str` type, the frontend supports other return types like `List` or `Dict` (for advanced usage such as in-context learning) are possible (see `debgpt/frontend.py :: ZMQFrontend.query`, but those are not explored yet.
+1. The current implementation stays at prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages. In the future, we may want to explore how we can use larger datasets like Salsa dump, Debian mailing list dump, etc. LoRA or RAG or any new methods are to be investegated with the datasets. Also see follow-ups at https://lists.debian.org/debian-project/2023/12/msg00028.html
 1. Should we really train or fine-tune a model? How do we organize the data for RLHF or instruction tuning?
 1. There are other possible backends like https://github.com/ggerganov/llama.cpp
 which allows inference on CPUs (even laptops). 
