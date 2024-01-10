@@ -70,7 +70,7 @@ def _load_bts(identifier: str) -> List[str]:
     text = [x.strip() for x in text.split('\n')]
 
     # filter out useless information from the webpage
-    if identifier.startswith('src:') and not raw:
+    if identifier.startswith('src:'):
         # the lines from 'Options' to the end are useless
         text = text[: text.index('Options')]
 
