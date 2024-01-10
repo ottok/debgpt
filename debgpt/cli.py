@@ -30,7 +30,7 @@ from prompt_toolkit.styles import Style
 from rich.markup import escape
 from rich.panel import Panel
 from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import Completer, Completion
 import argparse
 import re
 import os
@@ -356,15 +356,26 @@ def interactive_mode(f: frontend.AbstractFrontend, ag):
     # create prompt_toolkit style
     prompt_style = Style([('prompt', 'bold fg:ansibrightcyan'),
                           ('', 'bold ansiwhite')])
-    # Define the keywords to be completed
-    keywords = ['/save', '/reset']
 
-    # Create a WordCompleter with the keywords
-    completer = WordCompleter(keywords)
+    # Completer with several keywords keywords to be completed
+    class CustomCompleter(Completer):
+        def get_completions(self, document, complete_event):
+            # Get the current text before the cursor
+            text_before_cursor = document.text_before_cursor
+
+            # Check if the text starts with '/'
+            if text_before_cursor.startswith('/'):
+                # Define the available keywords
+                keywords = ['/save', '/reset']
+
+                # Generate completions for each keyword
+                for keyword in keywords:
+                    if keyword.startswith(text_before_cursor):
+                        yield Completion(keyword, -len(text_before_cursor))
 
     # start prompt session
     prompt_session = PromptSession(style=prompt_style, multiline=ag.multiline,
-                                   completer=completer)
+                                   completer=CustomCompleter())
 
     # loop
     try:
