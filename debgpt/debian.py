@@ -116,6 +116,19 @@ def _load_stdin() -> List[str]:
 #####################################
 
 
+def archw(identifier: str):
+    '''
+    Archwiki. e.g.,
+    https://wiki.archlinux.org/title/Archiving_and_compression
+    '''
+    url = f'https://wiki.archlinux.org/title/{identifier}'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, features='html.parser')
+    text = soup.get_text().split('\n')
+    lines = [f'Here is the Arch Wiki about {identifier}:']
+    lines.extend(['```', *text, '```', ''])
+    return '\n'.join(lines)
+
 
 def html(url: str, *, raw: bool = False):
     '''

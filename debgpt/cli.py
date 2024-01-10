@@ -199,6 +199,9 @@ Their prices vary. See https://platform.openai.com/docs/models .')
     # -- 10. CPython What's New
     ag.add_argument('--pynew', type=str, default=[], action='append',
                     help="load CPython What's New website, e.g. '3.12:summary-release-highlights'")
+    # -- 11. Arch Wiki
+    ag.add_argument('--archw', type=str, default=[], action='append',
+                    help='load Arch Wiki. e.g., "Archiving_and_compression"')
     # -- 999. The Question Template at the End of Prompt
     ag.add_argument('--ask', '-A', type=str, default=defaults.QUESTIONS[':none'],
                     help="Question template to append at the end of the prompt. "
@@ -294,6 +297,7 @@ def parse_args_order(argv) -> List[str]:
         _match_l(item, '--man', order)
         _match_l(item, '--html', order)
         _match_l(item, '--pynew', order)
+        _match_l(item, '--archw', order)
     return order
 
 
@@ -310,7 +314,7 @@ def gather_information_ordered(msg: Optional[str], ag, ag_order) -> Optional[str
     # following the argument order, dispatch to debian.* functions with
     # different function signatures
     for key in ag_order:
-        if key in ('file', 'tldr', 'man', 'buildd', 'pynew'):
+        if key in ('file', 'tldr', 'man', 'buildd', 'pynew', 'archw'):
             spec = getattr(ag, key).pop(0)
             func = getattr(debian, key)
             msg = _append_info(msg, func(spec))
