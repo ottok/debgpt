@@ -248,6 +248,14 @@ Let LLM explain the purpose of the contents in a file:
 debgpt -H -f pyproject.toml -A :what
 ```
 
+You can also specify the line range in a special grammar for `-f/--file`:
+
+```
+debgpt -H -f pyproject.toml:3-10 -A :what  # select the [3,10) lines
+debgpt -H -f pyproject.toml:-10 -A :what   # select from beginning to 10th (excluding 10th)
+debgpt -H -f pyproject.toml:3- -A :what  # select from 3th line (including) to end of file
+```
+
 Mimicing `licensecheck`:
 
 ```

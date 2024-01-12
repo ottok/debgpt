@@ -206,7 +206,16 @@ def stdin():
 
 
 def file(path: str):
-    text = _load_file(path)
+    if ':' in path:
+        # it is a special syntax to specify line range e.g. setup.py:1-10
+        path, lrange = path.split(':')
+        text = _load_file(path)
+        start, end = re.match(r'^(\d*)-(\d*)', lrange).groups()
+        start = int(start) if start else None
+        end = int(end) if end else None
+        text = text[start:end]
+    else:
+        text = _load_file(path)
     lines = [f'''The following is a file named {path}:''']
     lines.extend(['```'] + text + ['```', ''])
     return '\n'.join(lines)

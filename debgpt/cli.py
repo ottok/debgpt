@@ -443,7 +443,7 @@ def main(argv=sys.argv[1:]):
     # LLMs like the free web-based ChatGPT (OpenAI), claude.ai (Anthropic),
     # Bard (google), Gemini (google), huggingchat (huggingface), etc.
     if ag.frontend == 'dryrun':
-        console.print(msg)
+        console.print(msg, markup=False)
         exit(0)
 
     # print the prompt and do the first query, if specified
