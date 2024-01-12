@@ -407,7 +407,6 @@ The following is the current **TODO List**.Some ideas might be a little bit far 
 5. implement very simple CoT https://arxiv.org/pdf/2205.11916.pdf
 1. add perplexity API https://www.perplexity.ai
 1. https://github.com/openai/chatgpt-retrieval-plugin
-2. support file read range for `-f`, using `re.match(r'.+:(\d*)-(\d*)', 'setup.py:1-10').groups()`
 1. implement `--archwiki` `--gentoowiki` `--debianwiki` `--fedorawiki` `--wikipedia` (although the LLM have already read the wikipedia dump many times)
 1. analyze sbuild buildlog
 1. analyze udd, ddpo, contributors, nm
