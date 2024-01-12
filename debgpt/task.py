@@ -92,7 +92,7 @@ or
 
 def task_fortune(ag):
     '''
-    fortune mode. Note, it is very recommended to set --temperature to a value
+    Fortune mode. Note, it is very recommended to set --temperature to a value
     larger than 1.0, or LLM will give you the same thing across multiple runs.
     '''
     # create prompt

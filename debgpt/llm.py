@@ -74,7 +74,7 @@ class Mistral7B(AbstractLLM):
                      th.float16 has better compatibility than bfloat16.
         '''
         super().__init__()
-        self.device = device  # overrride abstract class
+        self.device = device  # override abstract class
         console.log(
             f'{self.NAME}> Loading {self.model_id} ({device}/{precision})')
         self.tok = AutoTokenizer.from_pretrained(self.model_id)

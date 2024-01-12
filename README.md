@@ -58,16 +58,16 @@ FRONTENDS
 The tool currently have three frontend implementations: `dryrun`, `openai`, and `zmq`.
 They are specified through the `-F | --frontend` argument.
 
-* `openai` Frontend. This frontend connects with a OpenAI API-compatible
+* `openai`: Connects with a OpenAI API-compatible
   server. For instance, by specifying `--openai_base_url`, you can switch to
   a different service provider than the default OpenAI API server.
 
-* `zmq` Frontend. This ZMQ frontend connects with the built-in ZMQ backend.
+* `zmq`: Connects with the built-in ZMQ backend.
   The ZMQ backend is provided for self-hosted LLM inference server. This
   implementation is very light weight, and not compatible with the OpenAI API.
   To use this frontend, you may need to set up a corresponding ZMQ backend.
 
-* `dryrun` Frontend. It is a fake frontend that does nothing in fact.
+* `dryrun`: Fake frontend that does nothing.
   Instead, we will simply print the generated initial prompt to the screen,
   so the user can can copy it, and paste into web-based LLMs, including but
   not limited to ChatGPT (OpenAI), Claude (Anthropic), Bard (google),
@@ -78,7 +78,7 @@ They are specified through the `-F | --frontend` argument.
 are uncertain how the third-party API servers will handle the data you created.
 Please refer their corresponding user agreements before adopting one of them.
 Be aware of such risks, and refrain from sending confidential information such
-like paied API keys to LLM.
+like paid API keys to LLM.
 
 
 CONFIGURATION
@@ -87,10 +87,10 @@ CONFIGURATION
 By default, the configuration file is placed at `$HOME/.debgpt/config.toml`.
 Use `debgpt genconfig` or `debgpt config.toml` to generate a config template.
 This configuration file should not be installed system-wide because users
-may need to fill in secrets like paied API keys.
+may need to fill in secrets like paid API keys.
 
 
-PROMPT-ENGINEERING
+PROMPT ENGINEERING
 ==================
 
 When you chat with LLM, note that the way you ask a question significant
@@ -128,7 +128,7 @@ context.
 
 #### Ex2. BTS / Buildd Query
 
-Ask LLM to summarize the BTS page for `src:pytorch`. 
+Ask LLM to summarize the BTS page for `src:pytorch`.
 
 ```
 debgpt -HQ --bts src:pytorch -A :summary_table
@@ -182,7 +182,7 @@ Similarly, we can also let LLM read the Policy section 4.9.1, and ask it to
 write some code:
 
 ```
-debgpt -H -f pytorch/debian/rules --policy 4.9.1 -A "Implemenet the support for the 'nocheck' tag based on the example provided in the policy document."
+debgpt -H -f pytorch/debian/rules --policy 4.9.1 -A "Implement the support for the 'nocheck' tag based on the example provided in the policy document."
 ```
 
 #### Ex6. External Command line
@@ -191,7 +191,7 @@ Being able to pipe the inputs and outputs among different programs is one of
 the reasons why I love the UNIX philosophy.
 
 For example, we can let debgpt read the command line outputs of `apt`, and
-summarize the upgradable pacakges for us:
+summarize the upgradable packages for us:
 
 ```
 debgpt -HQ --cmd 'apt list --upgradable' -A 'Briefly summarize the upgradable packages. You can categorize these packages.' -F openai --openai_model 'gpt-3.5-turbo-16k'
@@ -232,7 +232,7 @@ debgpt -T 1.0 fortune 'tell me something very funny about linux'
 ```
 
 We need to raise the temperature (`-T`) to `1.0` because otherwise it leads
-to less randomness, and LLM will tend to say the same thing everytime.
+to less randomness, and LLM will tend to say the same thing every time.
 
 #### Ex8. File-Specific Questions
 
@@ -256,7 +256,7 @@ debgpt -H -f pyproject.toml:-10 -A :what   # select from beginning to 10th (excl
 debgpt -H -f pyproject.toml:3- -A :what  # select from 3th line (including) to end of file
 ```
 
-Mimicing `licensecheck`:
+Mimicking `licensecheck`:
 
 ```
 debgpt -H -f debgpt/llm.py -A :licensecheck
@@ -264,7 +264,7 @@ debgpt -H -f debgpt/llm.py -A :licensecheck
 
 #### Ex9. Read Arbitrary HTML
 
-Make the maling list long story short:
+Make the mailing list long story short:
 
 ```
 debgpt -H --html 'https://lists.debian.org/debian-project/2023/12/msg00029.html' -A :summary
@@ -282,7 +282,7 @@ HTML page has roughly 5k tokens).
 #### Ex99. You Name It
 
 The usage of LLM is limited by our imaginations. I am glad to hear from you if
-you have more good ideas on how we can make LLMs useful for Debian Development:
+you have more good ideas on how we can make LLMs useful for Debian development:
 https://salsa.debian.org/deeplearning-team/debgpt/-/issues
 
 
@@ -293,9 +293,9 @@ BACKENDS
 
 This tool provides one backend implementation: `zmq`.
 
-* `zmq` Backend. This is only needed when you choose the ZMQ front end for
+* `zmq`: Only needed when you choose the ZMQ front end for
   self-hosted LLM inference server.
-  
+
 If you plan to use the `openai` or `dryrun` frontends, there is no specific
 hardware requirement. If you would like to self-host the LLM inference backend
 (ZMQ backend), powerful hardware is required.
@@ -339,19 +339,20 @@ precision now.
 Note, Multi-GPU inference is supported by the underlying transformers library.
 If you have multiple GPUs, this memory requirement is roughly divided by your number of GPUs.
 
-Hardware requirement for the `Mistral7B` LLM:
+Hardware requirements for the `Mistral7B` LLM:
 
-* `Mistral7B` + `fp16` (cuda). 24+GB perferred. needs 48GB GPU to run all the demos (some of them have a context as long as 8k). Example: Nvidia RTX A5000, Nvidia RTX 4090.
-* `Mistral7B` + `8bit` (cuda). at least 12+GB. 24+GB preferred (so you can run all demo).
-* `Mistral7B` + `4bit` (cuda). at least 6+GB. 12+GB preferred (so you can run all demo). Example: Nvidia RTX 4070 (mobile) 8GB.
-* `Mistral7B` + `fp32` (cpu). This requires 64+GB of RAM, but CPU is at least 100~400 times slower than GPU on this. Not recommended.
+* `Mistral7B` + `fp16` (cuda): 24GB+ VRAM preferred, but needs a 48GB GPU to run all the demos (some of them have a context as long as 8k). Example: Nvidia RTX A5000, Nvidia RTX 4090.
+* `Mistral7B` + `8bit` (cuda): 12GB+ VRAM at minimum, but 24GB+ preferred so you can run all demos.
+* `Mistral7B` + `4bit` (cuda): 6GB+ VRAM at minimum but 12GB+ preferred so you can run all demos. Example: Nvidia RTX 4070 (mobile) 8GB.
+* `Mistral7B` + `fp32` (cpu): Requires 64GB+ of RAM, but a CPU is 100~400 times slower than a GPU for this workload and thus not recommended.
 
 Hardware requirement for the `Mixtral8x7B` LLM:
 
-* `Mixtral8x7B` + `fp16` (cuda). 90+GB VRAM.
-* `Mixtral8x7B` + `8bit` (cuda). 45+GB VRAM.
-* `Mixtral8x7B` + `4bit` (cuda). 23+GB. But in order to make it work with long context such as 8k tokens, you still need 2x 48GB GPUs in 4bit precision.
-* See https://huggingface.co/blog/mixtral for more about this model.
+* `Mixtral8x7B` + `fp16` (cuda): 90GB+ VRAM.
+* `Mixtral8x7B` + `8bit` (cuda): 45GB+ VRAM.
+* `Mixtral8x7B` + `4bit` (cuda): 23GB+ VRAM, but in order to make it work with long context such as 8k tokens, you still need 2x 48GB GPUs in 4bit precision.
+
+See https://huggingface.co/blog/mixtral for more.
 
 ## Usage of the ZMQ Backend
 
@@ -374,14 +375,14 @@ debgpt backend --max_new_tokens=1024 --device cpu --precision fp32
 If you want to run a different LLM, such as `Mixtral8x7B`  than the default `Mistral7B`:
 
 ```
-debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit --llm Mixtral8x7B 
+debgpt backend --max_new_tokens=1024 --device cuda --precision 4bit --llm Mixtral8x7B
 ```
 
 The argument `--max_new_tokens` does not matter much and you can adjust it (it
 is the maximum length of each llm reply). You can adjust it as wish.
 
 
-SETUP-AND-INSTALL
+SETUP AND INSTALL
 =================
 
 FIXME: add optional (backend) dependencies in `pyproject.toml`
@@ -423,7 +424,7 @@ The following is the current **TODO List**.Some ideas might be a little bit far 
 1. The current implementation stays at prompt-engineering an existing Chatting LLM with debian-specific documents, like debian-policy, debian developer references, and some man pages. In the future, we may want to explore how we can use larger datasets like Salsa dump, Debian mailing list dump, etc. LoRA or RAG or any new methods are to be investegated with the datasets. Also see follow-ups at https://lists.debian.org/debian-project/2023/12/msg00028.html
 1. Should we really train or fine-tune a model? How do we organize the data for RLHF or instruction tuning?
 1. There are other possible backends like https://github.com/ggerganov/llama.cpp
-which allows inference on CPUs (even laptops). 
+which allows inference on CPUs (even laptops).
 transformers itself also supports 8bit and 4bit inference with bitsandbytes.
 
 LICENSE

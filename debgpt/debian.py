@@ -112,7 +112,7 @@ def _load_stdin() -> List[str]:
 
 
 #####################################
-# Text Loaders fron Various Sources
+# Text Loaders from Various Sources
 #####################################
 
 
