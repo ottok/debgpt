@@ -88,7 +88,7 @@ QUESTIONS = {
     ':summary_table': 'Please summarize the above information. Make a table to organize it.',
     ':polish': 'Please polish the language in the above texts, while not changing their original meaning.',
     ':rephrase': 'Please rephrase the above texts, while not changing their original meaning.',
-    ':git-commit': 'Use a very short sentence to describe the above `git diff` as a git commit message.',
+    ':git-commit': 'Write a good git commit message subject line for the change diff shown above, using the project style visible in previous commits titles above.',
     ':licensecheck': 'What is the license of this file? Just tell me the SPDX identifier, and answer in the shortest format.',
     ':diff': 'Please explain the differences among the above choices.',
     ':diff_table': 'Please explain the differences among the above choices. Organize your answer in tabular format.',
